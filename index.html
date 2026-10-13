@@ -1647,6 +1647,41 @@
       return null;
     }
 
+    /**
+     * Tautan sematan (embed) untuk dokumen: PDF, Word, PPT, Excel, Google Drive/Docs/Slides, Canva
+     * agar bisa dibuka langsung di dalam web tanpa berpindah halaman.
+     */
+    function getDocEmbedInfo(url) {
+      if (!url || url === '#') return null;
+
+      // Folder Google Drive
+      const folder = url.match(/drive\.google\.com\/(?:drive\/(?:u\/\d+\/)?folders\/|folderview\?id=)([\w-]+)/);
+      if (folder) return { embedUrl: `https://drive.google.com/embeddedfolderview?id=${folder[1]}#list` };
+
+      // Berkas Google Drive (PDF, Word, PPT, Excel, gambar, video)
+      const file = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);
+      if (file) return { embedUrl: `https://drive.google.com/file/d/${file[1]}/preview` };
+
+      // Google Docs / Sheets / Slides / Forms
+      const g = url.match(/docs\.google\.com\/(document|spreadsheets|presentation|forms)\/d\/(?:e\/)?([\w-]+)/);
+      if (g) {
+        if (g[1] === 'presentation') return { embedUrl: `https://docs.google.com/presentation/d/${g[2]}/embed?start=false&loop=false` };
+        if (g[1] === 'forms') return { embedUrl: url.split('?')[0].replace(/\/(edit|viewform)$/, '') + '/viewform?embedded=true' };
+        return { embedUrl: `https://docs.google.com/${g[1]}/d/${g[2]}/preview` };
+      }
+
+      // Canva
+      const cv = url.match(/canva\.com\/design\/([\w-]+)\/([\w-]+)/);
+      if (cv) return { embedUrl: `https://www.canva.com/design/${cv[1]}/${cv[2]}/view?embed` };
+
+      // Tautan langsung ke berkas dokumen
+      const clean = url.split('?')[0].split('#')[0].toLowerCase();
+      if (/\.pdf$/.test(clean)) return { embedUrl: `https://docs.google.com/viewer?embedded=true&url=${encodeURIComponent(url)}` };
+      if (/\.(docx?|pptx?|xlsx?)$/.test(clean)) return { embedUrl: `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}` };
+
+      return null;
+    }
+
     function formatDriveDirectUrl(url) {
       if (!url) return '';
       if (url.startsWith('data:image/')) return url;
@@ -2021,9 +2056,21 @@
       const badge = document.getElementById('preview-modal-badge');
       const videoBox = document.getElementById('preview-video-container');
       const iframe = document.getElementById('preview-iframe');
-      const imageBox = document.getElementById('preview-image-container');
-      const imageEl = document.getElementById('preview-image-el');
+      let imageBox = document.getElementById('preview-image-container');
+      let imageEl = document.getElementById('preview-image-el');
       const linkBox = document.getElementById('preview-link-container');
+      // Kotak tampilan gambar belum ada di HTML: buat otomatis agar gambar bisa dibuka di dalam web
+      if (!imageBox && linkBox) {
+        imageBox = document.createElement('div');
+        imageBox.id = 'preview-image-container';
+        imageBox.className = 'w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center hidden';
+        imageEl = document.createElement('img');
+        imageEl.id = 'preview-image-el';
+        imageEl.alt = 'Pratinjau gambar';
+        imageEl.className = 'max-w-full max-h-[65vh] object-contain';
+        imageBox.appendChild(imageEl);
+        linkBox.parentNode.insertBefore(imageBox, linkBox);
+      }
       const linkBtn = document.getElementById('preview-link-btn');
       const linkDesc = document.getElementById('preview-link-desc');
       const sourceBtn = document.getElementById('preview-source-btn');
@@ -2081,6 +2128,23 @@
           sourceBtn.classList.remove('hidden');
           sourceBtn.classList.add('inline-flex');
           sourceBtn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i><span>Buka Ukuran Penuh</span>`;
+        }
+      } else if (getDocEmbedInfo(item.url)) {
+        // Dokumen (PDF / Word / PPT / Drive dll) dibuka langsung di dalam web
+        const dInfo = getDocEmbedInfo(item.url);
+        if (dialog) dialog.className = 'bg-white rounded-3xl max-w-4xl w-full p-6 space-y-4 shadow-2xl relative max-h-[94vh] overflow-y-auto';
+        videoBox.className = 'w-full h-[65vh] min-h-[320px] rounded-2xl overflow-hidden bg-slate-100 relative flex items-center justify-center shadow-inner';
+        iframe.src = dInfo.embedUrl;
+        videoBox.classList.remove('hidden');
+        if (badge) {
+          badge.className = `px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white ${btnConfig.badgeClass.split(' ')[0]} shrink-0 inline-flex items-center space-x-1`;
+          badge.innerHTML = `<i class="${btnConfig.badgeIcon}"></i><span>${btnConfig.badgeLabel}</span>`;
+          badge.classList.remove('hidden');
+        }
+        if (sourceBtn) {
+          sourceBtn.href = item.url;
+          sourceBtn.classList.remove('hidden');
+          sourceBtn.classList.add('inline-flex');
         }
       } else {
         if (dialog) dialog.className = 'bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
