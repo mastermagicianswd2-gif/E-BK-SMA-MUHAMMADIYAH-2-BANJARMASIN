@@ -771,6 +771,19 @@
               </div>
             </div>
 
+            <!-- Bagian 5: Tautan Pengembang Web (Developer Web) -->
+            <div class="border-t border-slate-100 pt-5 space-y-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">5. Tautan Pengembang Web (Developer Web)</label>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">URL Tautan Developer Web (Muncul di Footer)</label>
+                <div class="relative">
+                  <i class="fa-solid fa-code absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                  <input type="url" id="cfg-developer-url" placeholder="https://instagram.com/akun_anda atau tautan portofolio" class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Tautan ini akan terbuka di tab baru saat pengunjung mengklik teks "Developer Web" pada bagian bawah halaman.</p>
+              </div>
+            </div>
+
             <button type="submit" id="cfg-save-btn" class="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
               <i class="fa-solid fa-floppy-disk"></i>
               <span>Simpan Perubahan Tampilan & Tema</span>
@@ -1061,9 +1074,14 @@
 
   <!-- Footer Bersih -->
   <footer class="bg-white border-t border-slate-200/80 py-8 text-center text-xs text-slate-400">
-    <div class="max-w-7xl mx-auto px-4 space-y-2">
+    <div class="max-w-7xl mx-auto px-4 space-y-1.5">
       <p class="font-semibold text-slate-600">E-BK • Layanan Bimbingan & Konseling Digital</p>
-      <p>SMA Muhammadiyah 2 Banjarmasin &copy; 2026. Berkarakter, Berkemajuan, dan Berprestasi.</p>
+      <p>Bimbingan dan Konseling FKIP ULM &copy; 2026</p>
+      <p>
+        <a id="footer-developer-link" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-sky-600 hover:underline transition-colors">
+          Developer Web
+        </a>
+      </p>
     </div>
   </footer>
 
@@ -1143,7 +1161,8 @@
       heroBgOverlay: '75',
       colorPrimary: '#0284c7',
       colorDark: '#0c2340',
-      colorAccent: '#f59e0b'
+      colorAccent: '#f59e0b',
+      developerUrl: '#'
     };
 
     function isBackendConnected() {
@@ -2767,6 +2786,21 @@
         applyDynamicColors(siteSettings.colorPrimary, siteSettings.colorDark, siteSettings.colorAccent || '#f59e0b');
       }
 
+      // Tautan Developer Web pada Footer
+      const devLink = document.getElementById('footer-developer-link');
+      if (devLink) {
+        let devUrl = (siteSettings.developerUrl || '#').trim();
+        if (devUrl && devUrl !== '#' && !devUrl.startsWith('http://') && !devUrl.startsWith('https://')) {
+          devUrl = 'https://' + devUrl;
+        }
+        devLink.href = devUrl || '#';
+      }
+
+      const devInput = document.getElementById('cfg-developer-url');
+      if (devInput) {
+        devInput.value = (siteSettings.developerUrl && siteSettings.developerUrl !== '#') ? siteSettings.developerUrl : '';
+      }
+
       // Sinkronkan nilai kolom di form Kustomisasi Tema agar konsisten
       const typeSelect = document.getElementById('cfg-logo-type');
       if (typeSelect) {
@@ -2799,6 +2833,11 @@
         effectiveHeroBgUrl = siteSettings.heroBgUrl;
       }
 
+      let devUrlInput = document.getElementById('cfg-developer-url') ? document.getElementById('cfg-developer-url').value.trim() : '#';
+      if (devUrlInput && devUrlInput !== '#' && !devUrlInput.startsWith('http://') && !devUrlInput.startsWith('https://')) {
+        devUrlInput = 'https://' + devUrlInput;
+      }
+
       const newSt = {
         logoType: logoType,
         logoIcon: document.getElementById('cfg-logo-icon').value,
@@ -2813,6 +2852,7 @@
         colorPrimary: document.getElementById('cfg-hex-primary').value.trim(),
         colorDark: document.getElementById('cfg-hex-dark').value.trim(),
         colorAccent: document.getElementById('cfg-hex-accent').value.trim(),
+        developerUrl: devUrlInput || '#',
         logoFileBase64: tempLogoBase64,
         logoFileName: tempLogoFileName,
         logoFileMime: tempLogoFileMime,
