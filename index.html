@@ -26,6 +26,18 @@
             themePrimary: 'var(--color-primary, #0284c7)',
             themeDark: 'var(--color-dark, #0c2340)',
             themeAccent: 'var(--color-accent, #f59e0b)',
+            sky: {
+              50:  'rgb(var(--sky-50, 240 249 255) / <alpha-value>)',
+              100: 'rgb(var(--sky-100, 224 242 254) / <alpha-value>)',
+              200: 'rgb(var(--sky-200, 186 230 253) / <alpha-value>)',
+              300: 'rgb(var(--sky-300, 125 211 252) / <alpha-value>)',
+              400: 'rgb(var(--sky-400, 56 189 248) / <alpha-value>)',
+              500: 'rgb(var(--sky-500, 14 165 233) / <alpha-value>)',
+              600: 'rgb(var(--sky-600, 2 132 199) / <alpha-value>)',
+              700: 'rgb(var(--sky-700, 3 105 161) / <alpha-value>)',
+              800: 'rgb(var(--sky-800, 7 89 133) / <alpha-value>)',
+              900: 'rgb(var(--sky-900, 12 74 110) / <alpha-value>)',
+            },
           }
         }
       }
@@ -149,7 +161,7 @@
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           
           <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-sky-200 text-xs sm:text-sm font-medium shadow-inner">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="hero-accent-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
             <span id="hero-text-badge">Portal Resmi Bimbingan & Konseling</span>
           </div>
 
@@ -3250,7 +3262,8 @@
     function updateHeroOverlay(val) {
       const overlay = document.getElementById('hero-bg-overlay');
       if (overlay) {
-        overlay.style.backgroundColor = `rgba(12, 35, 64, ${val / 100})`;
+        const dc = hexToRgbArr(normalizeHex(siteSettings.colorDark) || '#0c2340');
+        overlay.style.backgroundColor = `rgba(${dc[0]}, ${dc[1]}, ${dc[2]}, ${val / 100})`;
       }
     }
 
@@ -3264,10 +3277,57 @@
       applyDynamicColors(primary, dark, accent);
     }
 
+    function normalizeHex(h) {
+      if (!h) return null;
+      h = String(h).trim();
+      if (h[0] !== '#') h = '#' + h;
+      if (/^#[0-9a-f]{3}$/i.test(h)) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+      return /^#[0-9a-f]{6}$/i.test(h) ? h.toLowerCase() : null;
+    }
+
+    function hexToRgbArr(h) {
+      return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+    }
+
+    function mixRgb(c, target, t) {
+      return c.map((v, i) => Math.round(v + (target[i] - v) * t));
+    }
+
     function applyDynamicColors(primary, dark, accent) {
-      document.documentElement.style.setProperty('--color-primary', primary);
-      document.documentElement.style.setProperty('--color-dark', dark);
-      document.documentElement.style.setProperty('--color-accent', accent);
+      const root = document.documentElement;
+      const pHex = normalizeHex(primary) || '#0284c7';
+      const dHex = normalizeHex(dark) || '#0c2340';
+      const aHex = normalizeHex(accent) || '#f59e0b';
+
+      root.style.setProperty('--color-primary', pHex);
+      root.style.setProperty('--color-dark', dHex);
+      root.style.setProperty('--color-accent', aHex);
+
+      // Warna utama: bangun palet 50-900 (pusat di 600) yang menggantikan seluruh warna biru tombol, tautan, dan lencana
+      const shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+      if (pHex === '#0284c7') {
+        shades.forEach(n => root.style.removeProperty('--sky-' + n));
+      } else {
+        const base = hexToRgbArr(pHex);
+        const white = [255, 255, 255], black = [0, 0, 0];
+        const map = {
+          50: mixRgb(base, white, 0.94), 100: mixRgb(base, white, 0.87), 200: mixRgb(base, white, 0.72),
+          300: mixRgb(base, white, 0.52), 400: mixRgb(base, white, 0.3), 500: mixRgb(base, white, 0.13),
+          600: base, 700: mixRgb(base, black, 0.2), 800: mixRgb(base, black, 0.38), 900: mixRgb(base, black, 0.55)
+        };
+        shades.forEach(n => root.style.setProperty('--sky-' + n, map[n].join(' ')));
+      }
+
+      // Warna aksen: titik dan sorot gradasi pada banner beranda
+      let st = document.getElementById('dynamic-theme-style');
+      if (!st) {
+        st = document.createElement('style');
+        st.id = 'dynamic-theme-style';
+        document.head.appendChild(st);
+      }
+      st.textContent = aHex === '#f59e0b' ? '' :
+        '#hero-accent-dot{background-color:var(--color-accent) !important;}' +
+        '#hero-text-highlight{--tw-gradient-to:var(--color-accent) !important;}';
     }
 
     function applySiteSettings(st) {
