@@ -411,17 +411,23 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas Saat Ini <span class="text-rose-500">*</span></label>
-              <select id="cs-kelas" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
-                <option value="">-- Pilih Kelas --</option>
-                <option value="X-1">X-1</option>
-                <option value="X-2">X-2</option>
-                <option value="X-3">X-3</option>
-                <option value="XI-1">XI-1</option>
-                <option value="XI-2">XI-2</option>
-                <option value="XI-3">XI-3</option>
-                <option value="XII-1">XII-1</option>
-                <option value="XII-2">XII-2</option>
-                <option value="XII-3">XII-3</option>
+              <input type="text" id="cs-kelas" required placeholder="Ketik kelas (Contoh: X-1, XI IPA 2, XII-3)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Pilihan Tanggal & 3 Sesi Jam Konseling (08.00 - 15.00 WITA) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Tanggal Konseling <span class="text-rose-500">*</span></label>
+              <input type="date" id="cs-jadwal-tgl" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Sesi Jam Konseling (08.00 - 15.00 WITA) <span class="text-rose-500">*</span></label>
+              <select id="cs-jadwal-sesi" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                <option value="">-- Pilih Sesi Konseling --</option>
+                <option value="Sesi 1 (08.00 - 10.00 WITA)">Sesi 1 (08.00 - 10.00 WITA - Pagi)</option>
+                <option value="Sesi 2 (10.15 - 12.15 WITA)">Sesi 2 (10.15 - 12.15 WITA - Siang)</option>
+                <option value="Sesi 3 (13.00 - 15.00 WITA)">Sesi 3 (13.00 - 15.00 WITA - Sore)</option>
               </select>
             </div>
           </div>
@@ -614,10 +620,10 @@
                   <tr>
                     <th class="py-3.5 px-4">Siswa & Kelas</th>
                     <th class="py-3.5 px-4">Bidang</th>
+                    <th class="py-3.5 px-4">Jadwal & Sesi Konseling</th>
                     <th class="py-3.5 px-4">Isi Pesan Curhat</th>
-                    <th class="py-3.5 px-4">Tanggal</th>
                     <th class="py-3.5 px-4">Status</th>
-                    <th class="py-3.5 px-4 text-center">Tindakan</th>
+                    <th class="py-3.5 px-4 text-center">Tindakan & WhatsApp</th>
                   </tr>
                 </thead>
                 <tbody id="table-admin-konseling" class="divide-y divide-slate-100">
@@ -1645,7 +1651,9 @@
     async function handleFormKonseling(e) {
       e.preventDefault();
       const nama = document.getElementById('cs-nama').value.trim();
-      const kelas = document.getElementById('cs-kelas').value;
+      const kelas = document.getElementById('cs-kelas').value.trim();
+      const jadwalTgl = document.getElementById('cs-jadwal-tgl').value;
+      const jadwalSesi = document.getElementById('cs-jadwal-sesi').value;
       const noWa = document.getElementById('cs-wa').value.trim();
       const bidang = document.getElementById('cs-bidang').value;
       const pesan = document.getElementById('cs-pesan').value.trim();
@@ -1653,7 +1661,13 @@
 
       const payload = {
         action: 'submitKonseling',
-        nama, kelas, noWa, bidang, pesan
+        nama,
+        kelas,
+        jadwalTgl,
+        jadwalSesi,
+        noWa,
+        bidang,
+        pesan
       };
 
       btn.disabled = true;
@@ -1671,7 +1685,7 @@
           if (result.status === 'success') {
             const newCsItem = result.data || {
               id: 'CS_' + Date.now(),
-              nama, kelas, noWa, bidang, pesan,
+              nama, kelas, jadwalTgl, jadwalSesi, noWa, bidang, pesan,
               tanggal: new Date().toLocaleDateString('id-ID'),
               status: 'Menunggu Respons'
             };
@@ -1686,7 +1700,7 @@
         } else {
           const newCs = {
             id: 'CS_' + Date.now(),
-            nama, kelas, noWa, bidang, pesan,
+            nama, kelas, jadwalTgl, jadwalSesi, noWa, bidang, pesan,
             tanggal: new Date().toLocaleDateString('id-ID'),
             status: 'Menunggu Respons'
           };
@@ -2078,21 +2092,42 @@
 
       konselingData.forEach(item => {
         const isSelesai = item.status === 'Selesai';
-        const cleanWa = (item.noWa || '').replace(/[^0-9]/g, '');
-        const waLink = cleanWa ? `https://wa.me/${cleanWa.startsWith('0') ? '62' + cleanWa.slice(1) : cleanWa}` : '#';
+        const rawWa = (item.noWa || '').replace(/[^0-9]/g, '');
+        let cleanWa = rawWa;
+        if (cleanWa.startsWith('0')) {
+          cleanWa = '62' + cleanWa.slice(1);
+        } else if (cleanWa.startsWith('8')) {
+          cleanWa = '62' + cleanWa;
+        }
+
+        const jadwalDisplay = item.jadwalTgl ? item.jadwalTgl : (item.tanggal || '-');
+        const sesiDisplay = item.jadwalSesi ? item.jadwalSesi : '-';
+
+        const greetingText = encodeURIComponent(
+          `Assalamu'alaikum wr. wb. Halo ${item.nama} (${item.kelas}), saya Guru BK SMA Muhammadiyah 2 Banjarmasin terkait permohonan bimbingan konseling bidang *${item.bidang}* yang diajukan untuk jadwal *${jadwalDisplay}* (*${sesiDisplay}*). Kami ingin mengonfirmasi jadwal pelaksanaan konseling tersebut.`
+        );
+        const waLink = cleanWa ? `https://wa.me/${cleanWa}?text=${greetingText}` : '#';
 
         const tr = document.createElement('tr');
         tr.className = `hover:bg-slate-50/70 transition-colors ${isSelesai ? 'opacity-60 bg-slate-50/40' : ''}`;
         tr.innerHTML = `
-          <td class="py-3.5 px-4">
+          <td class="py-3.5 px-4 whitespace-nowrap">
             <p class="font-bold text-slate-900">${escapeHtml(item.nama)}</p>
-            <p class="text-[10px] text-slate-500 font-semibold">Kelas: ${escapeHtml(item.kelas)}</p>
+            <p class="text-[11px] text-slate-600 font-semibold"><i class="fa-solid fa-graduation-cap text-sky-600 mr-1"></i>${escapeHtml(item.kelas)}</p>
+            <p class="text-[10px] text-slate-400 font-mono mt-0.5"><i class="fa-brands fa-whatsapp text-emerald-600 mr-1"></i>${escapeHtml(item.noWa || '-')}</p>
           </td>
-          <td class="py-3.5 px-4 font-semibold text-slate-700">${escapeHtml(item.bidang)}</td>
+          <td class="py-3.5 px-4 font-semibold text-slate-700 whitespace-nowrap">
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-sky-700">${escapeHtml(item.bidang)}</span>
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            <div class="space-y-0.5">
+              <p class="font-bold text-slate-800 text-[11px]"><i class="fa-regular fa-calendar-check text-sky-600 mr-1"></i>${escapeHtml(jadwalDisplay)}</p>
+              <p class="text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded inline-block"><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(sesiDisplay)}</p>
+            </div>
+          </td>
           <td class="py-3.5 px-4 max-w-xs">
             <p class="line-clamp-2 text-slate-600 leading-snug">${escapeHtml(item.pesan)}</p>
           </td>
-          <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">${item.tanggal || '-'}</td>
           <td class="py-3.5 px-4 whitespace-nowrap">
             <select onchange="updateStatusKonseling('${item.id}', this.value)" class="text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-200 focus:outline-none ${item.status === 'Menunggu Respons' ? 'text-amber-700 bg-amber-50 border-amber-200' : (item.status === 'Terjadwal' ? 'text-sky-700 bg-sky-50 border-sky-200' : 'text-slate-600 bg-slate-50')}">
               <option value="Menunggu Respons" ${item.status === 'Menunggu Respons' ? 'selected' : ''}>Menunggu</option>
@@ -2101,9 +2136,16 @@
             </select>
           </td>
           <td class="py-3.5 px-4 text-center whitespace-nowrap">
-            <div class="flex items-center justify-center space-x-1">
-              ${cleanWa ? `<a href="${waLink}" target="_blank" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50" title="Hubungi Siswa via WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></a>` : ''}
-              <button onclick="deleteKonseling('${item.id}')" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50" title="Hapus Data"><i class="fa-solid fa-trash-can"></i></button>
+            <div class="flex items-center justify-center space-x-1.5">
+              ${cleanWa ? `
+                <a href="${waLink}" target="_blank" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition-all" title="Buka WhatsApp & Kirim Pesan Konfirmasi">
+                  <i class="fa-brands fa-whatsapp text-sm"></i>
+                  <span>Hubungi WA</span>
+                </a>
+              ` : `
+                <span class="text-[10px] text-slate-400 italic">No WA -</span>
+              `}
+              <button onclick="deleteKonseling('${item.id}')" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors" title="Hapus Data"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           </td>
         `;
@@ -2724,6 +2766,13 @@
     }
 
     async function loadInitialData() {
+      // Set batas minimal tanggal konseling siswa ke hari ini
+      const jadwalTglInput = document.getElementById('cs-jadwal-tgl');
+      if (jadwalTglInput) {
+        const todayIso = new Date().toISOString().split('T')[0];
+        jadwalTglInput.setAttribute('min', todayIso);
+      }
+
       if (isBackendConnected()) {
         updateConnectionStatusUI(true, 'Terhubung langsung ke Google Sheets');
       } else {
