@@ -1447,7 +1447,7 @@
      */
     async function resolveLinkThumbnail(url) {
       const yt = getYouTubeId(url);
-      if (yt) return { remoteUrl: `https://img.youtube.com/vi/${yt}/hqdefault.jpg` };
+      if (yt) return { remoteUrl: ytThumbUrl(yt) };
 
       // 1. Server Apps Script (paling andal untuk Instagram, TikTok, dan situs yang memblokir browser)
       if (isBackendConnected()) {
@@ -1781,13 +1781,14 @@
 
     function getYouTubeId(url) {
       if (!url) return null;
-      const reg = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
+      const reg = /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|live\/|shorts\/|watch\?(?:[^#]*&)?v=))([\w-]{11})/;
       const match = url.match(reg);
       return match ? match[1] : null;
     }
 
     /* ===== TikTok: tautan pendek (vm./vt.tiktok.com, tiktok.com/t/...) diubah ke alamat video lengkap lewat server ===== */
     let tiktokResolved = {};
+    let tiktokFailReason = '';
     const tiktokFailed = {};   // kegagalan hanya diingat selama halaman terbuka (tidak disimpan permanen)
     try { tiktokResolved = JSON.parse(localStorage.getItem('ebk_tt_resolved') || '{}') || {}; } catch (e) { tiktokResolved = {}; }
 
@@ -1798,6 +1799,10 @@
     async function resolveTikTokShortLink(url) {
       if (tiktokResolved[url]) return tiktokResolved[url];
       let finalUrl = null;
+      tiktokFailReason = '';
+      const canon = (author, id) => `https://www.tiktok.com/@${author || 'tiktok'}/video/${id}`;
+
+      // 1. Server Apps Script
       if (isBackendConnected()) {
         try {
           const r = await fetchWithTimeout(SCRIPT_URL, 20000, {
@@ -1808,7 +1813,32 @@
           });
           const j = await r.json();
           if (j && j.status === 'success' && j.url) finalUrl = j.url;
-        } catch (e) { /* tetap memakai tautan asli */ }
+          else tiktokFailReason = (j && j.message) || 'server tidak mengembalikan alamat video';
+        } catch (e) { tiktokFailReason = 'server Apps Script tidak dapat dihubungi'; }
+      } else {
+        tiktokFailReason = 'Apps Script belum terhubung';
+      }
+
+      // 2. oEmbed TikTok langsung dari browser
+      if (!finalUrl) {
+        try {
+          const r = await fetchWithTimeout(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`, 9000);
+          const j = await r.json();
+          const id = j && (j.embed_product_id || ((j.html || '').match(/data-video-id="(\d+)"/) || [])[1]);
+          if (id) finalUrl = canon(j.author_unique_id, id);
+        } catch (e) { /* lanjut */ }
+      }
+
+      // 3. Pengikut pengalihan (redirect) pihak ketiga
+      if (!finalUrl) {
+        try {
+          const r = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, 12000);
+          const j = await r.json();
+          const fu = (j && j.status && j.status.url) || '';
+          let m = fu.match(/tiktok\.com\/@([\w.-]+)\/(?:video|photo)\/(\d+)/);
+          if (!m && j && j.contents) m = String(j.contents).match(/tiktok\.com\/@([\w.-]+)\/(?:video|photo)\/(\d{15,})/);
+          if (m) finalUrl = canon(m[1], m[2]);
+        } catch (e) { /* gagal */ }
       }
       if (!finalUrl) {
         tiktokFailed[url] = true;
@@ -2069,11 +2099,30 @@
       return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     }
 
+    // Thumbnail YouTube 16:9 penuh (tanpa pita hitam), sama seperti thumbnail asli di YouTube
+    function ytThumbUrl(id) {
+      return `https://i.ytimg.com/vi/${id}/hq720.jpg`;
+    }
+
+    // Jika gambar gagal dimuat: untuk YouTube coba ukuran 16:9 yang lebih kecil, lalu poster bawaan
+    function thumbImgError(img, fallbackSvg) {
+      const m = (img.src || '').match(/i\.ytimg\.com\/vi\/([\w-]{11})\/(\w+)\.jpg/);
+      if (m && m[2] !== 'mqdefault') {
+        img.src = `https://i.ytimg.com/vi/${m[1]}/mqdefault.jpg`;
+        return;
+      }
+      img.onerror = null;
+      img.src = fallbackSvg;
+    }
+
     function getContentThumbnail(item) {
       if (!item) return getSvgCardThumbnail('E-BK Digital', 'BK', 'Info');
 
       // 1. Jika ada thumbnail khusus yang diunggah oleh guru BK
       if (item.thumbnail && item.thumbnail !== '#' && item.thumbnail.length > 5) {
+        // Thumbnail YouTube otomatis lama (4:3 berpita hitam) diganti versi 16:9 penuh
+        const oldYt = String(item.thumbnail).match(/(?:img\.youtube\.com|i\.ytimg\.com)\/vi\/([\w-]{11})\//);
+        if (oldYt) return ytThumbUrl(oldYt[1]);
         return formatDriveDirectUrl(item.thumbnail);
       }
 
@@ -2085,7 +2134,7 @@
       // 3. Jika video YouTube
       const ytId = getYouTubeId(item.url);
       if (ytId) {
-        return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        return ytThumbUrl(ytId);
       }
 
       // 4. Jika URL langsung adalah file gambar
@@ -2100,7 +2149,7 @@
       }
 
       // 4c. Tautan web tanpa sampul: tangkapan layar halaman utamanya (kecuali Instagram/TikTok yang meminta login)
-      if (needsAutoThumb(item.url) && !/instagram\.com|tiktok\.com|facebook\.com/i.test(item.url)) {
+      if (needsAutoThumb(item.url) && !/instagram\.com|tiktok\.com|facebook\.com|youtube\.com|youtu\.be/i.test(item.url)) {
         return `https://s0.wp.com/mshots/v1/${encodeURIComponent(item.url)}?w=640&h=360`;
       }
 
@@ -2151,7 +2200,7 @@
         card.innerHTML = `
           <div>
             <div class="relative w-full h-36 overflow-hidden bg-slate-100">
-              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='${fallbackSvg}';">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="thumbImgError(this, '${fallbackSvg}')">
               <div class="absolute top-2.5 left-2.5">
                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-sky-600 text-white shadow-xs">
                   ${escapeHtml(item.bidang || 'BK')}
@@ -2246,7 +2295,7 @@
         card.innerHTML = `
           <div>
             <div class="relative w-full h-44 overflow-hidden bg-slate-100">
-              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='${fallbackSvg}';">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="thumbImgError(this, '${fallbackSvg}')">
               <div class="absolute top-3 left-3">
                 <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[10px] font-bold ${btnConfig.badgeClass} shadow-md">
                   <i class="${btnConfig.badgeIcon}"></i>
@@ -2291,7 +2340,7 @@
       if (isTikTokShort(item.url) && !tiktokResolved[item.url] && !tiktokFailed[item.url]) {
         showToast('Memuat video TikTok...', 'info');
         resolveTikTokShortLink(item.url).then(() => {
-          if (tiktokFailed[item.url]) showToast('Link pendek TikTok tidak dapat diproses. Perbarui backend Apps Script atau gunakan link video lengkap.', 'info');
+          if (tiktokFailed[item.url]) showToast('Link pendek TikTok tidak dapat diproses (' + (tiktokFailReason || 'alasan tidak diketahui') + '). Gunakan link video lengkap: buka link di browser lalu salin alamat yang berbentuk tiktok.com/@akun/video/...', 'info');
           bukaPreview(id);
         });
         return;
@@ -2929,6 +2978,9 @@
           applyAutoThumbResult(await resolveLinkThumbnail(url));
         }
       }
+
+      // Thumbnail YouTube otomatis tidak disimpan: tampilan beranda selalu memakai thumbnail asli YouTube
+      if (thumbIsAuto && !selectedThumbBase64 && getYouTubeId(url)) selectedThumbRemote = null;
 
       let effectiveThumb = selectedThumbBase64 || selectedThumbRemote || '';
       if (!effectiveThumb && tipe === 'Gambar' && selectedFileBase64) {
