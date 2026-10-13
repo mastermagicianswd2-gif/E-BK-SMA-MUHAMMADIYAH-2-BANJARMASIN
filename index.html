@@ -1396,11 +1396,32 @@
     let autoThumbTimer = null;
     let lastAutoUrl = '';
 
-    async function fetchWithTimeout(u, ms) {
+    async function fetchWithTimeout(u, ms, opts) {
       const ctrl = new AbortController();
       const t = setTimeout(() => ctrl.abort(), ms);
-      try { return await fetch(u, { signal: ctrl.signal }); }
+      try { return await fetch(u, Object.assign({}, opts || {}, { signal: ctrl.signal })); }
       finally { clearTimeout(t); }
+    }
+
+    // Mengecilkan gambar (data URL) menjadi thumbnail 640x360 (dipotong tengah)
+    function dataUrlToThumb(dataUrl) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = function() {
+          try {
+            const W = 640, H = 360;
+            const c = document.createElement('canvas');
+            c.width = W; c.height = H;
+            const ctx = c.getContext('2d');
+            const scale = Math.max(W / img.width, H / img.height);
+            const w = img.width * scale, h = img.height * scale;
+            ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+            resolve(c.toDataURL('image/jpeg', 0.82));
+          } catch (e) { resolve(null); }
+        };
+        img.onerror = () => resolve(null);
+        img.src = dataUrl;
+      });
     }
 
     function blobToDataUrl(blob) {
@@ -1428,14 +1449,42 @@
       const yt = getYouTubeId(url);
       if (yt) return { remoteUrl: `https://img.youtube.com/vi/${yt}/hqdefault.jpg` };
 
+      // 1. Server Apps Script (paling andal untuk Instagram, TikTok, dan situs yang memblokir browser)
+      if (isBackendConnected()) {
+        try {
+          const rs = await fetchWithTimeout(SCRIPT_URL, 25000, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'resolveThumbnail', url: url }),
+            redirect: 'follow'
+          });
+          const js = await rs.json();
+          if (js && js.status === 'success' && js.image) {
+            const thumb = await dataUrlToThumb(js.image);
+            if (thumb) return { dataUrl: thumb, remoteUrl: js.source || '' };
+          }
+        } catch (e) { /* lanjut ke cadangan */ }
+      }
+
+      // 2. Cadangan langsung dari browser: oEmbed TikTok, noembed, lalu microlink
       let imgUrl = null;
-      try {
-        const r = await fetchWithTimeout(`https://api.microlink.io/?url=${encodeURIComponent(url)}`, 10000);
-        const j = await r.json();
-        if (j && j.status === 'success' && j.data) {
-          imgUrl = (j.data.image && j.data.image.url) || (j.data.logo && j.data.logo.url) || null;
-        }
-      } catch (e) { /* abaikan: akan memakai cadangan */ }
+      const tryJson = async (apiUrl, pick) => {
+        try {
+          const r = await fetchWithTimeout(apiUrl, 9000);
+          const j = await r.json();
+          return pick(j) || null;
+        } catch (e) { return null; }
+      };
+      if (/tiktok\.com/i.test(url)) {
+        imgUrl = await tryJson(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`, j => j && j.thumbnail_url);
+      }
+      if (!imgUrl) {
+        imgUrl = await tryJson(`https://noembed.com/embed?url=${encodeURIComponent(url)}`, j => j && j.thumbnail_url);
+      }
+      if (!imgUrl) {
+        imgUrl = await tryJson(`https://api.microlink.io/?url=${encodeURIComponent(url)}`, j =>
+          j && j.status === 'success' && j.data && ((j.data.image && j.data.image.url) || (j.data.logo && j.data.logo.url)));
+      }
       if (!imgUrl) return null;
 
       try {
@@ -1504,6 +1553,8 @@
       if (token !== autoThumbToken || thumbCleared) return;
       if (applyAutoThumbResult(res)) {
         showFormThumb(res.dataUrl || res.remoteUrl, 'Thumbnail otomatis dari tautan. Bisa diganti atau dihapus.');
+      } else {
+        showToast('Thumbnail otomatis tidak ditemukan untuk tautan ini. Silakan unggah foto sampul manual.', 'info');
       }
     }
 
