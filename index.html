@@ -3341,8 +3341,8 @@
             applySiteSettings(result.settings);
             localStorage.setItem('ebk_settings', JSON.stringify(result.settings));
           } else {
-            applySiteSettings(newSt);
-            localStorage.setItem('ebk_settings', JSON.stringify(newSt));
+            // Server menolak / gagal menyimpan: tampilkan alasan aslinya, jangan pura-pura berhasil
+            throw new Error(result.message || 'Server tidak mengembalikan pengaturan yang tersimpan.');
           }
         } else {
           applySiteSettings(newSt);
