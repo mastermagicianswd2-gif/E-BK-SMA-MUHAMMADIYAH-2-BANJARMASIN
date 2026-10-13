@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-BK SMA Muhammadiyah 2 Banjarmasin | Portal Bimbingan & Konseling</title>
+  <link id="site-favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230284c7'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EBK%3C/text%3E%3C/svg%3E">
   
   <!-- Tailwind CSS & Font Awesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -3330,6 +3331,32 @@
         '#hero-text-highlight{--tw-gradient-to:var(--color-accent) !important;}';
     }
 
+    /**
+     * Ikon tab browser (favicon) mengikuti logo yang diunggah di menu admin.
+     * Jika logo berupa ikon bawaan, dibuat ikon "BK" dengan warna utama tema.
+     */
+    function updateFavicon(logoUrl, useImage) {
+      let href;
+      if (useImage && logoUrl) {
+        href = logoUrl;
+      } else {
+        const col = normalizeHex(siteSettings.colorPrimary) || '#0284c7';
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${col}"/><text x="32" y="43" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="white" text-anchor="middle">BK</text></svg>`;
+        href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+      }
+      // Ganti elemen agar browser memuat ulang ikon
+      document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]').forEach(el => el.remove());
+      const icon = document.createElement('link');
+      icon.id = 'site-favicon';
+      icon.rel = 'icon';
+      icon.href = href;
+      document.head.appendChild(icon);
+      const touch = document.createElement('link');
+      touch.rel = 'apple-touch-icon';
+      touch.href = href;
+      document.head.appendChild(touch);
+    }
+
     function applySiteSettings(st) {
       if (!st) return;
       siteSettings = { ...siteSettings, ...st };
@@ -3351,6 +3378,8 @@
           logoImg.classList.remove('hidden');
         }
       }
+
+      updateFavicon(directLogoUrl, !(siteSettings.logoType === 'icon' || !directLogoUrl));
 
       if (siteSettings.heroBadge) document.getElementById('hero-text-badge').innerText = siteSettings.heroBadge;
       if (siteSettings.heroTitle) document.getElementById('hero-text-title').innerText = siteSettings.heroTitle;
