@@ -1177,6 +1177,191 @@
       developerUrl: '#'
     };
 
+    // Inisialisasi Worker PDF.js
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    /**
+     * Konfigurasi label, ikon, dan gaya tombol aksi yang menyesuaikan tipe berkas
+     */
+    function getActionButtonConfig(item) {
+      const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+      const tipe = (item.tipe || 'Materi').toLowerCase();
+
+      if (vInfo || tipe === 'video') {
+        return {
+          label: 'Putar Video',
+          icon: 'fa-solid fa-play',
+          badgeLabel: vInfo ? vInfo.label : 'Video',
+          badgeIcon: vInfo ? vInfo.icon : 'fa-solid fa-play',
+          badgeClass: vInfo ? `${vInfo.badgeBg} text-white` : 'bg-red-600 text-white',
+          btnClass: 'bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 hover:border-red-600',
+          isPlayable: true
+        };
+      }
+
+      if (tipe === 'pdf') {
+        return {
+          label: 'Baca Dokumen PDF',
+          icon: 'fa-solid fa-file-pdf',
+          badgeLabel: 'Dokumen PDF',
+          badgeIcon: 'fa-solid fa-file-pdf',
+          badgeClass: 'bg-rose-600 text-white',
+          btnClass: 'bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 hover:border-rose-600',
+          isPlayable: false
+        };
+      }
+
+      if (tipe === 'word') {
+        return {
+          label: 'Buka Dokumen Word',
+          icon: 'fa-solid fa-file-word',
+          badgeLabel: 'Microsoft Word',
+          badgeIcon: 'fa-solid fa-file-word',
+          badgeClass: 'bg-blue-600 text-white',
+          btnClass: 'bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600',
+          isPlayable: false
+        };
+      }
+
+      if (tipe === 'ppt') {
+        return {
+          label: 'Buka Presentasi PPT',
+          icon: 'fa-solid fa-file-powerpoint',
+          badgeLabel: 'PowerPoint PPT',
+          badgeIcon: 'fa-solid fa-file-powerpoint',
+          badgeClass: 'bg-amber-600 text-white',
+          btnClass: 'bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border border-amber-200 hover:border-amber-600',
+          isPlayable: false
+        };
+      }
+
+      if (tipe === 'gambar') {
+        return {
+          label: 'Lihat Gambar / Poster',
+          icon: 'fa-solid fa-image',
+          badgeLabel: 'Gambar / Poster',
+          badgeIcon: 'fa-solid fa-image',
+          badgeClass: 'bg-emerald-600 text-white',
+          btnClass: 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600',
+          isPlayable: false
+        };
+      }
+
+      if (tipe === 'drive') {
+        return {
+          label: 'Buka Google Drive',
+          icon: 'fa-brands fa-google-drive',
+          badgeLabel: 'Google Drive',
+          badgeIcon: 'fa-brands fa-google-drive',
+          badgeClass: 'bg-teal-600 text-white',
+          btnClass: 'bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600',
+          isPlayable: false
+        };
+      }
+
+      if (tipe === 'pengumuman') {
+        return {
+          label: 'Baca Pengumuman',
+          icon: 'fa-solid fa-bullhorn',
+          badgeLabel: 'Pengumuman BK',
+          badgeIcon: 'fa-solid fa-bullhorn',
+          badgeClass: 'bg-indigo-600 text-white',
+          btnClass: 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 hover:border-indigo-600',
+          isPlayable: false
+        };
+      }
+
+      return {
+        label: 'Buka Tautan Materi',
+        icon: 'fa-solid fa-arrow-up-right-from-square',
+        badgeLabel: item.tipe || 'Tautan',
+        badgeIcon: 'fa-solid fa-link',
+        badgeClass: 'bg-sky-600 text-white',
+        btnClass: 'bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 hover:border-sky-600',
+        isPlayable: false
+      };
+    }
+
+    /**
+     * Mengekstrak Halaman Pertama Berkas PDF Menggunakan PDF.js
+     */
+    function generatePdfThumbnail(file, callback) {
+      if (typeof pdfjsLib === 'undefined') {
+        callback(null);
+        return;
+      }
+      try {
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+          const typedarray = new Uint8Array(this.result);
+          pdfjsLib.getDocument({ data: typedarray }).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              const viewport = page.getViewport({ scale: 1.0 });
+              const scale = 640 / (viewport.width || 600);
+              const scaledViewport = page.getViewport({ scale: scale });
+
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = scaledViewport.height;
+              canvas.width = scaledViewport.width;
+
+              const renderContext = {
+                canvasContext: context,
+                viewport: scaledViewport
+              };
+
+              page.render(renderContext).promise.then(function() {
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                callback(dataUrl);
+              }).catch(function(e) {
+                console.warn('Gagal render halaman PDF:', e);
+                callback(null);
+              });
+            }).catch(function(e) {
+              console.warn('Gagal memuat halaman 1 PDF:', e);
+              callback(null);
+            });
+          }).catch(function(e) {
+            console.warn('Gagal parse PDF:', e);
+            callback(null);
+          });
+        };
+        fileReader.readAsArrayBuffer(file);
+      } catch (err) {
+        console.warn('Error saat memproses PDF:', err);
+        callback(null);
+      }
+    }
+
+    /**
+     * Deteksi Otomatis Jenis Media Saat URL Diketik / Ditempel
+     */
+    function onKontenUrlInput() {
+      const urlInput = document.getElementById('fk-url');
+      if (!urlInput) return;
+      const url = urlInput.value.trim().toLowerCase();
+      if (!url) return;
+      const tipeSelect = document.getElementById('fk-tipe');
+
+      if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('tiktok.com') || url.includes('instagram.com/reel')) {
+        tipeSelect.value = 'Video';
+        handleTipeChange();
+      } else if (url.match(/\.pdf($|\?)/i)) {
+        tipeSelect.value = 'PDF';
+        handleTipeChange();
+      } else if (url.match(/\.(jpg|jpeg|png|webp|gif)($|\?)/i)) {
+        tipeSelect.value = 'Gambar';
+        handleTipeChange();
+      } else if (url.includes('drive.google.com')) {
+        if (tipeSelect.value !== 'Video') {
+          tipeSelect.value = 'Drive';
+          handleTipeChange();
+        }
+      }
+    }
+
     function isBackendConnected() {
       return Boolean(
         SCRIPT_URL &&
@@ -1451,6 +1636,83 @@
       const cleanTitle = safeTitle.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const cleanTipe = (tipe || 'INFO').toUpperCase();
 
+      // Desain Khusus Sesuai Tipe Berkas
+      let typeBadgeBg = 'rgba(255,255,255,0.22)';
+      let mockGraphic = '';
+
+      if (tipe === 'PDF') {
+        typeBadgeBg = '#dc2626';
+        mockGraphic = `
+          <!-- Mockup Dokumen PDF -->
+          <g transform="translate(480, 100)">
+            <rect width="110" height="150" rx="8" fill="#ffffff" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.3))"/>
+            <path d="M 80 0 L 110 30 L 80 30 Z" fill="#e2e8f0"/>
+            <rect x="14" y="24" width="55" height="18" rx="4" fill="#dc2626"/>
+            <text x="22" y="37" font-family="'Inter', sans-serif" font-size="11" font-weight="900" fill="#ffffff">PDF</text>
+            <line x1="14" y1="62" x2="96" y2="62" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+            <line x1="14" y1="78" x2="96" y2="78" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+            <line x1="14" y1="94" x2="75" y2="94" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+            <line x1="14" y1="110" x2="88" y2="110" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+          </g>
+        `;
+      } else if (tipe === 'Word') {
+        typeBadgeBg = '#2563eb';
+        mockGraphic = `
+          <!-- Mockup Dokumen Word -->
+          <g transform="translate(480, 100)">
+            <rect width="110" height="150" rx="8" fill="#ffffff" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.3))"/>
+            <rect x="14" y="24" width="55" height="18" rx="4" fill="#2563eb"/>
+            <text x="24" y="37" font-family="'Inter', sans-serif" font-size="11" font-weight="900" fill="#ffffff">DOC</text>
+            <line x1="14" y1="62" x2="96" y2="62" stroke="#93c5fd" stroke-width="4" stroke-linecap="round"/>
+            <line x1="14" y1="78" x2="96" y2="78" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+            <line x1="14" y1="94" x2="85" y2="94" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+          </g>
+        `;
+      } else if (tipe === 'PPT') {
+        typeBadgeBg = '#ea580c';
+        mockGraphic = `
+          <!-- Mockup Presentasi PPT -->
+          <g transform="translate(460, 110)">
+            <rect width="140" height="95" rx="10" fill="#ffffff" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.3))"/>
+            <rect x="12" y="14" width="45" height="16" rx="4" fill="#ea580c"/>
+            <text x="18" y="26" font-family="'Inter', sans-serif" font-size="10" font-weight="900" fill="#ffffff">PPT</text>
+            <rect x="12" y="40" width="50" height="40" rx="4" fill="#fed7aa"/>
+            <rect x="70" y="44" width="56" height="7" rx="3" fill="#cbd5e1"/>
+            <rect x="70" y="58" width="45" height="7" rx="3" fill="#cbd5e1"/>
+          </g>
+        `;
+      } else if (tipe === 'Gambar') {
+        typeBadgeBg = '#059669';
+        mockGraphic = `
+          <!-- Mockup Gambar / Poster -->
+          <g transform="translate(470, 110)">
+            <rect width="125" height="100" rx="10" fill="#ffffff" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.3))"/>
+            <rect x="10" y="10" width="105" height="80" rx="6" fill="#a7f3d0"/>
+            <circle cx="35" cy="35" r="12" fill="#34d399"/>
+            <polygon points="20,80 50,50 80,80" fill="#059669"/>
+            <polygon points="60,80 85,55 110,80" fill="#047857"/>
+          </g>
+        `;
+      } else if (tipe === 'Pengumuman') {
+        typeBadgeBg = '#4f46e5';
+        mockGraphic = `
+          <!-- Ikon Pengumuman Megafon -->
+          <g transform="translate(490, 115)">
+            <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.18)"/>
+            <text x="24" y="65" font-size="50">📢</text>
+          </g>
+        `;
+      } else if (tipe === 'Drive') {
+        typeBadgeBg = '#0d9488';
+        mockGraphic = `
+          <!-- Mockup Google Drive -->
+          <g transform="translate(490, 115)">
+            <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.18)"/>
+            <text x="24" y="65" font-size="48">📁</text>
+          </g>
+        `;
+      }
+
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
         <defs>
           <linearGradient id="grad-${bidang}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1466,6 +1728,8 @@
         
         <circle cx="560" cy="50" r="130" fill="rgba(255,255,255,0.08)"/>
         <circle cx="70" cy="310" r="100" fill="rgba(255,255,255,0.06)"/>
+
+        ${mockGraphic}
 
         <!-- Header Pill -->
         <g transform="translate(36, 32)">
@@ -1487,8 +1751,8 @@
 
         <!-- Media Tag -->
         <g transform="translate(36, 292)">
-          <rect width="105" height="28" rx="8" fill="rgba(255,255,255,0.22)"/>
-          <text x="14" y="19" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.5">
+          <rect width="135" height="30" rx="8" fill="${typeBadgeBg}"/>
+          <text x="14" y="20" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="800" fill="#ffffff" letter-spacing="0.5">
             ${cleanTipe}
           </text>
         </g>
@@ -1521,7 +1785,7 @@
         return formatDriveDirectUrl(item.url);
       }
 
-      // 5. Poster SVG modern bawaan resmi
+      // 5. Poster SVG modern bawaan resmi yang menyesuaikan jenis berkas
       return getSvgCardThumbnail(item.judul || 'Kabar & Pengumuman', item.bidang || 'Lainnya', item.tipe || 'Info');
     }
 
@@ -1560,7 +1824,7 @@
 
       filtered.forEach(item => {
         const thumbUrl = getContentThumbnail(item);
-        const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+        const btnConfig = getActionButtonConfig(item);
         const fallbackSvg = getSvgCardThumbnail(item.judul, item.bidang, item.tipe);
 
         const card = document.createElement('div');
@@ -1574,9 +1838,15 @@
                   ${escapeHtml(item.bidang || 'BK')}
                 </span>
               </div>
-              ${vInfo ? `
+              <div class="absolute top-2.5 right-2.5">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${btnConfig.badgeClass} shadow-xs inline-flex items-center space-x-1">
+                  <i class="${btnConfig.badgeIcon} text-[9px]"></i>
+                  <span>${escapeHtml(item.tipe || 'Materi')}</span>
+                </span>
+              </div>
+              ${btnConfig.isPlayable ? `
                 <div class="absolute inset-0 flex items-center justify-center bg-black/25">
-                  <div class="w-9 h-9 rounded-full bg-white/90 text-sky-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div class="w-9 h-9 rounded-full bg-white/90 text-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-play text-xs ml-0.5"></i>
                   </div>
                 </div>
@@ -1596,9 +1866,9 @@
             </div>
           </div>
           <div class="px-4 pb-4 pt-1">
-            <button onclick="bukaPreview('${item.id}')" class="w-full py-2 rounded-xl bg-white hover:bg-sky-600 hover:text-white border border-slate-200 text-slate-700 font-semibold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-2xs">
-              <i class="${vInfo ? 'fa-solid fa-play' : 'fa-solid fa-arrow-up-right-from-square'} text-[10px]"></i>
-              <span>${vInfo ? 'Putar Video' : 'Buka Selengkapnya'}</span>
+            <button onclick="bukaPreview('${item.id}')" class="w-full py-2 rounded-xl ${btnConfig.btnClass} font-semibold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-2xs">
+              <i class="${btnConfig.icon} text-[11px]"></i>
+              <span>${btnConfig.label}</span>
             </button>
           </div>
         `;
@@ -1649,27 +1919,8 @@
 
       filtered.forEach(item => {
         const thumbUrl = getContentThumbnail(item);
-        const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+        const btnConfig = getActionButtonConfig(item);
         const fallbackSvg = getSvgCardThumbnail(item.judul, item.bidang, item.tipe);
-
-        let badgeIcon = 'fa-link';
-        let badgeColor = 'bg-sky-600 text-white';
-        let badgeText = item.tipe || 'Materi';
-
-        if (vInfo) {
-          badgeIcon = vInfo.icon;
-          badgeColor = `${vInfo.badgeBg} text-white`;
-          badgeText = vInfo.label;
-        } else if (item.tipe === 'PDF') {
-          badgeIcon = 'fa-file-pdf';
-          badgeColor = 'bg-rose-600 text-white';
-        } else if (item.tipe === 'Word') {
-          badgeIcon = 'fa-file-word';
-          badgeColor = 'bg-blue-600 text-white';
-        } else if (item.tipe === 'PPT') {
-          badgeIcon = 'fa-file-powerpoint';
-          badgeColor = 'bg-amber-600 text-white';
-        }
 
         const card = document.createElement('div');
         card.className = 'bg-white rounded-2xl border border-slate-200/90 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between group';
@@ -1678,9 +1929,9 @@
             <div class="relative w-full h-44 overflow-hidden bg-slate-100">
               <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='${fallbackSvg}';">
               <div class="absolute top-3 left-3">
-                <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[10px] font-bold ${badgeColor} shadow-md">
-                  <i class="${badgeIcon}"></i>
-                  <span>${escapeHtml(badgeText)}</span>
+                <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[10px] font-bold ${btnConfig.badgeClass} shadow-md">
+                  <i class="${btnConfig.badgeIcon}"></i>
+                  <span>${escapeHtml(btnConfig.badgeLabel)}</span>
                 </span>
               </div>
               <div class="absolute top-3 right-3">
@@ -1703,9 +1954,9 @@
             </div>
           </div>
           <div class="px-5 pb-5 pt-0">
-            <button onclick="bukaPreview('${item.id}')" class="w-full py-2.5 rounded-xl bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white font-semibold text-xs transition-all flex items-center justify-center space-x-2">
-              <i class="${vInfo ? 'fa-solid fa-play' : 'fa-solid fa-folder-open'} text-[11px]"></i>
-              <span>${vInfo ? 'Putar Video Langsung' : 'Buka Materi'}</span>
+            <button onclick="bukaPreview('${item.id}')" class="w-full py-2.5 rounded-xl ${btnConfig.btnClass} font-semibold text-xs transition-all flex items-center justify-center space-x-2">
+              <i class="${btnConfig.icon} text-[11px]"></i>
+              <span>${btnConfig.label}</span>
             </button>
           </div>
         `;
@@ -1724,6 +1975,8 @@
       const badge = document.getElementById('preview-modal-badge');
       const videoBox = document.getElementById('preview-video-container');
       const iframe = document.getElementById('preview-iframe');
+      const imageBox = document.getElementById('preview-image-container');
+      const imageEl = document.getElementById('preview-image-el');
       const linkBox = document.getElementById('preview-link-container');
       const linkBtn = document.getElementById('preview-link-btn');
       const linkDesc = document.getElementById('preview-link-desc');
@@ -1734,11 +1987,13 @@
       desc.innerText = item.deskripsi || '';
 
       videoBox.classList.add('hidden');
+      if (imageBox) imageBox.classList.add('hidden');
       linkBox.classList.add('hidden');
       if (badge) badge.classList.add('hidden');
       if (sourceBtn) sourceBtn.classList.add('hidden');
       iframe.src = '';
 
+      const btnConfig = getActionButtonConfig(item);
       const vInfo = getVideoEmbedInfo(item.url, item.tipe);
 
       if (vInfo) {
@@ -1764,11 +2019,36 @@
 
         iframe.src = vInfo.embedUrl;
         videoBox.classList.remove('hidden');
+      } else if (item.tipe === 'Gambar' && item.url && item.url !== '#') {
+        if (dialog) dialog.className = 'bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
+        if (imageBox && imageEl) {
+          imageEl.src = formatDriveDirectUrl(item.url);
+          imageBox.classList.remove('hidden');
+        }
+        if (badge) {
+          badge.className = 'px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white bg-emerald-600 shrink-0 inline-flex items-center space-x-1';
+          badge.innerHTML = `<i class="fa-solid fa-image"></i><span>Gambar / Poster</span>`;
+          badge.classList.remove('hidden');
+        }
+        if (sourceBtn) {
+          sourceBtn.href = formatDriveDirectUrl(item.url);
+          sourceBtn.classList.remove('hidden');
+          sourceBtn.classList.add('inline-flex');
+          sourceBtn.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i><span>Buka Ukuran Penuh</span>`;
+        }
       } else {
         if (dialog) dialog.className = 'bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
         linkBtn.href = item.url || '#';
-        linkDesc.innerText = `Buka berkas atau tautan materi (${item.tipe || 'Materi'}):`;
+        linkBtn.className = 'inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md transition-all';
+        linkBtn.innerHTML = `<i class="${btnConfig.icon}"></i><span>${btnConfig.label}</span>`;
+        linkDesc.innerText = `Buka berkas materi (${item.tipe || 'Materi'}):`;
         linkBox.classList.remove('hidden');
+
+        if (badge) {
+          badge.className = `px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white ${btnConfig.badgeClass.split(' ')[0]} shrink-0 inline-flex items-center space-x-1`;
+          badge.innerHTML = `<i class="${btnConfig.badgeIcon}"></i><span>${btnConfig.badgeLabel}</span>`;
+          badge.classList.remove('hidden');
+        }
       }
 
       modal.classList.remove('hidden');
@@ -2145,10 +2425,54 @@
 
       const ext = file.name.split('.').pop().toLowerCase();
       const tipeSelect = document.getElementById('fk-tipe');
-      if (ext === 'pdf') tipeSelect.value = 'PDF';
-      else if (['doc', 'docx'].includes(ext)) tipeSelect.value = 'Word';
-      else if (['ppt', 'pptx'].includes(ext)) tipeSelect.value = 'PPT';
-      else if (['jpg', 'jpeg', 'png'].includes(ext)) tipeSelect.value = 'Gambar';
+
+      if (ext === 'pdf') {
+        tipeSelect.value = 'PDF';
+        // Ekstraksi Otomatis Halaman 1 PDF Sebagai Foto Sampul Kartu
+        generatePdfThumbnail(file, function(pdfThumb) {
+          if (pdfThumb && !selectedThumbBase64) {
+            selectedThumbBase64 = pdfThumb;
+            selectedThumbName = 'sampul_' + file.name.replace(/\.[^/.]+$/, "") + '.jpg';
+            selectedThumbMime = 'image/jpeg';
+            const box = document.getElementById('fk-thumb-preview-box');
+            const img = document.getElementById('fk-thumb-preview-img');
+            const note = document.getElementById('fk-thumb-preview-note');
+            const btnClear = document.getElementById('btn-clear-thumb');
+            if (box && img) {
+              img.src = selectedThumbBase64;
+              box.classList.remove('hidden');
+              if (note) note.innerText = 'Halaman ke-1 PDF otomatis dijadikan foto sampul!';
+            }
+            if (btnClear) btnClear.classList.remove('hidden');
+          }
+        });
+      } else if (['doc', 'docx'].includes(ext)) {
+        tipeSelect.value = 'Word';
+      } else if (['ppt', 'pptx'].includes(ext)) {
+        tipeSelect.value = 'PPT';
+      } else if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+        tipeSelect.value = 'Gambar';
+        // Berkas Gambar Otomatis Dijadikan Foto Sampul Kartu
+        compressImage(file, 640, 360, 0.85, function(compressedData) {
+          if (!selectedThumbBase64) {
+            selectedThumbBase64 = compressedData;
+            selectedThumbName = 'sampul_' + file.name;
+            selectedThumbMime = file.type || 'image/jpeg';
+            const box = document.getElementById('fk-thumb-preview-box');
+            const img = document.getElementById('fk-thumb-preview-img');
+            const note = document.getElementById('fk-thumb-preview-note');
+            const btnClear = document.getElementById('btn-clear-thumb');
+            if (box && img) {
+              img.src = selectedThumbBase64;
+              box.classList.remove('hidden');
+              if (note) note.innerText = 'Foto berkas gambar otomatis dijadikan foto sampul!';
+            }
+            if (btnClear) btnClear.classList.remove('hidden');
+          }
+        });
+      }
+
+      handleTipeChange();
 
       const reader = new FileReader();
       reader.onload = function(evt) {
@@ -2169,6 +2493,10 @@
       if (tip) {
         if (tipe === 'Video') {
           tip.innerText = 'Mendukung YouTube, YouTube Shorts, Google Drive, Instagram Reels, dan TikTok.';
+        } else if (tipe === 'PDF') {
+          tip.innerText = 'Tautan dokumen PDF langsung atau tautan Google Drive / perpustakaan daring.';
+        } else if (tipe === 'Gambar') {
+          tip.innerText = 'Tautan berkas gambar, poster kegiatan, brosur, atau Google Drive foto.';
         } else if (tipe === 'Drive') {
           tip.innerText = 'Tempelkan link folder/file Google Drive (pastikan akses: Siapa saja yang memiliki link).';
         } else {
@@ -2209,6 +2537,12 @@
         effectiveThumb = existingItem.thumbnail;
       }
 
+      // Pastikan thumbnail hasil ekstraksi PDF/Gambar dikirimkan untuk diunggah permanen ke Drive
+      let thumbToUpload = selectedThumbBase64;
+      if (!thumbToUpload && effectiveThumb && effectiveThumb.startsWith('data:')) {
+        thumbToUpload = effectiveThumb;
+      }
+
       const payload = {
         action: id ? 'updateKonten' : 'addKonten',
         id: id,
@@ -2219,9 +2553,9 @@
         fileName: selectedFileName,
         fileMimeType: selectedFileMime,
         thumbnail: effectiveThumb,
-        thumbnailBase64: selectedThumbBase64,
-        thumbnailName: selectedThumbName,
-        thumbnailMime: selectedThumbMime
+        thumbnailBase64: thumbToUpload,
+        thumbnailName: selectedThumbName || ('sampul_' + Date.now() + '.jpg'),
+        thumbnailMime: selectedThumbMime || 'image/jpeg'
       };
 
       if (btn) {
