@@ -579,6 +579,7 @@
                     <th class="py-3.5 px-4">Bidang</th>
                     <th class="py-3.5 px-4">Tipe Media</th>
                     <th class="py-3.5 px-4">Tanggal</th>
+                    <th class="py-3.5 px-4 text-center">Papan Beranda</th>
                     <th class="py-3.5 px-4 text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -906,6 +907,17 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi / Penjelasan Singkat</label>
           <textarea id="fk-deskripsi" rows="3" placeholder="Tuliskan ringkasan materi atau catatan penting bagi siswa..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none leading-relaxed"></textarea>
+        </div>
+
+        <!-- Pilihan Penayangan Khusus di Papan Informasi & Pengumuman Beranda -->
+        <div class="p-3.5 bg-sky-50/70 border border-sky-100 rounded-2xl space-y-1.5">
+          <label class="flex items-center space-x-2.5 cursor-pointer select-none">
+            <input type="checkbox" id="fk-is-pengumuman" class="w-4 h-4 text-sky-600 rounded border-slate-300 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-800">Tampilkan di Papan Informasi & Pengumuman Beranda</span>
+          </label>
+          <p class="text-[10px] text-slate-500 pl-6 leading-relaxed">
+            Jika dicentang, konten akan dimuat di slider Kabar & Informasi Terkini pada Beranda depan. Jika tidak, materi ini hanya tersimpan rapi di Pusat Materi sesuai folder bidangnya (Pribadi, Sosial, Belajar, Karir).
+          </p>
         </div>
 
         <!-- Pemilih Gambar Sampul / Thumbnail Konten -->
@@ -1519,6 +1531,10 @@
       slider.innerHTML = '';
 
       let filtered = kontenData.filter(item => {
+        // Hanya tampilkan konten yang secara khusus dipilih/diunggah untuk Papan Pengumuman Beranda
+        const isPengumuman = (item.isPengumuman === true || item.isPengumuman === 'Ya' || item.isPengumuman === 'true');
+        if (!isPengumuman) return false;
+
         if (pengumumanFilter.bidang !== 'Semua' && item.bidang !== pengumumanFilter.bidang) return false;
         if (pengumumanFilter.waktu !== 'semua' && !checkTimeRangeMatch(item.tanggal, pengumumanFilter.waktu)) return false;
         if (pengumumanFilter.tanggal && !formatDateMatch(item.tanggal, pengumumanFilter.tanggal)) return false;
@@ -1535,7 +1551,8 @@
         slider.innerHTML = `
           <div class="w-full py-12 text-center text-slate-400 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
             <i class="fa-solid fa-bullhorn text-3xl mb-2 text-slate-300"></i>
-            <p class="text-xs font-semibold">Belum ada pengumuman atau materi yang sesuai kriteria.</p>
+            <p class="text-xs font-semibold">Belum ada pengumuman atau info yang ditayangkan di beranda.</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Guru BK dapat memilih materi untuk ditampilkan di sini melalui Dasbor Admin.</p>
           </div>
         `;
         return;
@@ -1985,11 +2002,12 @@
       tbody.innerHTML = '';
 
       if (kontenData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Belum ada konten bimbingan. Klik tombol Tambah Materi di atas.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Belum ada konten bimbingan. Klik tombol Tambah Materi di atas.</td></tr>`;
         return;
       }
 
       kontenData.forEach(item => {
+        const isTampilBeranda = (item.isPengumuman === true || item.isPengumuman === 'Ya' || item.isPengumuman === 'true');
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/70 transition-colors';
         tr.innerHTML = `
@@ -2003,6 +2021,12 @@
           </td>
           <td class="py-3.5 px-4 text-slate-500">${item.tanggal || '-'}</td>
           <td class="py-3.5 px-4 text-center">
+            <button onclick="toggleTampilPengumuman('${item.id}')" title="Klik untuk mengubah apakah konten ini tampil di Papan Pengumuman Beranda" class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all ${isTampilBeranda ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 border border-slate-200'}">
+              <i class="fa-solid ${isTampilBeranda ? 'fa-bullhorn text-amber-600' : 'fa-folder-closed text-slate-400'}"></i>
+              <span>${isTampilBeranda ? 'Di Beranda' : 'Materi Saja'}</span>
+            </button>
+          </td>
+          <td class="py-3.5 px-4 text-center">
             <div class="flex items-center justify-center space-x-1">
               <button onclick="editKonten('${item.id}')" class="p-2 rounded-lg text-sky-600 hover:bg-sky-50" title="Edit Materi"><i class="fa-solid fa-pen-to-square"></i></button>
               <button onclick="deleteKonten('${item.id}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
@@ -2013,10 +2037,39 @@
       });
     }
 
+    async function toggleTampilPengumuman(id) {
+      const item = kontenData.find(k => String(k.id) === String(id));
+      if (!item) return;
+
+      const currentState = (item.isPengumuman === true || item.isPengumuman === 'Ya' || item.isPengumuman === 'true');
+      const newState = !currentState;
+      item.isPengumuman = newState;
+
+      saveLocalData();
+      renderAdminKontenTable();
+      renderPengumumanSlider();
+
+      showToast(newState ? 'Konten sekarang ditampilkan di Papan Pengumuman Beranda!' : 'Konten sekarang hanya tersimpan di Pusat Materi.', 'info');
+
+      if (isBackendConnected()) {
+        try {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'togglePengumuman', id: id, isPengumuman: newState }),
+            redirect: 'follow'
+          });
+        } catch (e) {
+          console.error('Gagal sinkron status pengumuman:', e);
+        }
+      }
+    }
+
     function openTambahKontenModal() {
       document.getElementById('modal-konten-title').innerText = 'Tambah Materi / Pengumuman';
       document.getElementById('form-konten').reset();
       document.getElementById('fk-id').value = '';
+      document.getElementById('fk-is-pengumuman').checked = false;
       selectedFileBase64 = null;
       selectedFileName = null;
       selectedFileMime = null;
@@ -2107,6 +2160,12 @@
     function handleTipeChange() {
       const tipe = document.getElementById('fk-tipe').value;
       const tip = document.getElementById('fk-tip-text');
+      const checkPengumuman = document.getElementById('fk-is-pengumuman');
+
+      if (tipe === 'Pengumuman' && checkPengumuman) {
+        checkPengumuman.checked = true;
+      }
+
       if (tip) {
         if (tipe === 'Video') {
           tip.innerText = 'Mendukung YouTube, YouTube Shorts, Google Drive, Instagram Reels, dan TikTok.';
@@ -2126,6 +2185,7 @@
       const tipe = document.getElementById('fk-tipe').value;
       let url = document.getElementById('fk-url').value.trim();
       const deskripsi = document.getElementById('fk-deskripsi').value.trim();
+      const isPengumuman = document.getElementById('fk-is-pengumuman') ? document.getElementById('fk-is-pengumuman').checked : false;
       const btn = document.getElementById('fk-submit-btn');
 
       if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -2153,6 +2213,7 @@
         action: id ? 'updateKonten' : 'addKonten',
         id: id,
         judul, bidang, tipe, url, deskripsi,
+        isPengumuman: isPengumuman,
         penulis: currentUser ? currentUser.nama : 'Guru BK',
         fileBase64: selectedFileBase64,
         fileName: selectedFileName,
@@ -2191,6 +2252,7 @@
               judul, bidang, tipe,
               url: url || kontenData[idx].url,
               deskripsi,
+              isPengumuman: isPengumuman,
               thumbnail: effectiveThumb || kontenData[idx].thumbnail || ''
             };
           }
@@ -2200,6 +2262,7 @@
             judul, bidang, tipe,
             url: url || '#',
             deskripsi,
+            isPengumuman: isPengumuman,
             tanggal: new Date().toLocaleDateString('id-ID'),
             penulis: currentUser ? currentUser.nama : 'Guru BK',
             thumbnail: effectiveThumb || (tipe === 'Gambar' ? url : '')
@@ -2212,7 +2275,7 @@
         renderPengumumanSlider();
         renderKontenCards();
         closeTambahKontenModal();
-        showToast('Konten & thumbnail berhasil disimpan & dipublikasikan!', 'success');
+        showToast('Konten berhasil disimpan & diperbarui!', 'success');
       } catch (err) {
         showToast('Kesalahan saat menyimpan: ' + err.toString(), 'error');
       } finally {
@@ -2235,6 +2298,11 @@
       document.getElementById('fk-url').value = item.url || '';
       document.getElementById('fk-deskripsi').value = item.deskripsi || '';
       
+      const checkPengumuman = document.getElementById('fk-is-pengumuman');
+      if (checkPengumuman) {
+        checkPengumuman.checked = (item.isPengumuman === true || item.isPengumuman === 'Ya' || item.isPengumuman === 'true');
+      }
+
       selectedThumbBase64 = null;
       selectedThumbName = null;
       selectedThumbMime = null;
