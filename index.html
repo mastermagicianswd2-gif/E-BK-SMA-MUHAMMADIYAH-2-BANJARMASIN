@@ -1426,7 +1426,7 @@
         dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0';
         title.innerText = 'Mode Mandiri (Offline)';
         title.className = 'font-bold text-amber-700';
-        desc.innerText = 'Atur SCRIPT_URL di file index.html di GitHub untuk sinkronisasi';
+        desc.innerText = message || 'Atur SCRIPT_URL di file index.html di GitHub untuk sinkronisasi';
       }
     }
 
@@ -3555,10 +3555,12 @@
               applySiteSettings(result.settings);
               localStorage.setItem('ebk_settings', JSON.stringify(result.settings));
             }
+          } else {
+            updateConnectionStatusUI(false, 'Apps Script menjawab error: ' + (result.message || 'tidak diketahui'));
           }
         } catch (err) {
           console.log("Koneksi Apps Script terputus:", err);
-          updateConnectionStatusUI(false);
+          updateConnectionStatusUI(false, 'Link terpasang tetapi tidak bisa dibaca (' + (err && err.name ? err.name : 'error') + '). Pastikan deploy Apps Script: akses "Siapa saja" dan URL berakhiran /exec.');
         }
 
         // Jika Guru BK sedang dalam kondisi login, tarik data admin lengkap
