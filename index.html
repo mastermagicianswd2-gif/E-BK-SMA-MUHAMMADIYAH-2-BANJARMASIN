@@ -950,7 +950,7 @@
             <img id="fk-thumb-preview-img" src="" alt="Pratinjau Sampul" class="h-14 w-24 rounded-lg object-cover border border-slate-200 shadow-2xs">
             <div class="text-[11px] text-slate-600 truncate">
               <span class="font-bold block text-slate-800">Foto Sampul Terpilih</span>
-              <span class="text-[10px] text-emerald-600">Siap tampil di kartu beranda</span>
+              <span id="fk-thumb-preview-note" class="text-[10px] text-emerald-600">Siap tampil di kartu beranda</span>
             </div>
           </div>
         </div>
@@ -1388,6 +1388,130 @@
       }
     }
 
+    /* ===== THUMBNAIL OTOMATIS DARI TAUTAN (artikel web, Instagram, TikTok, YouTube, dll) ===== */
+    let selectedThumbRemote = null;   // alamat gambar thumbnail (jika tidak bisa dijadikan berkas)
+    let thumbIsAuto = false;          // true bila thumbnail yang tampil di form berasal dari tautan
+    let thumbCleared = false;         // true bila admin menghapus thumbnail secara manual
+    let autoThumbToken = 0;
+    let autoThumbTimer = null;
+    let lastAutoUrl = '';
+
+    async function fetchWithTimeout(u, ms) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), ms);
+      try { return await fetch(u, { signal: ctrl.signal }); }
+      finally { clearTimeout(t); }
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = reject;
+        fr.readAsDataURL(blob);
+      });
+    }
+
+    // Tautan yang thumbnail-nya perlu diambil dari halaman (bukan berkas/gambar langsung/Drive)
+    function needsAutoThumb(url) {
+      if (!/^https?:\/\//i.test(url || '')) return false;
+      if (/drive\.google\.com|lh3\.googleusercontent\.com/i.test(url)) return false;
+      if (/\.(jpe?g|png|webp|gif|pdf|docx?|pptx?|xlsx?)($|\?)/i.test(url)) return false;
+      return true;
+    }
+
+    /**
+     * Mengambil gambar utama (og:image) dari halaman tautan, lalu mengubahnya menjadi gambar 640x360
+     * agar bisa disimpan permanen. Mengembalikan { dataUrl, remoteUrl } atau null jika gagal.
+     */
+    async function resolveLinkThumbnail(url) {
+      const yt = getYouTubeId(url);
+      if (yt) return { remoteUrl: `https://img.youtube.com/vi/${yt}/hqdefault.jpg` };
+
+      let imgUrl = null;
+      try {
+        const r = await fetchWithTimeout(`https://api.microlink.io/?url=${encodeURIComponent(url)}`, 10000);
+        const j = await r.json();
+        if (j && j.status === 'success' && j.data) {
+          imgUrl = (j.data.image && j.data.image.url) || (j.data.logo && j.data.logo.url) || null;
+        }
+      } catch (e) { /* abaikan: akan memakai cadangan */ }
+      if (!imgUrl) return null;
+
+      try {
+        const proxied = `https://images.weserv.nl/?url=${encodeURIComponent(imgUrl)}&w=640&h=360&fit=cover&output=jpg&q=82`;
+        const r2 = await fetchWithTimeout(proxied, 10000);
+        if (!r2.ok) throw new Error('proxy gagal');
+        const blob = await r2.blob();
+        if (!blob || blob.size < 500) throw new Error('gambar kosong');
+        return { dataUrl: await blobToDataUrl(blob), remoteUrl: imgUrl };
+      } catch (e) {
+        return { remoteUrl: imgUrl };
+      }
+    }
+
+    function showFormThumb(src, noteText) {
+      const box = document.getElementById('fk-thumb-preview-box');
+      const img = document.getElementById('fk-thumb-preview-img');
+      const note = document.getElementById('fk-thumb-preview-note');
+      const btnClear = document.getElementById('btn-clear-thumb');
+      if (box && img) {
+        img.src = src;
+        box.classList.remove('hidden');
+        if (note) note.innerText = noteText;
+      }
+      if (btnClear) btnClear.classList.remove('hidden');
+    }
+
+    function applyAutoThumbResult(res) {
+      if (!res) return false;
+      if (res.dataUrl) {
+        selectedThumbBase64 = res.dataUrl;
+        selectedThumbName = 'sampul_otomatis_' + Date.now() + '.jpg';
+        selectedThumbMime = 'image/jpeg';
+        selectedThumbRemote = null;
+      } else {
+        selectedThumbBase64 = null;
+        selectedThumbRemote = res.remoteUrl;
+      }
+      thumbIsAuto = true;
+      return true;
+    }
+
+    function scheduleAutoThumb() {
+      clearTimeout(autoThumbTimer);
+      const url = (document.getElementById('fk-url').value || '').trim();
+      if (url !== lastAutoUrl) thumbCleared = false;
+      autoThumbTimer = setTimeout(runAutoThumb, 900);
+    }
+
+    async function runAutoThumb() {
+      const input = document.getElementById('fk-url');
+      if (!input) return;
+      const url = input.value.trim();
+      if (!needsAutoThumb(url) && !getYouTubeId(url)) return;
+      if ((selectedThumbBase64 || selectedThumbRemote) && !thumbIsAuto) {
+        // sampul manual (unggahan admin) tidak ditimpa
+        return;
+      }
+      if (thumbCleared) return;
+      const token = ++autoThumbToken;
+      lastAutoUrl = url;
+      const box = document.getElementById('fk-thumb-preview-box');
+      const note = document.getElementById('fk-thumb-preview-note');
+      if (box && note && !box.classList.contains('hidden')) note.innerText = 'Mengambil thumbnail dari tautan...';
+      const res = await resolveLinkThumbnail(url);
+      if (token !== autoThumbToken || thumbCleared) return;
+      if (applyAutoThumbResult(res)) {
+        showFormThumb(res.dataUrl || res.remoteUrl, 'Thumbnail otomatis dari tautan. Bisa diganti atau dihapus.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const u = document.getElementById('fk-url');
+      if (u) u.addEventListener('input', function() { onKontenUrlInput(); scheduleAutoThumb(); });
+    });
+
     /**
      * Deteksi Otomatis Jenis Media Saat URL Diketik / Ditempel
      */
@@ -1407,11 +1531,21 @@
       } else if (url.match(/\.(jpg|jpeg|png|webp|gif)($|\?)/i)) {
         tipeSelect.value = 'Gambar';
         handleTipeChange();
+      } else if (url.match(/\.docx?($|\?)/i)) {
+        tipeSelect.value = 'Word';
+        handleTipeChange();
+      } else if (url.match(/\.pptx?($|\?)/i)) {
+        tipeSelect.value = 'PPT';
+        handleTipeChange();
       } else if (url.includes('drive.google.com')) {
         if (tipeSelect.value !== 'Video') {
           tipeSelect.value = 'Drive';
           handleTipeChange();
         }
+      } else if (tipeSelect.value === 'Video' && !url.match(/\.(mp4|webm|mov|m4v)($|\?)/i)) {
+        // Tautan web biasa (artikel, blog, dll) bukan video: jangan berlabel "Putar Video"
+        tipeSelect.value = 'Link';
+        handleTipeChange();
       }
     }
 
@@ -1874,9 +2008,14 @@
       }
 
       // 4b. Berkas Google Drive (PDF, video, dokumen) -> pratinjau halaman/frame pertama dari Drive
-      if (item.url && ['PDF', 'Video', 'Gambar'].includes(item.tipe)) {
+      if (item.url) {
         const dm = item.url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/);
         if (dm) return `https://drive.google.com/thumbnail?id=${dm[1]}&sz=w640`;
+      }
+
+      // 4c. Tautan web tanpa sampul: tangkapan layar halaman utamanya (kecuali Instagram/TikTok yang meminta login)
+      if (needsAutoThumb(item.url) && !/instagram\.com|tiktok\.com|facebook\.com/i.test(item.url)) {
+        return `https://s0.wp.com/mshots/v1/${encodeURIComponent(item.url)}?w=640&h=360`;
       }
 
       // 5. Poster SVG modern bawaan resmi yang menyesuaikan jenis berkas
@@ -2479,6 +2618,7 @@
       selectedThumbBase64 = null;
       selectedThumbName = null;
       selectedThumbMime = null;
+      selectedThumbRemote = null; thumbIsAuto = false; thumbCleared = false; lastAutoUrl = ''; autoThumbToken++;
       document.getElementById('fk-thumb-preview-box').classList.add('hidden');
       document.getElementById('btn-clear-thumb').classList.add('hidden');
       switchMetodeSumber('link');
@@ -2494,6 +2634,7 @@
       if (!file) return;
       selectedThumbName = file.name;
       selectedThumbMime = file.type || 'image/jpeg';
+      selectedThumbRemote = null; thumbIsAuto = false; thumbCleared = false; autoThumbToken++;
 
       compressImage(file, 640, 360, 0.82, function(compressedBase64) {
         selectedThumbBase64 = compressedBase64;
@@ -2509,6 +2650,7 @@
     }
 
     function clearSelectedThumb() {
+      selectedThumbRemote = null; thumbIsAuto = false; thumbCleared = true; autoThumbToken++;
       selectedThumbBase64 = null;
       selectedThumbName = null;
       selectedThumbMime = null;
@@ -2671,7 +2813,19 @@
         existingItem = kontenData.find(k => String(k.id) === String(id));
       }
 
-      let effectiveThumb = selectedThumbBase64 || '';
+      // Tautan baru/berubah tanpa sampul: ambil thumbnail otomatis dari halaman tautannya
+      if (!selectedThumbBase64 && !selectedThumbRemote && !thumbCleared && !selectedFileBase64 && needsAutoThumb(url)) {
+        const needAuto = !existingItem || !existingItem.thumbnail || existingItem.url !== url;
+        if (needAuto) {
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Mengambil thumbnail...</span>';
+          }
+          applyAutoThumbResult(await resolveLinkThumbnail(url));
+        }
+      }
+
+      let effectiveThumb = selectedThumbBase64 || selectedThumbRemote || '';
       if (!effectiveThumb && tipe === 'Gambar' && selectedFileBase64) {
         effectiveThumb = selectedFileBase64;
       }
@@ -2782,6 +2936,7 @@
       selectedThumbBase64 = null;
       selectedThumbName = null;
       selectedThumbMime = null;
+      selectedThumbRemote = null; thumbIsAuto = false; thumbCleared = false; lastAutoUrl = item.url || ''; autoThumbToken++;
       const box = document.getElementById('fk-thumb-preview-box');
       const img = document.getElementById('fk-thumb-preview-img');
       const btnClear = document.getElementById('btn-clear-thumb');
