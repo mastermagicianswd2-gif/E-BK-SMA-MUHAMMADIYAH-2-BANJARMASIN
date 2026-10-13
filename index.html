@@ -1786,8 +1786,42 @@
       return match ? match[1] : null;
     }
 
+    /* ===== TikTok: tautan pendek (vm./vt.tiktok.com, tiktok.com/t/...) diubah ke alamat video lengkap lewat server ===== */
+    let tiktokResolved = {};
+    const tiktokFailed = {};   // kegagalan hanya diingat selama halaman terbuka (tidak disimpan permanen)
+    try { tiktokResolved = JSON.parse(localStorage.getItem('ebk_tt_resolved') || '{}') || {}; } catch (e) { tiktokResolved = {}; }
+
+    function isTikTokShort(url) {
+      return /^https?:\/\/(?:vm|vt)\.tiktok\.com\/[\w-]+/i.test(url || '') || /tiktok\.com\/t\/[\w-]+/i.test(url || '');
+    }
+
+    async function resolveTikTokShortLink(url) {
+      if (tiktokResolved[url]) return tiktokResolved[url];
+      let finalUrl = null;
+      if (isBackendConnected()) {
+        try {
+          const r = await fetchWithTimeout(SCRIPT_URL, 20000, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'resolveLink', url: url }),
+            redirect: 'follow'
+          });
+          const j = await r.json();
+          if (j && j.status === 'success' && j.url) finalUrl = j.url;
+        } catch (e) { /* tetap memakai tautan asli */ }
+      }
+      if (!finalUrl) {
+        tiktokFailed[url] = true;
+        return url;
+      }
+      tiktokResolved[url] = finalUrl;
+      try { localStorage.setItem('ebk_tt_resolved', JSON.stringify(tiktokResolved)); } catch (e) {}
+      return finalUrl;
+    }
+
     function getVideoEmbedInfo(url, tipe) {
       if (!url) return null;
+      if (tiktokResolved[url]) url = tiktokResolved[url];
 
       // 1. YouTube & YouTube Shorts
       const ytId = getYouTubeId(url);
@@ -1817,11 +1851,12 @@
       }
 
       // 3. Instagram Reels
-      const igMatch = url.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
+      const igMatch = url.match(/instagram\.com\/(?:[\w.]+\/)?(?:reel|reels|p|tv)\/([\w-]+)/);
       if (igMatch) {
+        const igKind = /instagram\.com\/(?:[\w.]+\/)?p\//.test(url) ? 'p' : 'reel';
         return {
           type: 'instagram',
-          embedUrl: `https://www.instagram.com/reel/${igMatch[1]}/embed`,
+          embedUrl: `https://www.instagram.com/${igKind}/${igMatch[1]}/embed`,
           label: 'Instagram Reel',
           icon: 'fa-brands fa-instagram',
           badgeBg: 'bg-gradient-to-r from-pink-500 to-rose-500',
@@ -1830,7 +1865,7 @@
       }
 
       // 4. TikTok
-      const tikMatch = url.match(/tiktok\.com\/(?:@[\w.-]+\/video\/|v\/)([\d]+)/);
+      const tikMatch = url.match(/tiktok\.com\/(?:@[\w.-]+\/(?:video|photo)\/|v\/|embed\/(?:v2\/)?)([\d]+)/);
       if (tikMatch) {
         return {
           type: 'tiktok',
@@ -2251,6 +2286,16 @@
     function bukaPreview(id) {
       const item = kontenData.find(k => k.id.toString() === id.toString());
       if (!item) return;
+
+      // Tautan pendek TikTok: ubah dulu ke alamat video lengkap, lalu buka di dalam web
+      if (isTikTokShort(item.url) && !tiktokResolved[item.url] && !tiktokFailed[item.url]) {
+        showToast('Memuat video TikTok...', 'info');
+        resolveTikTokShortLink(item.url).then(() => {
+          if (tiktokFailed[item.url]) showToast('Link pendek TikTok tidak dapat diproses. Perbarui backend Apps Script atau gunakan link video lengkap.', 'info');
+          bukaPreview(id);
+        });
+        return;
+      }
 
       const modal = document.getElementById('modal-preview');
       const dialog = document.getElementById('preview-modal-dialog');
@@ -2857,6 +2902,15 @@
 
       if (!url && !selectedFileBase64) {
         url = '#';
+      }
+
+      // Tautan pendek TikTok disimpan sebagai alamat video lengkap agar bisa dibuka langsung di web
+      if (isTikTokShort(url) && isBackendConnected()) {
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Memproses link TikTok...</span>';
+        }
+        url = await resolveTikTokShortLink(url);
       }
 
       let existingItem = null;
