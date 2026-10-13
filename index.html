@@ -895,60 +895,24 @@
           <textarea id="fk-deskripsi" rows="3" placeholder="Tuliskan ringkasan materi atau catatan penting bagi siswa..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none leading-relaxed"></textarea>
         </div>
 
-        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
-          <button type="button" onclick="closeTambahKontenModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all">Batal</button>
-          <button type="submit" id="fk-submit-btn" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center space-x-2">
-            <i class="fa-solid fa-floppy-disk"></i>
-            <span>Simpan & Publikasikan Konten</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="modal-profil" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-900 text-base">Edit Profil & Email OTP Guru BK</h3>
-        <button onclick="closeEditProfilModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
-      </div>
-
-      <form id="form-profil" onsubmit="handleSaveProfil(event)" class="space-y-4 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar</label>
-          <input type="text" id="prof-nama" required placeholder="Contoh: Dra. Hj. Siti Aminah, M.Pd" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Jabatan Guru BK</label>
-          <input type="text" id="prof-jabatan" required placeholder="Contoh: Koordinator Bimbingan & Konseling" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
-        </div>
-        
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Nomor Identitas Pendidik</label>
-          <div class="flex items-center space-x-2">
-            <select id="prof-id-type" class="w-28 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500">
-              <option value="NIP">NIP</option>
-              <option value="NUPTK">NUPTK</option>
-            </select>
-            <input type="text" id="prof-nip-val" placeholder="Masukkan nomor identitas" class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+        <!-- Pemilih Gambar Sampul / Thumbnail Konten -->
+        <div class="border-t border-slate-100 pt-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-700">
+              Foto Sampul / Poster Thumbnail <span class="text-[10px] text-slate-400 font-normal">(Opsional)</span>
+            </label>
+            <button type="button" onclick="clearSelectedThumb()" id="btn-clear-thumb" class="hidden text-[11px] font-semibold text-rose-500 hover:text-rose-600">
+              <i class="fa-solid fa-xmark mr-0.5"></i> Hapus Foto
+            </button>
           </div>
-        </div>
-
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Email Aktif (Penerima Kode OTP Lupa Password)</label>
-          <input type="email" id="prof-email" required placeholder="email.guru@gmail.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
-          <p class="text-[10px] text-slate-400 mt-1">Pastikan email aktif dan benar agar kode OTP 6 digit dapat dikirimkan ke email ini saat Anda lupa password.</p>
-        </div>
-
-        <div class="border-t border-slate-100 pt-3 space-y-3">
-          <p class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Ubah Kredensial Masuk (Opsional)</p>
-          <div>
-            <label class="block text-slate-600 mb-1">Username Baru (Kosongkan jika tetap)</label>
-            <input type="text" id="prof-username" placeholder="Tetap menggunakan yang lama" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500">
-          </div>
-          <div>
-            <label class="block text-slate-600 mb-1">Kata Sandi Baru (Kosongkan jika tetap)</label>
-            <input type="password" id="prof-password" placeholder="Tetap menggunakan yang lama" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500">
+          <p class="text-[10px] text-slate-400 mb-2">Unggah brosur, pamflet, flyer kegiatan, atau foto sampul untuk kartu di beranda.</p>
+          <input type="file" id="fk-thumb-file" accept="image/*" onchange="handleThumbFileChange(event)" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+          <div id="fk-thumb-preview-box" class="mt-2.5 hidden flex items-center space-x-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <img id="fk-thumb-preview-img" src="" alt="Pratinjau Sampul" class="h-14 w-24 rounded-lg object-cover border border-slate-200 shadow-2xs">
+            <div class="text-[11px] text-slate-600 truncate">
+              <span class="font-bold block text-slate-800">Foto Sampul Terpilih</span>
+              <span class="text-[10px] text-emerald-600">Siap tampil di kartu beranda</span>
+            </div>
           </div>
         </div>
 
@@ -1093,6 +1057,11 @@
     let selectedFileName = null;
     let selectedFileMime = null;
     let currentUploadMethod = 'link';
+
+    // State Unggah Thumbnail Khusus
+    let selectedThumbBase64 = null;
+    let selectedThumbName = null;
+    let selectedThumbMime = null;
 
     // State Tambahan Unggah Kustomisasi Tema
     let tempLogoBase64 = null;
@@ -1375,28 +1344,97 @@
       return url;
     }
 
-    function getContentThumbnail(item) {
-      if (!item) return 'https://placehold.co/640x360/0c2340/ffffff?text=E-BK+SMA+Muhammadiyah+2';
+    /**
+     * Menghasilkan poster visual berbasis SVG resolusi tinggi dan instan
+     * sebagai thumbnail bawaan jika belum ada foto sampul khusus yang diunggah.
+     */
+    function getSvgCardThumbnail(title, bidang, tipe) {
+      const bColors = {
+        'Pribadi': { start: '#f43f5e', end: '#be123c', icon: '❤', label: 'BIMBINGAN PRIBADI' },
+        'Sosial': { start: '#10b981', end: '#047857', icon: '👥', label: 'BIMBINGAN SOSIAL' },
+        'Belajar': { start: '#f59e0b', end: '#b45309', icon: '📖', label: 'BIMBINGAN BELAJAR' },
+        'Karir': { start: '#0ea5e9', end: '#0369a1', icon: '🎯', label: 'BIMBINGAN KARIR' },
+        'Lainnya': { start: '#475569', end: '#0f172a', icon: '📢', label: 'PENGUMUMAN & INFO' }
+      };
 
+      const theme = bColors[bidang] || bColors['Lainnya'];
+      const rawTitle = (title || 'E-BK Muhammadiyah 2').trim();
+      const safeTitle = rawTitle.length > 42 ? rawTitle.substring(0, 40) + '...' : rawTitle;
+      const cleanTitle = safeTitle.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cleanTipe = (tipe || 'INFO').toUpperCase();
+
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+        <defs>
+          <linearGradient id="grad-${bidang}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${theme.start}"/>
+            <stop offset="100%" stop-color="${theme.end}"/>
+          </linearGradient>
+          <pattern id="pat-${bidang}" width="36" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="18" cy="18" r="1.5" fill="rgba(255,255,255,0.12)"/>
+          </pattern>
+        </defs>
+        <rect width="640" height="360" fill="url(#grad-${bidang})"/>
+        <rect width="640" height="360" fill="url(#pat-${bidang})"/>
+        
+        <circle cx="560" cy="50" r="130" fill="rgba(255,255,255,0.08)"/>
+        <circle cx="70" cy="310" r="100" fill="rgba(255,255,255,0.06)"/>
+
+        <!-- Header Pill -->
+        <g transform="translate(36, 32)">
+          <rect width="230" height="30" rx="15" fill="rgba(0,0,0,0.22)"/>
+          <text x="14" y="20" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.5">
+            ${theme.icon}  ${theme.label}
+          </text>
+        </g>
+
+        <!-- Content Info -->
+        <g transform="translate(36, 125)">
+          <text x="0" y="0" font-family="'Inter', -apple-system, sans-serif" font-size="13" font-weight="700" fill="rgba(255,255,255,0.85)" letter-spacing="1">
+            SMA MUHAMMADIYAH 2 BANJARMASIN
+          </text>
+          <text x="0" y="42" font-family="'Inter', -apple-system, sans-serif" font-size="25" font-weight="800" fill="#ffffff">
+            ${cleanTitle}
+          </text>
+        </g>
+
+        <!-- Media Tag -->
+        <g transform="translate(36, 292)">
+          <rect width="105" height="28" rx="8" fill="rgba(255,255,255,0.22)"/>
+          <text x="14" y="19" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.5">
+            ${cleanTipe}
+          </text>
+        </g>
+      </svg>`;
+
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function getContentThumbnail(item) {
+      if (!item) return getSvgCardThumbnail('E-BK Digital', 'BK', 'Info');
+
+      // 1. Jika ada thumbnail khusus yang diunggah oleh guru BK
+      if (item.thumbnail && item.thumbnail !== '#' && item.thumbnail.length > 5) {
+        return formatDriveDirectUrl(item.thumbnail);
+      }
+
+      // 2. Jika konten bertipe Gambar
+      if (item.tipe === 'Gambar' && item.url && item.url !== '#') {
+        return formatDriveDirectUrl(item.url);
+      }
+
+      // 3. Jika video YouTube
       const ytId = getYouTubeId(item.url);
       if (ytId) {
         return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
       }
 
-      if (item.tipe === 'Gambar' && item.url && item.url !== '#') {
+      // 4. Jika URL langsung adalah file gambar
+      if (item.url && (item.url.match(/\.(jpeg|jpg|png|webp|gif)($|\?)/i) || item.url.includes('googleusercontent.com') || item.url.startsWith('data:image/'))) {
         return formatDriveDirectUrl(item.url);
       }
 
-      const bidangColors = {
-        'Pribadi': 'e11d48/ffffff?text=Bimbingan+Pribadi',
-        'Sosial': '059669/ffffff?text=Bimbingan+Sosial',
-        'Belajar': 'd97706/ffffff?text=Bimbingan+Belajar',
-        'Karir': '0284c7/ffffff?text=Bimbingan+Karir',
-        'Lainnya': '475569/ffffff?text=Informasi+BK'
-      };
-
-      const fallback = bidangColors[item.bidang] || '0c2340/ffffff?text=E-BK+Digital';
-      return `https://placehold.co/640x360/${fallback}`;
+      // 5. Poster SVG modern bawaan resmi
+      return getSvgCardThumbnail(item.judul || 'Kabar & Pengumuman', item.bidang || 'Lainnya', item.tipe || 'Info');
     }
 
     function renderPengumumanSlider() {
@@ -1430,13 +1468,14 @@
       filtered.forEach(item => {
         const thumbUrl = getContentThumbnail(item);
         const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+        const fallbackSvg = getSvgCardThumbnail(item.judul, item.bidang, item.tipe);
 
         const card = document.createElement('div');
         card.className = 'min-w-[280px] sm:min-w-[310px] max-w-[310px] bg-slate-50 rounded-2xl border border-slate-200/90 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between shrink-0 snap-start group';
         card.innerHTML = `
           <div>
             <div class="relative w-full h-36 overflow-hidden bg-slate-100">
-              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/640x360/0c2340/ffffff?text=E-BK+Info';">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='${fallbackSvg}';">
               <div class="absolute top-2.5 left-2.5">
                 <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-sky-600 text-white shadow-xs">
                   ${escapeHtml(item.bidang || 'BK')}
@@ -1518,6 +1557,7 @@
       filtered.forEach(item => {
         const thumbUrl = getContentThumbnail(item);
         const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+        const fallbackSvg = getSvgCardThumbnail(item.judul, item.bidang, item.tipe);
 
         let badgeIcon = 'fa-link';
         let badgeColor = 'bg-sky-600 text-white';
@@ -1543,7 +1583,7 @@
         card.innerHTML = `
           <div>
             <div class="relative w-full h-44 overflow-hidden bg-slate-100">
-              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/640x360/0c2340/ffffff?text=Materi+BK';">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.src='${fallbackSvg}';">
               <div class="absolute top-3 left-3">
                 <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[10px] font-bold ${badgeColor} shadow-md">
                   <i class="${badgeIcon}"></i>
@@ -1903,12 +1943,49 @@
       document.getElementById('fk-id').value = '';
       selectedFileBase64 = null;
       selectedFileName = null;
+      selectedFileMime = null;
+      selectedThumbBase64 = null;
+      selectedThumbName = null;
+      selectedThumbMime = null;
+      document.getElementById('fk-thumb-preview-box').classList.add('hidden');
+      document.getElementById('btn-clear-thumb').classList.add('hidden');
       switchMetodeSumber('link');
       document.getElementById('modal-konten').classList.remove('hidden');
     }
 
     function closeTambahKontenModal() {
       document.getElementById('modal-konten').classList.add('hidden');
+    }
+
+    function handleThumbFileChange(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      selectedThumbName = file.name;
+      selectedThumbMime = file.type || 'image/jpeg';
+
+      compressImage(file, 640, 360, 0.82, function(compressedBase64) {
+        selectedThumbBase64 = compressedBase64;
+        const box = document.getElementById('fk-thumb-preview-box');
+        const img = document.getElementById('fk-thumb-preview-img');
+        const btnClear = document.getElementById('btn-clear-thumb');
+        if (box && img) {
+          img.src = selectedThumbBase64;
+          box.classList.remove('hidden');
+        }
+        if (btnClear) btnClear.classList.remove('hidden');
+      });
+    }
+
+    function clearSelectedThumb() {
+      selectedThumbBase64 = null;
+      selectedThumbName = null;
+      selectedThumbMime = null;
+      const fileInput = document.getElementById('fk-thumb-file');
+      if (fileInput) fileInput.value = '';
+      const box = document.getElementById('fk-thumb-preview-box');
+      const btnClear = document.getElementById('btn-clear-thumb');
+      if (box) box.classList.add('hidden');
+      if (btnClear) btnClear.classList.add('hidden');
     }
 
     function switchMetodeSumber(method) {
@@ -1979,6 +2056,19 @@
         url = 'https://' + url;
       }
 
+      let existingItem = null;
+      if (id) {
+        existingItem = kontenData.find(k => String(k.id) === String(id));
+      }
+
+      let effectiveThumb = selectedThumbBase64 || '';
+      if (!effectiveThumb && tipe === 'Gambar' && selectedFileBase64) {
+        effectiveThumb = selectedFileBase64;
+      }
+      if (!effectiveThumb && existingItem && existingItem.thumbnail) {
+        effectiveThumb = existingItem.thumbnail;
+      }
+
       const payload = {
         action: id ? 'updateKonten' : 'addKonten',
         id: id,
@@ -1986,7 +2076,11 @@
         penulis: currentUser ? currentUser.nama : 'Guru BK',
         fileBase64: selectedFileBase64,
         fileName: selectedFileName,
-        fileMimeType: selectedFileMime
+        fileMimeType: selectedFileMime,
+        thumbnail: effectiveThumb,
+        thumbnailBase64: selectedThumbBase64,
+        thumbnailName: selectedThumbName,
+        thumbnailMime: selectedThumbMime
       };
 
       btn.disabled = true;
@@ -2001,15 +2095,22 @@
             redirect: 'follow'
           });
           const result = await res.json();
-          if (result.status === 'success' && result.url) {
-            url = result.url;
+          if (result.status === 'success') {
+            if (result.url) url = result.url;
+            if (result.thumbnail) effectiveThumb = result.thumbnail;
           }
         }
 
         if (id) {
-          const idx = kontenData.findIndex(k => k.id.toString() === id.toString());
+          const idx = kontenData.findIndex(k => String(k.id) === String(id));
           if (idx !== -1) {
-            kontenData[idx] = { ...kontenData[idx], judul, bidang, tipe, url: url || kontenData[idx].url, deskripsi };
+            kontenData[idx] = {
+              ...kontenData[idx],
+              judul, bidang, tipe,
+              url: url || kontenData[idx].url,
+              deskripsi,
+              thumbnail: effectiveThumb || kontenData[idx].thumbnail || ''
+            };
           }
         } else {
           const newKonten = {
@@ -2018,7 +2119,8 @@
             url: url || '#',
             deskripsi,
             tanggal: new Date().toLocaleDateString('id-ID'),
-            penulis: currentUser ? currentUser.nama : 'Guru BK'
+            penulis: currentUser ? currentUser.nama : 'Guru BK',
+            thumbnail: effectiveThumb || (tipe === 'Gambar' ? url : '')
           };
           kontenData.unshift(newKonten);
         }
@@ -2028,7 +2130,7 @@
         renderPengumumanSlider();
         renderKontenCards();
         closeTambahKontenModal();
-        showToast('Konten berhasil disimpan & dipublikasikan!', 'success');
+        showToast('Konten & thumbnail berhasil disimpan & dipublikasikan!', 'success');
       } catch (err) {
         showToast('Kesalahan saat menyimpan: ' + err.toString(), 'error');
       } finally {
@@ -2038,7 +2140,7 @@
     }
 
     function editKonten(id) {
-      const item = kontenData.find(k => k.id.toString() === id.toString());
+      const item = kontenData.find(k => String(k.id) === String(id));
       if (!item) return;
 
       document.getElementById('modal-konten-title').innerText = 'Edit Materi / Pengumuman';
@@ -2048,30 +2150,49 @@
       document.getElementById('fk-tipe').value = item.tipe;
       document.getElementById('fk-url').value = item.url || '';
       document.getElementById('fk-deskripsi').value = item.deskripsi || '';
+      
+      selectedThumbBase64 = null;
+      selectedThumbName = null;
+      selectedThumbMime = null;
+      const box = document.getElementById('fk-thumb-preview-box');
+      const img = document.getElementById('fk-thumb-preview-img');
+      const btnClear = document.getElementById('btn-clear-thumb');
+
+      if (item.thumbnail && item.thumbnail.length > 5) {
+        img.src = formatDriveDirectUrl(item.thumbnail);
+        box.classList.remove('hidden');
+        btnClear.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+        btnClear.classList.add('hidden');
+      }
+
       switchMetodeSumber('link');
       handleTipeChange();
       document.getElementById('modal-konten').classList.remove('hidden');
     }
 
     function deleteKonten(id) {
+      if (!id) return;
       showConfirm('Hapus materi bimbingan ini dari daftar?', async () => {
-        try {
-          if (isBackendConnected()) {
+        kontenData = kontenData.filter(k => String(k.id).trim() !== String(id).trim());
+        saveLocalData();
+        renderAdminKontenTable();
+        renderPengumumanSlider();
+        renderKontenCards();
+        showToast('Materi berhasil dihapus.', 'info');
+
+        if (isBackendConnected()) {
+          try {
             await fetch(SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({ action: 'deleteKonten', id: id }),
               redirect: 'follow'
             });
+          } catch (e) {
+            console.error('Gagal sinkron hapus materi:', e);
           }
-          kontenData = kontenData.filter(k => k.id.toString() !== id.toString());
-          saveLocalData();
-          renderAdminKontenTable();
-          renderPengumumanSlider();
-          renderKontenCards();
-          showToast('Materi berhasil dihapus.', 'info');
-        } catch (e) {
-          showToast('Gagal menghapus materi.', 'error');
         }
       });
     }
@@ -2163,7 +2284,7 @@
             redirect: 'follow'
           });
         }
-        const item = konselingData.find(c => c.id.toString() === id.toString());
+        const item = konselingData.find(c => String(c.id).trim() === String(id).trim());
         if (item) item.status = newStatus;
         saveLocalData();
         renderAdminKonselingTable();
@@ -2175,23 +2296,27 @@
     }
 
     function deleteKonseling(id) {
-      showConfirm('Hapus data pesan konseling ini?', async () => {
-        try {
-          if (isBackendConnected()) {
+      if (!id) return;
+      showConfirm('Hapus data pesan konseling ini secara permanen?', async () => {
+        // Penghapusan instan di tabel dan memori lokal
+        konselingData = konselingData.filter(c => String(c.id).trim() !== String(id).trim());
+        saveLocalData();
+        renderAdminKonselingTable();
+        updateKonselingBadge();
+        showToast('Data konseling berhasil dihapus.', 'info');
+
+        // Sinkronisasi hapus ke database spreadsheet Google
+        if (isBackendConnected()) {
+          try {
             await fetch(SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({ action: 'deleteKonseling', id: id }),
               redirect: 'follow'
             });
+          } catch (err) {
+            console.error('Gagal sinkron hapus ke backend:', err);
           }
-          konselingData = konselingData.filter(c => c.id.toString() !== id.toString());
-          saveLocalData();
-          renderAdminKonselingTable();
-          updateKonselingBadge();
-          showToast('Data konseling berhasil dihapus.', 'info');
-        } catch (err) {
-          showToast('Gagal menghapus data.', 'error');
         }
       });
     }
@@ -2204,21 +2329,22 @@
       }
 
       showConfirm(`Bersihkan ${selesaiCount} data konseling yang sudah 'Selesai'? Tindakan ini membuat database tetap cepat.`, async () => {
-        try {
-          if (isBackendConnected()) {
+        konselingData = konselingData.filter(c => c.status !== 'Selesai');
+        saveLocalData();
+        renderAdminKonselingTable();
+        showToast(`Berhasil membersihkan ${selesaiCount} data selesai!`, 'success');
+
+        if (isBackendConnected()) {
+          try {
             await fetch(SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({ action: 'cleanCompletedKonseling' }),
               redirect: 'follow'
             });
+          } catch (e) {
+            console.error('Gagal membersihkan database:', e);
           }
-          konselingData = konselingData.filter(c => c.status !== 'Selesai');
-          saveLocalData();
-          renderAdminKonselingTable();
-          showToast(`Berhasil membersihkan ${selesaiCount} data selesai!`, 'success');
-        } catch (e) {
-          showToast('Gagal membersihkan database.', 'error');
         }
       });
     }
@@ -2706,8 +2832,11 @@
       msgEl.innerText = msg;
       confirmCallback = onConfirm;
       yesBtn.onclick = () => {
+        const actionToRun = confirmCallback;
         closeConfirmModal();
-        if (confirmCallback) confirmCallback();
+        if (actionToRun && typeof actionToRun === 'function') {
+          actionToRun();
+        }
       };
       modal.classList.remove('hidden');
     }
