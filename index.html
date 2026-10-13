@@ -7,6 +7,7 @@
   
   <!-- Tailwind CSS & Font Awesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Google Fonts: Inter -->
@@ -899,8 +900,8 @@
           </div>
 
           <div id="box-src-upload" class="hidden">
-            <input type="file" id="fk-file" onchange="handleFileUploadChange(event)" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
-            <p class="text-[10px] text-slate-400 mt-1">Mendukung berkas: PDF, Word, PowerPoint, dan Gambar (JPG/PNG).</p>
+            <input type="file" id="fk-file" onchange="handleFileUploadChange(event)" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4,.webm,.mov" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+            <p class="text-[10px] text-slate-400 mt-1">Mendukung berkas: PDF, Word, PowerPoint, Gambar (JPG/PNG), dan Video (MP4).</p>
           </div>
         </div>
 
@@ -1336,6 +1337,45 @@
     }
 
     /**
+     * Mengambil frame video unggahan sebagai thumbnail
+     */
+    function generateVideoThumbnail(file, callback) {
+      try {
+        const video = document.createElement('video');
+        const objUrl = URL.createObjectURL(file);
+        let done = false;
+        const finish = function(data) {
+          if (done) return;
+          done = true;
+          URL.revokeObjectURL(objUrl);
+          callback(data);
+        };
+        video.preload = 'metadata';
+        video.muted = true;
+        video.playsInline = true;
+        video.onloadeddata = function() {
+          try { video.currentTime = Math.min(1, (video.duration || 1) / 2); } catch (e) { finish(null); }
+        };
+        video.onseeked = function() {
+          try {
+            const w = 640;
+            const h = Math.round(w * (video.videoHeight || 360) / (video.videoWidth || 640));
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(video, 0, 0, w, h);
+            finish(canvas.toDataURL('image/jpeg', 0.82));
+          } catch (e) { finish(null); }
+        };
+        video.onerror = function() { finish(null); };
+        setTimeout(function() { finish(null); }, 8000);
+        video.src = objUrl;
+      } catch (err) {
+        callback(null);
+      }
+    }
+
+    /**
      * Deteksi Otomatis Jenis Media Saat URL Diketik / Ditempel
      */
     function onKontenUrlInput() {
@@ -1365,7 +1405,7 @@
     function isBackendConnected() {
       return Boolean(
         SCRIPT_URL &&
-        SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI" &&
+        SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbw15Z7OzT_aF0dlcQh7xxrovzIgtJdqPi-LrImRwJ23IZENCtvWu-AJ6eJeqXol28llgQ/exec" &&
         SCRIPT_URL.startsWith('https://script.google.com')
       );
     }
@@ -1567,7 +1607,7 @@
 
       // 2. Google Drive Video
       const driveMatch = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/);
-      if (driveMatch && (tipe === 'Video' || url.includes('/view'))) {
+      if (driveMatch && tipe === 'Video') {
         return {
           type: 'drive',
           embedUrl: `https://drive.google.com/file/d/${driveMatch[1]}/preview`,
@@ -1783,6 +1823,12 @@
       // 4. Jika URL langsung adalah file gambar
       if (item.url && (item.url.match(/\.(jpeg|jpg|png|webp|gif)($|\?)/i) || item.url.includes('googleusercontent.com') || item.url.startsWith('data:image/'))) {
         return formatDriveDirectUrl(item.url);
+      }
+
+      // 4b. Berkas Google Drive (PDF, video, dokumen) -> pratinjau halaman/frame pertama dari Drive
+      if (item.url && ['PDF', 'Video', 'Gambar'].includes(item.tipe)) {
+        const dm = item.url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/);
+        if (dm) return `https://drive.google.com/thumbnail?id=${dm[1]}&sz=w640`;
       }
 
       // 5. Poster SVG modern bawaan resmi yang menyesuaikan jenis berkas
@@ -2442,6 +2488,25 @@
               img.src = selectedThumbBase64;
               box.classList.remove('hidden');
               if (note) note.innerText = 'Halaman ke-1 PDF otomatis dijadikan foto sampul!';
+            }
+            if (btnClear) btnClear.classList.remove('hidden');
+          }
+        });
+      } else if (['mp4', 'webm', 'mov', 'm4v', 'mkv', 'avi', '3gp'].includes(ext)) {
+        tipeSelect.value = 'Video';
+        generateVideoThumbnail(file, function(vidThumb) {
+          if (vidThumb && !selectedThumbBase64) {
+            selectedThumbBase64 = vidThumb;
+            selectedThumbName = 'sampul_' + file.name.replace(/\.[^/.]+$/, "") + '.jpg';
+            selectedThumbMime = 'image/jpeg';
+            const box = document.getElementById('fk-thumb-preview-box');
+            const img = document.getElementById('fk-thumb-preview-img');
+            const note = document.getElementById('fk-thumb-preview-note');
+            const btnClear = document.getElementById('btn-clear-thumb');
+            if (box && img) {
+              img.src = selectedThumbBase64;
+              box.classList.remove('hidden');
+              if (note) note.innerText = 'Cuplikan video otomatis dijadikan foto sampul!';
             }
             if (btnClear) btnClear.classList.remove('hidden');
           }
