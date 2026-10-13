@@ -3328,25 +3328,53 @@
         heroBgFileMime: tempHeroBgFileMime
       };
 
+      // Salinan lokal: gambar unggahan dipakai langsung (data URL) agar tetap tampil tanpa server
+      const localSt = { ...newSt };
+      if (logoType === 'upload') {
+        if (tempLogoBase64) localSt.logoUrl = tempLogoBase64;
+        else if (siteSettings.logoUrl) localSt.logoUrl = siteSettings.logoUrl;
+      }
+      if (heroBgType === 'upload') {
+        if (tempHeroBgBase64) localSt.heroBgUrl = tempHeroBgBase64;
+        else if (siteSettings.heroBgUrl) localSt.heroBgUrl = siteSettings.heroBgUrl;
+      }
+      ['logoFileBase64', 'logoFileName', 'logoFileMime', 'heroBgFileBase64', 'heroBgFileName', 'heroBgFileMime'].forEach(k => delete localSt[k]);
+
+      let savedToServer = false;
+      let serverNote = '';
+
       try {
         if (isBackendConnected()) {
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'updateSettings', ...newSt }),
-            redirect: 'follow'
-          });
-          const result = await res.json();
-          if (result.status === 'success' && result.settings) {
-            applySiteSettings(result.settings);
-            localStorage.setItem('ebk_settings', JSON.stringify(result.settings));
-          } else {
-            // Server menolak / gagal menyimpan: tampilkan alasan aslinya, jangan pura-pura berhasil
-            throw new Error(result.message || 'Server tidak mengembalikan pengaturan yang tersimpan.');
+          try {
+            const res = await fetch(SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ action: 'updateSettings', ...newSt }),
+              redirect: 'follow'
+            });
+            const result = await res.json();
+            if (result.status === 'success' && result.settings) {
+              applySiteSettings(result.settings);
+              try { localStorage.setItem('ebk_settings', JSON.stringify(result.settings)); } catch (qe) {}
+              savedToServer = true;
+            } else {
+              serverNote = result.message || 'Server tidak mengembalikan pengaturan yang tersimpan.';
+            }
+          } catch (netErr) {
+            serverNote = 'Apps Script tidak dapat dihubungi (' + netErr.toString() + ')';
           }
         } else {
-          applySiteSettings(newSt);
-          localStorage.setItem('ebk_settings', JSON.stringify(newSt));
+          serverNote = 'Apps Script belum terhubung.';
+        }
+
+        // Jika server gagal / tidak terhubung, tetap terapkan & simpan di perangkat ini
+        if (!savedToServer) {
+          applySiteSettings(localSt);
+          try {
+            localStorage.setItem('ebk_settings', JSON.stringify(localSt));
+          } catch (qe) {
+            serverNote += ' Penyimpanan lokal penuh, gunakan gambar yang lebih kecil.';
+          }
         }
 
         // Bersihkan data sementara setelah berhasil disimpan
@@ -3357,7 +3385,11 @@
         if (logoPrevBox) logoPrevBox.classList.add('hidden');
         if (heroPrevBox) heroPrevBox.classList.add('hidden');
 
-        showToast('Tampilan dan tema website berhasil diperbarui!', 'success');
+        if (savedToServer) {
+          showToast('Tampilan dan tema website berhasil diperbarui!', 'success');
+        } else {
+          showToast('Diterapkan & disimpan di perangkat ini saja. ' + serverNote, 'info');
+        }
       } catch (err) {
         showToast('Gagal menyimpan tema: ' + err.toString(), 'error');
       } finally {
