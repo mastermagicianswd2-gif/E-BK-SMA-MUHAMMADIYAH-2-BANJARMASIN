@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-BK SMA Muhammadiyah 2 Banjarmasin | Portal Bimbingan & Konseling</title>
+  
+  <!-- Tailwind CSS & Font Awesome Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            themePrimary: 'var(--color-primary, #0284c7)',
+            themeDark: 'var(--color-dark, #0c2340)',
+            themeAccent: 'var(--color-accent, #f59e0b)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --color-primary: #0284c7;
+      --color-dark: #0c2340;
+      --color-accent: #f59e0b;
+    }
+
+    /* Utilitas Scrollbar Halus */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Pola Latar Belakang Geometris */
+    .bg-pattern-subtle {
+      background-color: var(--color-dark);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px), radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+
+    /* Transisi Halus */
+    .smooth-transition {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
+
+  <!-- Header & Navigasi Atas -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo & Identitas Aplikasi -->
+        <a href="javascript:void(0)" onclick="showTab('beranda')" class="flex items-center space-x-3.5 group">
+          <div id="nav-logo-box" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-sky-500/20 group-hover:scale-105 transition-transform overflow-hidden">
+            <i id="nav-logo-icon" class="fa-solid fa-graduation-cap text-xl"></i>
+            <img id="nav-logo-img" src="" alt="Logo" class="w-full h-full object-contain hidden" onerror="this.classList.add('hidden'); document.getElementById('nav-logo-icon').classList.remove('hidden');">
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center space-x-1.5">
+              <span class="font-black text-slate-900 tracking-tight text-lg sm:text-xl">E-BK</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-100 text-sky-700 uppercase tracking-wider">Digital</span>
+            </div>
+            <span class="text-xs text-slate-500 font-medium tracking-tight truncate max-w-[210px] sm:max-w-xs">SMA Muhammadiyah 2 Banjarmasin</span>
+          </div>
+        </a>
+
+        <!-- Menu Desktop -->
+        <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+          <button onclick="showTab('beranda')" id="btn-nav-beranda" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-house text-xs"></i>
+            <span>Beranda</span>
+          </button>
+          <button onclick="showTab('layanan')" id="btn-nav-layanan" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-shapes text-xs"></i>
+            <span>Layanan BK</span>
+          </button>
+          <button onclick="showTab('materi')" id="btn-nav-materi" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-book-open text-xs"></i>
+            <span>Pusat Materi</span>
+          </button>
+          <button onclick="showTab('konseling')" id="btn-nav-konseling" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-comments text-xs"></i>
+            <span>Konseling</span>
+          </button>
+          <div class="h-6 w-px bg-slate-200 mx-2"></div>
+          <button onclick="showTab('admin')" id="btn-nav-admin" class="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-sky-600 shadow-sm transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-user-tie text-xs"></i>
+            <span>Portal Guru BK</span>
+          </button>
+        </nav>
+
+        <!-- Tombol Menu Mobile -->
+        <div class="flex items-center md:hidden">
+          <button onclick="toggleMobileMenu()" class="p-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none">
+            <i id="mobile-menu-icon" class="fa-solid fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Menu Mobile -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg">
+      <button onclick="showTab('beranda'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-semibold text-sky-600 bg-sky-50 flex items-center space-x-3">
+        <i class="fa-solid fa-house w-5 text-center"></i>
+        <span>Beranda</span>
+      </button>
+      <button onclick="showTab('layanan'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
+        <i class="fa-solid fa-shapes w-5 text-center"></i>
+        <span>Layanan BK</span>
+      </button>
+      <button onclick="showTab('materi'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
+        <i class="fa-solid fa-book-open w-5 text-center"></i>
+        <span>Pusat Materi</span>
+      </button>
+      <button onclick="showTab('konseling'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
+        <i class="fa-solid fa-comments w-5 text-center"></i>
+        <span>Konseling Siswa</span>
+      </button>
+      <div class="pt-2">
+        <button onclick="showTab('admin'); toggleMobileMenu()" class="w-full text-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-sky-600 shadow-sm flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-user-tie"></i>
+          <span>Portal Guru BK</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    
+    <!-- =========================================================================
+         TAB 1: BERANDA PUBLIK
+         ========================================================================= -->
+    <section id="tab-beranda" class="space-y-12 pb-16">
+      
+      <!-- Hero Banner Bersih & Elegan -->
+      <div id="hero-banner-container" class="relative bg-pattern-subtle text-white overflow-hidden py-16 sm:py-24 transition-all">
+        <div id="hero-bg-overlay" class="absolute inset-0 bg-slate-950/75 pointer-events-none transition-all"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-sky-200 text-xs sm:text-sm font-medium shadow-inner">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="hero-text-badge">Portal Resmi Bimbingan & Konseling</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
+            <span id="hero-text-title" class="block text-white">Bimbingan & Konseling Digital</span>
+            <span id="hero-text-highlight" class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-300">SMA Muhammadiyah 2 Banjarmasin</span>
+          </h1>
+
+          <p id="hero-text-caption" class="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
+            Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik berlandaskan nilai-nilai Islami.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button onclick="showTab('materi')" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-compass"></i>
+              <span>Jelajahi Konten</span>
+            </button>
+            <button onclick="showTab('konseling')" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition-all flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+              <span>Konsultasi Sekarang</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Pilar Bidang Layanan BK -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-8">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-sky-600 mb-1">Ruang Lingkup Bimbingan</h2>
+          <p class="text-2xl font-bold text-slate-900">4 Bidang Layanan Utama Siswa</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Pribadi -->
+          <div onclick="filterByBidang('Pribadi')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-rose-300 hover:shadow-xl hover:shadow-rose-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-rose-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base">Bimbingan Pribadi</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Pengembangan karakter, pengelolaan emosi, kepercayaan diri, dan pemahaman potensi diri.</p>
+          </div>
+
+          <!-- Sosial -->
+          <div onclick="filterByBidang('Sosial')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base">Bimbingan Sosial</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Hubungan pertemanan, adaptasi lingkungan sekolah, komunikasi efektif, dan empati sosial.</p>
+          </div>
+
+          <!-- Belajar -->
+          <div onclick="filterByBidang('Belajar')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-amber-300 hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base">Bimbingan Belajar</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Strategi belajar efektif, manajemen waktu, mengatasi kesulitan belajar, dan persiapan ujian.</p>
+          </div>
+
+          <!-- Karir -->
+          <div onclick="filterByBidang('Karir')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base">Bimbingan Karir</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Eksplorasi minat bakat, informasi perguruan tinggi, beasiswa, dan perencanaan masa depan.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Papan Informasi & Pengumuman BK (Bejejer Horizontal dengan Filter Terpadu) -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm space-y-6">
+          
+          <!-- Baris Header Pengumuman & Toolbar Filter -->
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Papan Informasi & Pengumuman BK</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">Kabar & Informasi Terkini</h2>
+            </div>
+
+            <!-- Toolbar Pencarian, Satu Tombol Filter, dan Navigasi Geser -->
+            <div class="flex items-center flex-wrap gap-2.5">
+              <!-- Kolom Pencarian -->
+              <div class="relative w-full sm:w-56">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="pengumuman-search-input" oninput="onPengumumanSearch()" placeholder="Cari info / kata kunci..." class="w-full pl-9 pr-7 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
+                <button id="pengumuman-search-clear" onclick="clearPengumumanSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs hidden">&times;</button>
+              </div>
+
+              <!-- Satu Tombol Filter Terpadu -->
+              <div class="relative">
+                <button onclick="togglePengumumanFilter()" id="btn-toggle-filter" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-all flex items-center space-x-2">
+                  <i class="fa-solid fa-sliders text-sky-600"></i>
+                  <span>Filter</span>
+                  <span id="filter-badge-count" class="hidden px-1.5 py-0.2 rounded-full bg-sky-600 text-white text-[10px]">0</span>
+                  <i id="filter-arrow-icon" class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                </button>
+
+                <!-- Panel Dropdown Filter Terpadu -->
+                <div id="pengumuman-filter-panel" class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 z-30 space-y-4">
+                  <!-- Grup Bidang BK -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Bidang Layanan BK</label>
+                    <div class="grid grid-cols-2 gap-1 text-xs" id="filter-panel-bidang-group">
+                      <button onclick="setPengumumanBidangFilter('Semua')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium bg-sky-50 text-sky-700" data-val="Semua">Semua Bidang</button>
+                      <button onclick="setPengumumanBidangFilter('Pribadi')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50" data-val="Pribadi">Pribadi</button>
+                      <button onclick="setPengumumanBidangFilter('Sosial')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50" data-val="Sosial">Sosial</button>
+                      <button onclick="setPengumumanBidangFilter('Belajar')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50" data-val="Belajar">Belajar</button>
+                      <button onclick="setPengumumanBidangFilter('Karir')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50" data-val="Karir">Karir</button>
+                      <button onclick="setPengumumanBidangFilter('Lainnya')" class="filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50" data-val="Lainnya">Lainnya</button>
+                    </div>
+                  </div>
+
+                  <!-- Grup Waktu Unggah -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Waktu Unggah</label>
+                    <div class="flex flex-wrap gap-1 text-xs" id="filter-panel-time-group">
+                      <button onclick="setPengumumanTimeFilter('semua')" class="filter-time-btn px-2.5 py-1 rounded-lg font-medium bg-sky-50 text-sky-700" data-val="semua">Semua</button>
+                      <button onclick="setPengumumanTimeFilter('harian')" class="filter-time-btn px-2.5 py-1 rounded-lg font-medium text-slate-600 hover:bg-slate-50" data-val="harian">Harian</button>
+                      <button onclick="setPengumumanTimeFilter('mingguan')" class="filter-time-btn px-2.5 py-1 rounded-lg font-medium text-slate-600 hover:bg-slate-50" data-val="mingguan">Mingguan</button>
+                      <button onclick="setPengumumanTimeFilter('bulanan')" class="filter-time-btn px-2.5 py-1 rounded-lg font-medium text-slate-600 hover:bg-slate-50" data-val="bulanan">Bulanan</button>
+                      <button onclick="setPengumumanTimeFilter('tahunan')" class="filter-time-btn px-2.5 py-1 rounded-lg font-medium text-slate-600 hover:bg-slate-50" data-val="tahunan">Tahunan</button>
+                    </div>
+                  </div>
+
+                  <!-- Filter Tanggal Spesifik -->
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Pilih Tanggal Tertentu</label>
+                    <div class="flex items-center space-x-2">
+                      <input type="date" id="pengumuman-filter-date" onchange="onPengumumanDateChange()" class="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500">
+                      <button onclick="clearPengumumanDate()" title="Hapus Tanggal" class="p-1.5 text-slate-400 hover:text-slate-600 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Reset Semua Filter -->
+                  <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span id="filter-status-desc" class="text-slate-400">Menampilkan semua</span>
+                    <button onclick="resetPengumumanFilter()" class="text-sky-600 hover:text-sky-700 font-semibold">Reset Filter</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tombol Navigasi Geser (Kiri & Kanan) -->
+              <div class="flex items-center space-x-1 pl-1">
+                <button onclick="scrollPengumuman('left')" class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center text-xs transition-colors shadow-2xs">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="scrollPengumuman('right')" class="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center text-xs transition-colors shadow-2xs">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slider Kartu Bejejer ke Samping (Horizontal Scroll Container) -->
+          <div id="pengumuman-slider" class="flex overflow-x-auto gap-5 pb-3 pt-1 scroll-smooth no-scrollbar snap-x snap-mandatory">
+            <!-- Kartu pengumuman akan dirender dinamis di sini -->
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: DETAIL LAYANAN BK
+         ========================================================================= -->
+    <section id="tab-layanan" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Layanan Komprehensif</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Format Layanan Bimbingan & Konseling</h2>
+        <p class="text-slate-500 text-sm">Berbagai bentuk layanan yang disediakan Guru BK untuk mendukung perkembangan optimal peserta didik.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">1</div>
+          <h3 class="font-bold text-slate-900 text-base">Konseling Individual</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Layanan tatap muka atau daring secara empat mata yang menjunjung tinggi asas kerahasiaan untuk menyelesaikan masalah pribadi siswa.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center font-bold">2</div>
+          <h3 class="font-bold text-slate-900 text-base">Bimbingan Kelompok</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Diskusi kelompok terarah untuk melatih kemampuan sosial, komunikasi, toleransi, dan pemecahan masalah bersama.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">3</div>
+          <h3 class="font-bold text-slate-900 text-base">Bimbingan Klasikal</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Penyampaian materi pengembangan diri, motivasi belajar, dan wawasan karir terjadwal di dalam kelas.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">4</div>
+          <h3 class="font-bold text-slate-900 text-base">Konsultasi Karir & PTN/PTS</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Pendampingan memilih jurusan kuliah, SNBP, SNBT, kedinasan, beasiswa, dan persiapan dunia kerja.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold">5</div>
+          <h3 class="font-bold text-slate-900 text-base">Kolaborasi Orang Tua & Wali</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Komunikasi sinergis antara sekolah dan keluarga demi memantau kenyamanan dan perkembangan belajar siswa.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">6</div>
+          <h3 class="font-bold text-slate-900 text-base">Alih Tangan Kasus (Referral)</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Pemberian rujukan kepada tenaga ahli profesional (psikolog, dokter) jika memerlukan penanganan medis/klinis khusus.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: PUSAT MATERI & MEDIA EDUKASI BK
+         ========================================================================= -->
+    <section id="tab-materi" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pusat Sumber Belajar</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Materi & Media Edukasi BK</h2>
+          <p class="text-slate-500 text-sm mt-1">Video edukatif, panduan karir, modul belajar, infografis, dan dokumen resmi BK.</p>
+        </div>
+
+        <!-- Kolom Pencarian Materi -->
+        <div class="relative w-full md:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="materi-search-input" oninput="renderKontenCards()" placeholder="Cari materi..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-2xs">
+        </div>
+      </div>
+
+      <!-- Filter Kategori Bidang BK (Bersih tanpa tombol Video / Dokumen) -->
+      <div class="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
+        <button onclick="setMateriFilter('Semua')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-semibold bg-sky-600 text-white shadow-xs shrink-0 transition-all" data-bidang="Semua">Semua Materi</button>
+        <button onclick="setMateriFilter('Pribadi')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all" data-bidang="Pribadi">Pribadi</button>
+        <button onclick="setMateriFilter('Sosial')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all" data-bidang="Sosial">Sosial</button>
+        <button onclick="setMateriFilter('Belajar')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all" data-bidang="Belajar">Belajar</button>
+        <button onclick="setMateriFilter('Karir')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all" data-bidang="Karir">Karir</button>
+        <button onclick="setMateriFilter('Lainnya')" class="btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all" data-bidang="Lainnya">Lainnya</button>
+      </div>
+
+      <!-- Grid Kartu Konten Publik -->
+      <div id="materi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Kartu materi akan dirender dinamis di sini -->
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: FORMULIR KONSELING RAHASIA SISWA
+         ========================================================================= -->
+    <section id="tab-konseling" class="hidden max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Asas Kerahasiaan Terjamin 100%</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Ruang Cerita & Konseling Siswa</h2>
+        <p class="text-slate-500 text-xs sm:text-sm max-w-lg mx-auto">
+          Setiap pesan yang kamu kirimkan hanya akan dibaca dan ditindaklanjuti oleh Guru BK SMA Muhammadiyah 2 Banjarmasin secara tertutup.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-sm">
+        <form id="form-konseling" onsubmit="handleFormKonseling(event)" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap / Inisial <span class="text-rose-500">*</span></label>
+              <input type="text" id="cs-nama" required placeholder="Contoh: Ahmad Rizky / AR" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas Saat Ini <span class="text-rose-500">*</span></label>
+              <select id="cs-kelas" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="X-1">X-1</option>
+                <option value="X-2">X-2</option>
+                <option value="X-3">X-3</option>
+                <option value="XI-1">XI-1</option>
+                <option value="XI-2">XI-2</option>
+                <option value="XI-3">XI-3</option>
+                <option value="XII-1">XII-1</option>
+                <option value="XII-2">XII-2</option>
+                <option value="XII-3">XII-3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor WhatsApp Aktif <span class="text-rose-500">*</span></label>
+              <input type="tel" id="cs-wa" required placeholder="Contoh: 081234567890" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Bidang yang Ingin Dikonsultasikan <span class="text-rose-500">*</span></label>
+              <select id="cs-bidang" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                <option value="Pribadi">Masalah Pribadi & Karakter</option>
+                <option value="Sosial">Pertemanan & Hubungan Sosial</option>
+                <option value="Belajar">Kesulitan Belajar & Motivasi</option>
+                <option value="Karir">Rencana Kuliah / Karir</option>
+                <option value="Lainnya">Lainnya / Curhat Umum</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Tuliskan Cerita / Hal yang Ingin Dibicarakan <span class="text-rose-500">*</span></label>
+            <textarea id="cs-pesan" required rows="4" placeholder="Ceritakan apa yang kamu rasakan, tidak perlu takut dinilai..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none leading-relaxed"></textarea>
+          </div>
+
+          <button type="submit" id="cs-submit-btn" class="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Kirim Pesan Konseling Secara Rahasia</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: PORTAL ADMIN GURU BK
+         ========================================================================= -->
+    <section id="tab-admin" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      
+      <!-- Laman Login Guru BK (Tampil jika belum login) -->
+      <div id="admin-login-box" class="max-w-md mx-auto bg-white rounded-3xl border border-slate-200/90 p-8 shadow-sm space-y-6">
+        <div class="text-center space-y-2">
+          <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl mx-auto shadow-md">
+            <i class="fa-solid fa-user-lock"></i>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900">Masuk Portal Guru BK</h2>
+          <p class="text-xs text-slate-500">Gunakan akun resmi pengelola bimbingan & konseling.</p>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Username / ID Admin</label>
+            <input type="text" id="login-username" required placeholder="adminbk" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-semibold text-slate-700">Kata Sandi</label>
+              <button type="button" onclick="openForgotPasswordModal()" class="text-[11px] font-semibold text-sky-600 hover:text-sky-700">Lupa Password?</button>
+            </div>
+            <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+          </div>
+          <button type="submit" id="login-btn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-sky-600 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Masuk ke Dasbor</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Tampilan Dasbor Admin Guru BK (Tampil setelah login) -->
+      <div id="admin-dashboard-box" class="hidden space-y-6">
+        
+        <!-- Baris Header Profil Guru BK & Aksi Cepat -->
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
+              <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h2 id="dash-guru-nama" class="text-xl sm:text-2xl font-bold text-slate-900">Guru BK</h2>
+                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700">Admin Aktif</span>
+              </div>
+              <p id="dash-guru-jabatan" class="text-xs font-semibold text-sky-600 mt-0.5">Guru Bimbingan & Konseling</p>
+              <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1">
+                <span id="dash-guru-nip">NIP: -</span>
+                <span>•</span>
+                <span id="dash-guru-email"><i class="fa-regular fa-envelope mr-1"></i>Belum ada email OTP</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Tombol Buka Spreadsheet Langsung -->
+            <button onclick="bukaSpreadsheet()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all flex items-center space-x-2 shadow-xs">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Buka Database Spreadsheet</span>
+            </button>
+            <button onclick="openEditProfilModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all flex items-center space-x-2">
+              <i class="fa-solid fa-user-pen"></i>
+              <span>Edit Profil & OTP</span>
+            </button>
+            <button onclick="handleAdminLogout()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs transition-all flex items-center space-x-2">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Navigasi Dasbor Admin -->
+        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3">
+          <button onclick="switchAdminTab('konten')" id="admin-tab-btn-konten" class="px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Kelola Materi & Pengumuman</span>
+          </button>
+          <button onclick="switchAdminTab('konseling')" id="admin-tab-btn-konseling" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-inbox"></i>
+            <span>Pesan Konseling Masuk</span>
+            <span id="badge-unread-konseling" class="hidden px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px]">0</span>
+          </button>
+          <button onclick="switchAdminTab('tema')" id="admin-tab-btn-tema" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-palette"></i>
+            <span>Kustomisasi Tampilan & Tema</span>
+          </button>
+        </div>
+
+        <!-- Sub-Tab A: Kelola Konten -->
+        <div id="admin-subtab-konten" class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900">Daftar Materi & Pengumuman Aktif</h3>
+            <button onclick="openTambahKontenModal()" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center space-x-2">
+              <i class="fa-solid fa-plus"></i>
+              <span>Tambah Materi / Pengumuman</span>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-bold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3.5 px-4">Judul & Penulis</th>
+                    <th class="py-3.5 px-4">Bidang</th>
+                    <th class="py-3.5 px-4">Tipe Media</th>
+                    <th class="py-3.5 px-4">Tanggal</th>
+                    <th class="py-3.5 px-4 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="table-admin-konten" class="divide-y divide-slate-100">
+                  <!-- Data konten admin dirender dinamis -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab B: Pesan Konseling Masuk -->
+        <div id="admin-subtab-konseling" class="hidden space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Kotak Masuk Konseling Siswa</h3>
+              <p class="text-xs text-slate-500">Data konsultasi rahasia siswa.</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="bersihkanDataSelesai()" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs transition-all flex items-center space-x-1.5" title="Hapus konseling berstatus selesai untuk menghemat memori database">
+                <i class="fa-solid fa-broom"></i>
+                <span>Bersihkan Data Selesai</span>
+              </button>
+              <button onclick="openMaintenanceModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all flex items-center space-x-1.5">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Panduan Maintenance</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200/80 text-slate-500 font-bold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3.5 px-4">Siswa & Kelas</th>
+                    <th class="py-3.5 px-4">Bidang</th>
+                    <th class="py-3.5 px-4">Isi Pesan Curhat</th>
+                    <th class="py-3.5 px-4">Tanggal</th>
+                    <th class="py-3.5 px-4">Status</th>
+                    <th class="py-3.5 px-4 text-center">Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="table-admin-konseling" class="divide-y divide-slate-100">
+                  <!-- Data konseling admin dirender dinamis -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab C: Kustomisasi Tampilan & Tema -->
+        <div id="admin-subtab-tema" class="hidden space-y-6">
+          <form onsubmit="handleSaveSettings(event)" class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Kustomisasi Tampilan & Palet Warna Website</h3>
+              <p class="text-xs text-slate-500">Sesuaikan logo, teks sambutan hero, gambar sampul, dan skema warna situs.</p>
+            </div>
+
+            <!-- Bagian 1: Logo Website -->
+            <div class="border-t border-slate-100 pt-5 space-y-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">1. Pengaturan Logo Aplikasi</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Logo</label>
+                  <select id="cfg-logo-type" onchange="toggleLogoConfigType()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                    <option value="icon">Ikon Font Awesome</option>
+                    <option value="upload">Unggah Gambar Logo dari HP/Laptop</option>
+                    <option value="url">Tautan Gambar Logo (URL)</option>
+                  </select>
+                </div>
+                <div id="cfg-logo-icon-box">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Ikon Logo</label>
+                  <select id="cfg-logo-icon" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                    <option value="fa-graduation-cap">Topi Toga (fa-graduation-cap)</option>
+                    <option value="fa-school">Gedung Sekolah (fa-school)</option>
+                    <option value="fa-book-open">Buku Terbuka (fa-book-open)</option>
+                    <option value="fa-heart">Hati / Peduli (fa-heart)</option>
+                    <option value="fa-hands-holding-child">Bimbingan (fa-hands-holding-child)</option>
+                    <option value="fa-compass">Kompas Karir (fa-compass)</option>
+                  </select>
+                </div>
+                <div id="cfg-logo-upload-box" class="hidden">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Unggah Berkas Logo (.png, .jpg)</label>
+                  <input type="file" id="cfg-logo-file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700">
+                </div>
+                <div id="cfg-logo-url-box" class="hidden">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">URL Tautan Logo Transparan</label>
+                  <input type="url" id="cfg-logo-url" placeholder="https://example.com/logo.png" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bagian 2: Teks Caption Hero -->
+            <div class="border-t border-slate-100 pt-5 space-y-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">2. Teks & Narasi Sampul Website</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Teks Lencana Kecil (Badge)</label>
+                  <input type="text" id="cfg-hero-badge" placeholder="Portal Resmi Bimbingan & Konseling" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Baris Judul Atas</label>
+                  <input type="text" id="cfg-hero-title" placeholder="Bimbingan & Konseling Digital" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Teks Judul Sorotan Gradien</label>
+                  <input type="text" id="cfg-hero-highlight" placeholder="SMA Muhammadiyah 2 Banjarmasin" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tingkat Kegelapan Foto Sampul (%)</label>
+                  <input type="range" id="cfg-hero-overlay" min="20" max="95" value="75" oninput="updateHeroOverlay(this.value)" class="w-full accent-sky-600">
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Narasi Sambutan Singkat</label>
+                  <textarea id="cfg-hero-caption" rows="2" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bagian 3: Foto Sampul Hero -->
+            <div class="border-t border-slate-100 pt-5 space-y-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">3. Gambar Latar Sampul Hero</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Latar Belakang</label>
+                  <select id="cfg-hero-bgtype" onchange="toggleHeroBgType()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                    <option value="pattern">Pola Geometris Bersih (Bawaan)</option>
+                    <option value="upload">Unggah Foto Sampul dari HP/Laptop</option>
+                    <option value="url">Tautan Foto Sampul (URL)</option>
+                  </select>
+                </div>
+                <div id="cfg-hero-upload-box" class="hidden">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Berkas Foto (.jpg, .png)</label>
+                  <input type="file" id="cfg-hero-file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700">
+                </div>
+                <div id="cfg-hero-url-box" class="hidden">
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">URL Tautan Gambar Sampul</label>
+                  <input type="url" id="cfg-hero-url" placeholder="https://example.com/foto-sekolah.jpg" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bagian 4: Skema Palet Warna Custom -->
+            <div class="border-t border-slate-100 pt-5 space-y-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">4. Kustomisasi Skema Palet Warna</label>
+              
+              <!-- Pilihan Cepat Preset Palet -->
+              <div class="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar">
+                <button type="button" onclick="applyPalettePreset('#0284c7', '#0c2340', '#f59e0b')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-50 border border-sky-300 text-sky-800">Muhammadiyah (Biru)</button>
+                <button type="button" onclick="applyPalettePreset('#059669', '#064e3b', '#f59e0b')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 border border-emerald-300 text-emerald-800">Zamrud Islami (Hijau)</button>
+                <button type="button" onclick="applyPalettePreset('#6366f1', '#1e1b4b', '#ec4899')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 border border-indigo-300 text-indigo-800">Royal Indigo</button>
+                <button type="button" onclick="applyPalettePreset('#d97706', '#451a03', '#3b82f6')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 border border-amber-300 text-amber-800">Emas Elegan</button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Warna Primer / Tombol</label>
+                  <div class="flex items-center space-x-2">
+                    <input type="color" id="cfg-color-primary" value="#0284c7" oninput="document.getElementById('cfg-hex-primary').value = this.value" class="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer">
+                    <input type="text" id="cfg-hex-primary" value="#0284c7" oninput="document.getElementById('cfg-color-primary').value = this.value" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Warna Latar Gelap / Sampul</label>
+                  <div class="flex items-center space-x-2">
+                    <input type="color" id="cfg-color-dark" value="#0c2340" oninput="document.getElementById('cfg-hex-dark').value = this.value" class="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer">
+                    <input type="text" id="cfg-hex-dark" value="#0c2340" oninput="document.getElementById('cfg-color-dark').value = this.value" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Warna Aksen / Sorotan</label>
+                  <div class="flex items-center space-x-2">
+                    <input type="color" id="cfg-color-accent" value="#f59e0b" oninput="document.getElementById('cfg-hex-accent').value = this.value" class="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer">
+                    <input type="text" id="cfg-hex-accent" value="#f59e0b" oninput="document.getElementById('cfg-color-accent').value = this.value" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="cfg-save-btn" class="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>Simpan Perubahan Tampilan & Tema</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL 1: PREVIEW / TONTON MEDIA (UNIVERSAL EMBED VIDEO & DOKUMEN)
+       Mendukung YouTube, Google Drive Video, Instagram Reels, dan TikTok
+       ========================================================================= -->
+  <div id="modal-preview" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div id="preview-modal-dialog" class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-hidden relative max-h-[92vh] overflow-y-auto transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2 truncate pr-2">
+          <span id="preview-modal-badge" class="hidden px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white bg-sky-600 shrink-0">Video</span>
+          <h3 id="preview-modal-title" class="font-bold text-slate-900 text-sm sm:text-base truncate">Judul Media</h3>
+        </div>
+        <button onclick="closePreviewModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Container Video Pemutar Langsung (Otomatis Landscape 16:9 atau Portrait 9:16) -->
+      <div id="preview-video-container" class="aspect-video w-full rounded-2xl overflow-hidden bg-black hidden relative flex items-center justify-center shadow-inner">
+        <iframe id="preview-iframe" class="w-full h-full" src="" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+      </div>
+
+      <!-- Wadah Dokumen / Link Drive / Web Bebas -->
+      <div id="preview-link-container" class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-3 hidden">
+        <i class="fa-solid fa-file-arrow-down text-4xl text-sky-600"></i>
+        <p class="text-xs sm:text-sm text-slate-600" id="preview-link-desc">Klik tombol di bawah ini untuk membuka dokumen atau sumber berkas.</p>
+        <a id="preview-link-btn" href="#" target="_blank" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs transition-colors">
+          <span>Buka Tautan / Unduh File</span>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+        <p id="preview-modal-desc" class="text-xs text-slate-600 leading-relaxed flex-1"></p>
+        <a id="preview-source-btn" href="#" target="_blank" class="hidden shrink-0 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] transition-colors items-center space-x-1.5">
+          <span>Buka Tautan Asli</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: TAMBAH / EDIT KONTEN GURU BK
+       ========================================================================= -->
+  <div id="modal-konten" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="modal-konten-title" class="font-bold text-slate-900 text-base">Tambah Materi / Pengumuman</h3>
+        <button onclick="closeTambahKontenModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <form id="form-konten" onsubmit="handleSaveKonten(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="fk-id" value="">
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Judul Materi / Pengumuman <span class="text-rose-500">*</span></label>
+          <input type="text" id="fk-judul" required placeholder="Contoh: Strategi Sukses Memilih Jurusan Kuliah SNBP" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Bidang Bimbingan <span class="text-rose-500">*</span></label>
+            <select id="fk-bidang" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <option value="Karir">Karir</option>
+              <option value="Belajar">Belajar</option>
+              <option value="Pribadi">Pribadi</option>
+              <option value="Sosial">Sosial</option>
+              <option value="Lainnya">Lainnya / Umum</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Tipe Media <span class="text-rose-500">*</span></label>
+            <select id="fk-tipe" required onchange="handleTipeChange()" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <option value="Video">Video (YouTube, Drive, IG Reels, TikTok)</option>
+              <option value="Pengumuman">Pengumuman / Informasi</option>
+              <option value="PDF">Dokumen PDF (.pdf)</option>
+              <option value="Word">Dokumen Word (.doc, .docx)</option>
+              <option value="PPT">Presentasi PowerPoint (.ppt, .pptx)</option>
+              <option value="Gambar">Gambar / Infografis (.jpg, .png)</option>
+              <option value="Drive">Tautan Google Drive</option>
+              <option value="Artikel">Tautan Artikel / Berita Web</option>
+              <option value="Link">Tautan Bebas (Canva, Form, Quizizz, dll)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pilihan Metode Sumber: Input Link ATAU Unggah Berkas dari Perangkat -->
+        <div class="space-y-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">Metode Sumber Berkas:</span>
+            <div class="flex items-center space-x-1">
+              <button type="button" id="btn-src-link" onclick="switchMetodeSumber('link')" class="px-2.5 py-1 rounded-lg font-semibold bg-sky-600 text-white text-[11px]">Tautan / Link</button>
+              <button type="button" id="btn-src-upload" onclick="switchMetodeSumber('upload')" class="px-2.5 py-1 rounded-lg font-semibold bg-white text-slate-600 text-[11px] border border-slate-200">Unggah dari HP / Laptop</button>
+            </div>
+          </div>
+
+          <!-- Opsi 1: Input URL / Tautan Bebas -->
+          <div id="box-src-link">
+            <input type="text" id="fk-url" placeholder="https://..." class="w-full px-3 py-2 bg-white rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <p id="fk-tip-text" class="text-[10px] text-slate-500 mt-1">Tempelkan link video YouTube, Google Drive, Instagram Reels, TikTok, Canva, dsb.</p>
+          </div>
+
+          <!-- Opsi 2: Upload File Lokal -->
+          <div id="box-src-upload" class="hidden space-y-2">
+            <input type="file" id="fk-file" onchange="handleFileUploadChange(event)" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" class="w-full text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:font-semibold file:bg-sky-600 file:text-white">
+            <p class="text-[10px] text-slate-500">Mendukung format PDF, Word, PowerPoint, dan Gambar. Berkas akan otomatis disimpan ke Google Drive.</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Deskripsi Singkat / Ringkasan</label>
+          <textarea id="fk-deskripsi" rows="3" placeholder="Jelaskan isi pokok materi atau inti pengumuman..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+        </div>
+
+        <button type="submit" id="fk-submit-btn" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Simpan & Publikasikan Konten</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: EDIT PROFIL GURU BK & EMAIL OTP
+       ========================================================================= -->
+  <div id="modal-profil" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Edit Profil Guru BK & Email OTP</h3>
+        <button onclick="closeEditProfilModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <form onsubmit="handleSaveProfil(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
+          <input type="text" id="prof-nama" required placeholder="Contoh: Dra. Hj. Siti Rahmah, M.Pd." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Jabatan Guru BK</label>
+          <input type="text" id="prof-jabatan" placeholder="Contoh: Koordinator Bimbingan & Konseling" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+        </div>
+        
+        <!-- Pilihan NIP atau NUPTK -->
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Identitas Pendidik (NIP / NUPTK)</label>
+          <div class="flex items-center space-x-2">
+            <select id="prof-id-type" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+              <option value="NIP">NIP</option>
+              <option value="NUPTK">NUPTK</option>
+            </select>
+            <input type="text" id="prof-nip-val" placeholder="Contoh: 19820512..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Email Aktif (Untuk Menerima OTP Lupa Password) <span class="text-rose-500">*</span></label>
+          <input type="email" id="prof-email" required placeholder="gurubk@smam2bjm.sch.id" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+          <p class="text-[10px] text-slate-500 mt-1">Kode pemulihan 6 digit akan otomatis dikirimkan ke email ini jika lupa kata sandi.</p>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Username Baru</label>
+          <input type="text" id="prof-username" placeholder="Biarkan kosong jika tidak diubah" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Baru</label>
+          <input type="password" id="prof-password" placeholder="Biarkan kosong jika tidak diubah" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <button type="submit" id="prof-submit-btn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-sky-600 text-white font-semibold transition-all">
+          Simpan Profil Guru BK
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 4: LUPA KATA SANDI (DENGAN KODE OTP 6 DIGIT)
+       ========================================================================= -->
+  <div id="modal-forgot" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Pemulihan Kata Sandi</h3>
+        <button onclick="closeForgotPasswordModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <!-- Langkah 1: Minta Kode OTP -->
+      <div id="forgot-step-1" class="space-y-4 text-xs">
+        <p class="text-slate-600">Masukkan Username atau Alamat Email terdaftar akun Guru BK Anda untuk menerima kode OTP 6 digit.</p>
+        <form onsubmit="handleKirimOtp(event)" class="space-y-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Username atau Email Guru BK</label>
+            <input type="text" id="forgot-identifier" required placeholder="adminbk / email@sekolah.sch.id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <button type="submit" id="btn-kirim-otp" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold shadow-md transition-all flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Kirim Kode OTP</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Langkah 2: Verifikasi OTP & Password Baru -->
+      <div id="forgot-step-2" class="hidden space-y-4 text-xs">
+        <p class="text-slate-600">Kode OTP 6 digit telah dikirim. Masukkan kode tersebut dan buat kata sandi baru Anda.</p>
+        <form onsubmit="handleVerifikasiOtpReset(event)" class="space-y-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Kode OTP 6 Digit</label>
+            <input type="text" id="forgot-otp" required maxlength="6" placeholder="123456" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono text-center tracking-widest text-lg font-bold focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Kata Sandi Baru</label>
+            <input type="password" id="forgot-new-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          </div>
+          <button type="submit" id="btn-reset-pass" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-md transition-all flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Simpan Kata Sandi Baru</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 5: PANDUAN MAINTENANCE & DATABASE
+       ========================================================================= -->
+  <div id="modal-maintenance" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto text-xs text-slate-600">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Panduan Pemeliharaan Database E-BK</h3>
+        <button onclick="closeMaintenanceModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-3 leading-relaxed">
+        <div class="p-3 bg-sky-50 rounded-xl text-sky-800 space-y-1">
+          <p class="font-bold">Tips Mencegah Aplikasi Berjalan Lemot:</p>
+          <ul class="list-disc list-inside space-y-1 text-[11px]">
+            <li>Gunakan tombol <strong>"Bersihkan Data Selesai"</strong> secara berkala agar baris konsultasi lama terhapus dari spreadsheet.</li>
+            <li>Klik tombol hijau <strong>"Buka Database Spreadsheet"</strong> untuk menghapus baris secara manual langsung di Google Sheets.</li>
+            <li>Berkas foto dan dokumen yang diunggah otomatis tersimpan di folder Google Drive <em>"Berkas E-BK SMA Muhammadiyah 2"</em>. Hapus berkas yang sudah tidak dipakai di Google Drive jika kuota penyimpanan akun sekolah penuh.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 text-right">
+        <button onclick="closeMaintenanceModal()" class="px-4 py-2 bg-slate-900 text-white font-semibold rounded-xl text-xs">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifikasi Elegan (Pengganti alert()) -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Footer Bersih -->
+  <footer class="bg-white border-t border-slate-200/80 py-8 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-600">E-BK • Layanan Bimbingan & Konseling Digital</p>
+      <p>SMA Muhammadiyah 2 Banjarmasin &copy; 2026. Berkarakter, Berkemajuan, dan Berprestasi.</p>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       JAVASCRIPT APLIKASI UTAMA (FRONTEND ENGINE & GAS CONNECTOR)
+       ========================================================================= -->
+  <script>
+    /**
+     * Konfigurasi Jembatan Google Apps Script (Backend)
+     * Tempelkan URL Web App dari Apps Script Anda di sini (berakhiran /exec)
+     */
+    const SCRIPT_URL = "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI";
+
+    // State Aplikasi
+    let kontenData = [];
+    let konselingData = [];
+    let currentUser = null;
+    let spreadsheetUrl = "https://docs.google.com/spreadsheets";
+
+    // State Filter Pengumuman Bejejer
+    let pengumumanFilter = {
+      bidang: 'Semua',
+      waktu: 'semua',
+      tanggal: '',
+      pencarian: ''
+    };
+
+    // State Tambah Materi Berkas
+    let selectedFileBase64 = null;
+    let selectedFileName = null;
+    let selectedFileMime = null;
+    let currentUploadMethod = 'link';
+
+    // State Kustomisasi Tampilan
+    let siteSettings = {
+      logoType: 'icon',
+      logoIcon: 'fa-graduation-cap',
+      logoUrl: '',
+      heroBadge: 'Portal Resmi Bimbingan & Konseling',
+      heroTitle: 'Bimbingan & Konseling Digital',
+      heroTitleHighlight: 'SMA Muhammadiyah 2 Banjarmasin',
+      heroCaption: 'Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik berlandaskan nilai-nilai Islami.',
+      heroBgType: 'pattern',
+      heroBgUrl: '',
+      heroBgOverlay: '75',
+      colorPrimary: '#0284c7',
+      colorDark: '#0c2340',
+      colorAccent: '#f59e0b'
+    };
+
+    /**
+     * =========================================================================
+     * ENGINE PEMUTAR VIDEO MULTI-PLATFORM (Putar Langsung di Website)
+     * =========================================================================
+     */
+    function getYouTubeEmbed(url) {
+      if (!url) return null;
+      const regExp = /(?:youtube\.com\/(?:watch\?.*v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+      const match = url.match(regExp);
+      return match ? {
+        id: match[1],
+        embedUrl: `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0`,
+        platform: 'YouTube',
+        format: 'landscape',
+        icon: 'fa-brands fa-youtube',
+        badgeBg: 'bg-rose-600',
+        label: 'YouTube'
+      } : null;
+    }
+
+    function getGoogleDriveEmbed(url) {
+      if (!url || !url.includes('drive.google.com')) return null;
+      let fileId = null;
+      const matchFile = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (matchFile) fileId = matchFile[1];
+      const matchId = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (matchId) fileId = matchId[1];
+
+      if (fileId) {
+        return {
+          id: fileId,
+          embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
+          platform: 'Google Drive',
+          format: 'landscape',
+          icon: 'fa-brands fa-google-drive',
+          badgeBg: 'bg-emerald-600',
+          label: 'Google Drive'
+        };
+      }
+      return null;
+    }
+
+    function getInstagramEmbed(url) {
+      if (!url || !url.includes('instagram.com')) return null;
+      const match = url.match(/instagram\.com\/(?:reel|reels|p)\/([a-zA-Z0-9_-]+)/);
+      if (match) {
+        return {
+          id: match[1],
+          embedUrl: `https://www.instagram.com/reel/${match[1]}/embed/`,
+          platform: 'Instagram Reels',
+          format: 'portrait',
+          icon: 'fa-brands fa-instagram',
+          badgeBg: 'bg-gradient-to-r from-purple-600 to-pink-500',
+          label: 'IG Reels'
+        };
+      }
+      return null;
+    }
+
+    function getTikTokEmbed(url) {
+      if (!url || !url.includes('tiktok.com')) return null;
+      const match = url.match(/\/video\/(\d+)/) || url.match(/\/v\/(\d+)/) || url.match(/\/player\/v1\/(\d+)/) || url.match(/\/embed\/(\d+)/);
+      if (match) {
+        return {
+          id: match[1],
+          embedUrl: `https://www.tiktok.com/player/v1/${match[1]}?autoplay=1`,
+          platform: 'TikTok',
+          format: 'portrait',
+          icon: 'fa-brands fa-tiktok',
+          badgeBg: 'bg-black',
+          label: 'TikTok'
+        };
+      }
+      return null;
+    }
+
+    function getVideoEmbedInfo(url, tipe = '') {
+      if (!url) return null;
+      const u = url.trim();
+      const yt = getYouTubeEmbed(u);
+      if (yt) return yt;
+      const ig = getInstagramEmbed(u);
+      if (ig) return ig;
+      const tt = getTikTokEmbed(u);
+      if (tt) return tt;
+      const drive = getGoogleDriveEmbed(u);
+      if (drive && (tipe === 'Video' || u.includes('/view') || u.includes('/preview'))) {
+        return drive;
+      }
+      return null;
+    }
+
+    function getContentThumbnail(item) {
+      const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+      if (vInfo) {
+        if (vInfo.platform === 'YouTube') {
+          return `https://img.youtube.com/vi/${vInfo.id}/hqdefault.jpg`;
+        } else if (vInfo.platform === 'Instagram Reels') {
+          return `https://placehold.co/640x360/c13584/ffffff?text=Instagram+Reels+BK`;
+        } else if (vInfo.platform === 'TikTok') {
+          return `https://placehold.co/640x360/000000/00f2fe?text=Video+TikTok+BK`;
+        } else if (vInfo.platform === 'Google Drive') {
+          return `https://placehold.co/640x360/0f9d58/ffffff?text=Video+Google+Drive`;
+        }
+      }
+
+      if (item.tipe === 'Gambar' && item.url && !item.url.includes('drive.google.com')) {
+        return item.url;
+      }
+
+      // Visual Ilustrasi Tematik Bidang BK
+      if (item.bidang === 'Karir') return `https://placehold.co/640x360/0284c7/ffffff?text=Bimbingan+Karir`;
+      if (item.bidang === 'Belajar') return `https://placehold.co/640x360/d97706/ffffff?text=Bimbingan+Belajar`;
+      if (item.bidang === 'Sosial') return `https://placehold.co/640x360/059669/ffffff?text=Bimbingan+Sosial`;
+      if (item.bidang === 'Pribadi') return `https://placehold.co/640x360/e11d48/ffffff?text=Bimbingan+Pribadi`;
+      return `https://placehold.co/640x360/0c2340/ffffff?text=Layanan+BK+SMAM2`;
+    }
+
+    /**
+     * =========================================================================
+     * KONTROL NAVIGASI TAB
+     * =========================================================================
+     */
+    function showTab(tabId) {
+      const tabs = ['beranda', 'layanan', 'materi', 'konseling', 'admin'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`btn-nav-${t}`);
+        if (sec) sec.classList.add('hidden');
+        if (btn && t !== 'admin') {
+          btn.className = 'px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2';
+        }
+      });
+
+      const activeSec = document.getElementById(`tab-${tabId}`);
+      const activeBtn = document.getElementById(`btn-nav-${tabId}`);
+      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeBtn && tabId !== 'admin') {
+        activeBtn.className = 'px-3.5 py-2 rounded-xl text-sm font-semibold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
+      }
+
+      if (tabId === 'materi') renderKontenCards();
+      if (tabId === 'beranda') renderPengumumanSlider();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function filterByBidang(bidang) {
+      showTab('materi');
+      setMateriFilter(bidang);
+    }
+
+    /**
+     * =========================================================================
+     * PENGUMUMAN & KABAR TERKINI (BEJEJER HORIZONTAL & FILTER TERPADU)
+     * =========================================================================
+     */
+    function renderPengumumanSlider() {
+      const slider = document.getElementById('pengumuman-slider');
+      if (!slider) return;
+      slider.innerHTML = '';
+
+      // Filter konten untuk papan pengumuman
+      let items = kontenData.filter(item => {
+        // Filter Pencarian
+        if (pengumumanFilter.pencarian) {
+          const q = pengumumanFilter.pencarian.toLowerCase();
+          const matchTitle = item.judul && item.judul.toLowerCase().includes(q);
+          const matchDesc = item.deskripsi && item.deskripsi.toLowerCase().includes(q);
+          const matchBidang = item.bidang && item.bidang.toLowerCase().includes(q);
+          if (!matchTitle && !matchDesc && !matchBidang) return false;
+        }
+
+        // Filter Bidang
+        if (pengumumanFilter.bidang !== 'Semua' && item.bidang !== pengumumanFilter.bidang) {
+          return false;
+        }
+
+        // Filter Tanggal Kalender
+        if (pengumumanFilter.tanggal && item.tanggal) {
+          // Tanggal tersimpan format d/m/yyyy atau yyyy-mm-dd
+          const tglStr = item.tanggal.toString();
+          if (!tglStr.includes(pengumumanFilter.tanggal) && !formatDateMatch(item.tanggal, pengumumanFilter.tanggal)) {
+            return false;
+          }
+        }
+
+        // Filter Waktu Unggah
+        if (pengumumanFilter.waktu !== 'semua' && item.tanggal) {
+          if (!checkTimeRangeMatch(item.tanggal, pengumumanFilter.waktu)) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      if (items.length === 0) {
+        slider.innerHTML = `
+          <div class="w-full py-12 text-center text-slate-400 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
+            <i class="fa-solid fa-bullhorn text-3xl mb-2 text-slate-300"></i>
+            <p class="text-xs">Belum ada pengumuman yang sesuai dengan filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(item => {
+        const thumbUrl = getContentThumbnail(item);
+        const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+
+        let badgeIcon = 'fa-bullhorn';
+        let badgeBg = 'bg-amber-500';
+        let badgeText = item.tipe || 'Informasi';
+
+        if (vInfo) {
+          badgeIcon = vInfo.icon;
+          badgeBg = vInfo.badgeBg;
+          badgeText = vInfo.label;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'w-72 sm:w-80 shrink-0 snap-start bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between group';
+        card.innerHTML = `
+          <div>
+            <div class="relative w-full h-36 overflow-hidden bg-slate-200">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/640x360/0c2340/ffffff?text=Kabar+BK';">
+              <div class="absolute top-2.5 left-2.5">
+                <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white ${badgeBg} shadow-sm">
+                  <i class="${badgeIcon}"></i>
+                  <span>${escapeHtml(badgeText)}</span>
+                </span>
+              </div>
+              <div class="absolute top-2.5 right-2.5">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-white/90 text-slate-800 shadow-sm">
+                  ${escapeHtml(item.bidang || 'Umum')}
+                </span>
+              </div>
+            </div>
+            <div class="p-4 space-y-1.5">
+              <div class="flex items-center justify-between text-[10px] text-slate-400">
+                <span><i class="fa-regular fa-calendar-days mr-1"></i>${item.tanggal || '-'}</span>
+                <span>${escapeHtml(item.penulis || 'Guru BK')}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-sky-600 transition-colors text-xs leading-snug line-clamp-2">
+                ${escapeHtml(item.judul)}
+              </h3>
+              <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                ${escapeHtml(item.deskripsi || '-')}
+              </p>
+            </div>
+          </div>
+          <div class="p-4 pt-0">
+            <button onclick="bukaPreview('${item.id}')" class="w-full py-2 rounded-xl bg-white group-hover:bg-sky-600 text-slate-700 group-hover:text-white border border-slate-200 group-hover:border-sky-600 font-semibold text-xs transition-all flex items-center justify-center space-x-1.5">
+              <i class="${vInfo ? 'fa-solid fa-play' : 'fa-solid fa-eye'} text-[10px]"></i>
+              <span>${vInfo ? 'Putar Video' : 'Lihat Detail'}</span>
+            </button>
+          </div>
+        `;
+        slider.appendChild(card);
+      });
+    }
+
+    function scrollPengumuman(dir) {
+      const slider = document.getElementById('pengumuman-slider');
+      if (!slider) return;
+      const scrollAmount = 320;
+      slider.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+    }
+
+    function togglePengumumanFilter() {
+      const panel = document.getElementById('pengumuman-filter-panel');
+      const arrow = document.getElementById('filter-arrow-icon');
+      if (panel) {
+        panel.classList.toggle('hidden');
+        if (arrow) arrow.classList.toggle('rotate-180');
+      }
+    }
+
+    function setPengumumanBidangFilter(bidang) {
+      pengumumanFilter.bidang = bidang;
+      document.querySelectorAll('.filter-bidang-btn').forEach(btn => {
+        if (btn.getAttribute('data-val') === bidang) {
+          btn.className = 'filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-semibold bg-sky-50 text-sky-700';
+        } else {
+          btn.className = 'filter-bidang-btn px-2.5 py-1.5 rounded-lg text-left font-medium text-slate-600 hover:bg-slate-50';
+        }
+      });
+      updateFilterBadge();
+      renderPengumumanSlider();
+    }
+
+    function setPengumumanTimeFilter(waktu) {
+      pengumumanFilter.waktu = waktu;
+      document.querySelectorAll('.filter-time-btn').forEach(btn => {
+        if (btn.getAttribute('data-val') === waktu) {
+          btn.className = 'filter-time-btn px-2.5 py-1 rounded-lg font-semibold bg-sky-50 text-sky-700';
+        } else {
+          btn.className = 'filter-time-btn px-2.5 py-1 rounded-lg font-medium text-slate-600 hover:bg-slate-50';
+        }
+      });
+      updateFilterBadge();
+      renderPengumumanSlider();
+    }
+
+    function onPengumumanDateChange() {
+      const d = document.getElementById('pengumuman-filter-date').value;
+      pengumumanFilter.tanggal = d;
+      updateFilterBadge();
+      renderPengumumanSlider();
+    }
+
+    function clearPengumumanDate() {
+      document.getElementById('pengumuman-filter-date').value = '';
+      pengumumanFilter.tanggal = '';
+      updateFilterBadge();
+      renderPengumumanSlider();
+    }
+
+    function onPengumumanSearch() {
+      const val = document.getElementById('pengumuman-search-input').value;
+      pengumumanFilter.pencarian = val;
+      const clearBtn = document.getElementById('pengumuman-search-clear');
+      if (clearBtn) {
+        if (val) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+      renderPengumumanSlider();
+    }
+
+    function clearPengumumanSearch() {
+      document.getElementById('pengumuman-search-input').value = '';
+      onPengumumanSearch();
+    }
+
+    function resetPengumumanFilter() {
+      pengumumanFilter = { bidang: 'Semua', waktu: 'semua', tanggal: '', pencarian: '' };
+      document.getElementById('pengumuman-filter-date').value = '';
+      document.getElementById('pengumuman-search-input').value = '';
+      setPengumumanBidangFilter('Semua');
+      setPengumumanTimeFilter('semua');
+      updateFilterBadge();
+      renderPengumumanSlider();
+    }
+
+    function updateFilterBadge() {
+      let count = 0;
+      if (pengumumanFilter.bidang !== 'Semua') count++;
+      if (pengumumanFilter.waktu !== 'semua') count++;
+      if (pengumumanFilter.tanggal) count++;
+
+      const badge = document.getElementById('filter-badge-count');
+      const desc = document.getElementById('filter-status-desc');
+      if (badge) {
+        if (count > 0) {
+          badge.innerText = count;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+      if (desc) {
+        desc.innerText = count > 0 ? `${count} kriteria aktif` : 'Menampilkan semua';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * PUSAT MATERI (GRID UTAMA)
+     * =========================================================================
+     */
+    let activeMateriBidang = 'Semua';
+
+    function setMateriFilter(bidang) {
+      activeMateriBidang = bidang;
+      document.querySelectorAll('.btn-materi-filter').forEach(b => {
+        if (b.getAttribute('data-bidang') === bidang) {
+          b.className = 'btn-materi-filter px-4 py-2 rounded-xl text-xs font-semibold bg-sky-600 text-white shadow-xs shrink-0 transition-all';
+        } else {
+          b.className = 'btn-materi-filter px-4 py-2 rounded-xl text-xs font-medium bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 shrink-0 transition-all';
+        }
+      });
+      renderKontenCards();
+    }
+
+    function renderKontenCards() {
+      const grid = document.getElementById('materi-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const searchInput = document.getElementById('materi-search-input');
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+      let filtered = kontenData.filter(item => {
+        if (activeMateriBidang !== 'Semua' && item.bidang !== activeMateriBidang) return false;
+        if (query) {
+          const matchJudul = item.judul && item.judul.toLowerCase().includes(query);
+          const matchDesc = item.deskripsi && item.deskripsi.toLowerCase().includes(query);
+          if (!matchJudul && !matchDesc) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-400 bg-white rounded-3xl border border-dashed border-slate-200">
+            <i class="fa-solid fa-folder-open text-4xl mb-3 text-slate-300"></i>
+            <p class="text-sm font-semibold">Belum ada materi edukasi pada kategori ini.</p>
+            <p class="text-xs text-slate-400 mt-1">Materi akan segera diterbitkan oleh Guru BK.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const thumbUrl = getContentThumbnail(item);
+        const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+
+        let badgeIcon = 'fa-link';
+        let badgeColor = 'bg-sky-600 text-white';
+        let badgeText = item.tipe || 'Materi';
+
+        if (vInfo) {
+          badgeIcon = vInfo.icon;
+          badgeColor = `${vInfo.badgeBg} text-white`;
+          badgeText = vInfo.label;
+        } else if (item.tipe === 'PDF') {
+          badgeIcon = 'fa-file-pdf';
+          badgeColor = 'bg-rose-600 text-white';
+        } else if (item.tipe === 'Word') {
+          badgeIcon = 'fa-file-word';
+          badgeColor = 'bg-blue-600 text-white';
+        } else if (item.tipe === 'PPT') {
+          badgeIcon = 'fa-file-powerpoint';
+          badgeColor = 'bg-amber-600 text-white';
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-slate-200/90 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col justify-between group';
+        card.innerHTML = `
+          <div>
+            <div class="relative w-full h-44 overflow-hidden bg-slate-100">
+              <img src="${thumbUrl}" alt="${escapeHtml(item.judul)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/640x360/0c2340/ffffff?text=Materi+BK';">
+              <div class="absolute top-3 left-3">
+                <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[10px] font-bold ${badgeColor} shadow-md">
+                  <i class="${badgeIcon}"></i>
+                  <span>${escapeHtml(badgeText)}</span>
+                </span>
+              </div>
+              <div class="absolute top-3 right-3">
+                <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/90 backdrop-blur-xs text-slate-800 shadow-md">
+                  ${escapeHtml(item.bidang || 'BK')}
+                </span>
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2">
+                <span><i class="fa-regular fa-calendar-days mr-1 text-sky-600"></i>${item.tanggal || '-'}</span>
+                <span>Oleh: <strong class="text-slate-600">${escapeHtml(item.penulis || 'Guru BK')}</strong></span>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-sky-700 transition-colors line-clamp-2 text-sm leading-snug">
+                ${escapeHtml(item.judul)}
+              </h3>
+              <p class="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">
+                ${escapeHtml(item.deskripsi || '-')}
+              </p>
+            </div>
+          </div>
+          <div class="px-5 pb-5 pt-0">
+            <button onclick="bukaPreview('${item.id}')" class="w-full py-2.5 rounded-xl bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white font-semibold text-xs transition-all flex items-center justify-center space-x-2">
+              <i class="${vInfo ? 'fa-solid fa-play' : 'fa-solid fa-folder-open'} text-[11px]"></i>
+              <span>${vInfo ? 'Putar Video Langsung' : 'Buka Materi'}</span>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * MODAL PREVIEW & PEMUTAR MEDIA
+     * =========================================================================
+     */
+    function bukaPreview(id) {
+      const item = kontenData.find(k => k.id.toString() === id.toString());
+      if (!item) return;
+
+      const modal = document.getElementById('modal-preview');
+      const dialog = document.getElementById('preview-modal-dialog');
+      const title = document.getElementById('preview-modal-title');
+      const desc = document.getElementById('preview-modal-desc');
+      const badge = document.getElementById('preview-modal-badge');
+      const videoBox = document.getElementById('preview-video-container');
+      const iframe = document.getElementById('preview-iframe');
+      const linkBox = document.getElementById('preview-link-container');
+      const linkBtn = document.getElementById('preview-link-btn');
+      const linkDesc = document.getElementById('preview-link-desc');
+      const sourceBtn = document.getElementById('preview-source-btn');
+
+      if (!modal) return;
+      title.innerText = item.judul;
+      desc.innerText = item.deskripsi || '';
+
+      videoBox.classList.add('hidden');
+      linkBox.classList.add('hidden');
+      if (badge) badge.classList.add('hidden');
+      if (sourceBtn) sourceBtn.classList.add('hidden');
+      iframe.src = '';
+
+      const vInfo = getVideoEmbedInfo(item.url, item.tipe);
+
+      if (vInfo) {
+        if (badge) {
+          badge.className = `px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white ${vInfo.badgeBg} shrink-0 inline-flex items-center space-x-1`;
+          badge.innerHTML = `<i class="${vInfo.icon}"></i><span>${vInfo.label}</span>`;
+          badge.classList.remove('hidden');
+        }
+
+        if (sourceBtn) {
+          sourceBtn.href = item.url;
+          sourceBtn.classList.remove('hidden');
+          sourceBtn.classList.add('inline-flex');
+        }
+
+        if (vInfo.format === 'portrait') {
+          if (dialog) dialog.className = 'bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
+          videoBox.className = 'w-full max-w-[340px] h-[520px] mx-auto rounded-2xl overflow-hidden bg-black relative flex items-center justify-center shadow-lg';
+        } else {
+          if (dialog) dialog.className = 'bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
+          videoBox.className = 'aspect-video w-full rounded-2xl overflow-hidden bg-black relative flex items-center justify-center shadow-inner';
+        }
+
+        iframe.src = vInfo.embedUrl;
+        videoBox.classList.remove('hidden');
+      } else {
+        if (dialog) dialog.className = 'bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto';
+        linkBtn.href = item.url || '#';
+        linkDesc.innerText = `Buka berkas atau tautan materi (${item.tipe || 'Materi'}):`;
+        linkBox.classList.remove('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closePreviewModal() {
+      const modal = document.getElementById('modal-preview');
+      const iframe = document.getElementById('preview-iframe');
+      if (iframe) iframe.src = ''; // Menghentikan audio seketika
+      if (modal) modal.classList.add('hidden');
+    }
+
+    /**
+     * =========================================================================
+     * FORMULIR KONSELING SISWA
+     * =========================================================================
+     */
+    async function handleFormKonseling(e) {
+      e.preventDefault();
+      const nama = document.getElementById('cs-nama').value.trim();
+      const kelas = document.getElementById('cs-kelas').value;
+      const noWa = document.getElementById('cs-wa').value.trim();
+      const bidang = document.getElementById('cs-bidang').value;
+      const pesan = document.getElementById('cs-pesan').value.trim();
+      const btn = document.getElementById('cs-submit-btn');
+
+      const payload = {
+        action: 'submitKonseling',
+        nama, kelas, noWa, bidang, pesan
+      };
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Mengirim Pesan...</span>';
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          const result = await res.json();
+          showToast(result.message || 'Pesan terkirim ke Guru BK!', 'success');
+        } else {
+          // Mode Simpan Lokal jika belum deploy Apps Script
+          const newCs = {
+            id: 'CS_' + Date.now(),
+            nama, kelas, noWa, bidang, pesan,
+            tanggal: new Date().toLocaleDateString('id-ID'),
+            status: 'Menunggu Respons'
+          };
+          konselingData.unshift(newCs);
+          saveLocalData();
+          showToast('Pesan konseling tersimpan secara aman!', 'success');
+        }
+        document.getElementById('form-konseling').reset();
+      } catch (err) {
+        showToast('Gagal mengirim: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span>Kirim Pesan Konseling Secara Rahasia</span>';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * DASHBOARD ADMIN GURU BK
+     * =========================================================================
+     */
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const btn = document.getElementById('login-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Memverifikasi...</span>';
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'login', username: user, password: pass })
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            currentUser = result.profile;
+            if (result.spreadsheetUrl) spreadsheetUrl = result.spreadsheetUrl;
+            loadAdminData(result.token);
+            showToast('Login berhasil! Selamat datang Guru BK.', 'success');
+          } else {
+            showToast(result.message || 'Username / Password salah!', 'error');
+          }
+        } else {
+          // Fallback akun bawaan
+          if (user.toLowerCase() === 'adminbk' && pass === 'muhammadiyah2') {
+            currentUser = {
+              username: 'adminbk',
+              nama: 'Guru BK',
+              jabatan: 'Guru Bimbingan & Konseling',
+              nip: '-',
+              email: ''
+            };
+            displayAdminDashboard();
+            showToast('Login Berhasil!', 'success');
+          } else {
+            showToast('Username atau Kata Sandi salah!', 'error');
+          }
+        }
+      } catch (err) {
+        showToast('Kesalahan koneksi: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i><span>Masuk ke Dasbor</span>';
+      }
+    }
+
+    function displayAdminDashboard() {
+      document.getElementById('admin-login-box').classList.add('hidden');
+      document.getElementById('admin-dashboard-box').classList.remove('hidden');
+
+      if (currentUser) {
+        document.getElementById('dash-guru-nama').innerText = currentUser.nama || 'Guru BK';
+        document.getElementById('dash-guru-jabatan').innerText = currentUser.jabatan || 'Guru Bimbingan & Konseling';
+        
+        const nipLabel = currentUser.nip && currentUser.nip !== '-' ? `NIP/NUPTK: ${currentUser.nip}` : 'NIP/NUPTK: -';
+        document.getElementById('dash-guru-nip').innerText = nipLabel;
+
+        const emailText = currentUser.email ? currentUser.email : 'Belum ada email OTP';
+        document.getElementById('dash-guru-email').innerHTML = `<i class="fa-regular fa-envelope mr-1"></i>${emailText}`;
+      }
+
+      renderAdminKontenTable();
+      renderAdminKonselingTable();
+    }
+
+    function handleAdminLogout() {
+      currentUser = null;
+      document.getElementById('admin-login-box').classList.remove('hidden');
+      document.getElementById('admin-dashboard-box').classList.add('hidden');
+      document.getElementById('login-password').value = '';
+      showToast('Anda telah keluar dari dasbor Guru BK.', 'info');
+    }
+
+    function switchAdminTab(subTab) {
+      const tabs = ['konten', 'konseling', 'tema'];
+      tabs.forEach(t => {
+        document.getElementById(`admin-subtab-${t}`).classList.add('hidden');
+        document.getElementById(`admin-tab-btn-${t}`).className = 'px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2';
+      });
+
+      document.getElementById(`admin-subtab-${subTab}`).classList.remove('hidden');
+      document.getElementById(`admin-tab-btn-${subTab}`).className = 'px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
+    }
+
+    /**
+     * =========================================================================
+     * PENGELOLAAN KONTEN OLEH GURU BK
+     * =========================================================================
+     */
+    function renderAdminKontenTable() {
+      const tbody = document.getElementById('table-admin-konten');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (kontenData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Belum ada konten bimbingan. Klik tombol Tambah Materi di atas.</td></tr>`;
+        return;
+      }
+
+      kontenData.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3.5 px-4">
+            <p class="font-bold text-slate-900">${escapeHtml(item.judul)}</p>
+            <p class="text-[10px] text-slate-400">Penulis: ${escapeHtml(item.penulis || '-')}</p>
+          </td>
+          <td class="py-3.5 px-4 font-semibold text-slate-700">${escapeHtml(item.bidang)}</td>
+          <td class="py-3.5 px-4">
+            <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700">${escapeHtml(item.tipe)}</span>
+          </td>
+          <td class="py-3.5 px-4 text-slate-500">${item.tanggal || '-'}</td>
+          <td class="py-3.5 px-4 text-center">
+            <div class="flex items-center justify-center space-x-1">
+              <button onclick="editKonten('${item.id}')" class="p-2 rounded-lg text-sky-600 hover:bg-sky-50" title="Edit Materi"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteKonten('${item.id}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openTambahKontenModal() {
+      document.getElementById('modal-konten-title').innerText = 'Tambah Materi / Pengumuman';
+      document.getElementById('form-konten').reset();
+      document.getElementById('fk-id').value = '';
+      selectedFileBase64 = null;
+      selectedFileName = null;
+      switchMetodeSumber('link');
+      document.getElementById('modal-konten').classList.remove('hidden');
+    }
+
+    function closeTambahKontenModal() {
+      document.getElementById('modal-konten').classList.add('hidden');
+    }
+
+    function switchMetodeSumber(method) {
+      currentUploadMethod = method;
+      const btnLink = document.getElementById('btn-src-link');
+      const btnUpload = document.getElementById('btn-src-upload');
+      const boxLink = document.getElementById('box-src-link');
+      const boxUpload = document.getElementById('box-src-upload');
+
+      if (method === 'link') {
+        btnLink.className = 'px-2.5 py-1 rounded-lg font-semibold bg-sky-600 text-white text-[11px]';
+        btnUpload.className = 'px-2.5 py-1 rounded-lg font-semibold bg-white text-slate-600 text-[11px] border border-slate-200';
+        boxLink.classList.remove('hidden');
+        boxUpload.classList.add('hidden');
+      } else {
+        btnUpload.className = 'px-2.5 py-1 rounded-lg font-semibold bg-sky-600 text-white text-[11px]';
+        btnLink.className = 'px-2.5 py-1 rounded-lg font-semibold bg-white text-slate-600 text-[11px] border border-slate-200';
+        boxUpload.classList.remove('hidden');
+        boxLink.classList.add('hidden');
+      }
+    }
+
+    function handleFileUploadChange(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      selectedFileName = file.name;
+      selectedFileMime = file.type;
+
+      // Otomatis sesuaikan tipe dropdown
+      const ext = file.name.split('.').pop().toLowerCase();
+      const tipeSelect = document.getElementById('fk-tipe');
+      if (ext === 'pdf') tipeSelect.value = 'PDF';
+      else if (['doc', 'docx'].includes(ext)) tipeSelect.value = 'Word';
+      else if (['ppt', 'pptx'].includes(ext)) tipeSelect.value = 'PPT';
+      else if (['jpg', 'jpeg', 'png'].includes(ext)) tipeSelect.value = 'Gambar';
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        selectedFileBase64 = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleTipeChange() {
+      const tipe = document.getElementById('fk-tipe').value;
+      const tip = document.getElementById('fk-tip-text');
+      if (tip) {
+        if (tipe === 'Video') {
+          tip.innerText = 'Tempelkan link video YouTube, Google Drive, Instagram Reels, atau TikTok.';
+        } else if (tipe === 'Drive') {
+          tip.innerText = 'Tempelkan link folder/file Google Drive (pastikan akses: Siapa saja yang memiliki link).';
+        } else {
+          tip.innerText = 'Mendukung tautan apa saja (YouTube, Canva, Formulir, Berita, dokumen, dll).';
+        }
+      }
+    }
+
+    async function handleSaveKonten(e) {
+      e.preventDefault();
+      const id = document.getElementById('fk-id').value;
+      const judul = document.getElementById('fk-judul').value.trim();
+      const bidang = document.getElementById('fk-bidang').value;
+      const tipe = document.getElementById('fk-tipe').value;
+      let url = document.getElementById('fk-url').value.trim();
+      const deskripsi = document.getElementById('fk-deskripsi').value.trim();
+      const btn = document.getElementById('fk-submit-btn');
+
+      if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      const payload = {
+        action: id ? 'updateKonten' : 'addKonten',
+        id: id,
+        judul, bidang, tipe, url, deskripsi,
+        penulis: currentUser ? currentUser.nama : 'Guru BK',
+        fileBase64: selectedFileBase64,
+        fileName: selectedFileName,
+        fileMimeType: selectedFileMime
+      };
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Menyimpan...</span>';
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            showToast('Konten berhasil dipublikasikan!', 'success');
+            if (result.url) url = result.url;
+          }
+        }
+
+        // Sinkronisasi data lokal
+        if (id) {
+          const idx = kontenData.findIndex(k => k.id.toString() === id.toString());
+          if (idx !== -1) {
+            kontenData[idx] = { ...kontenData[idx], judul, bidang, tipe, url: url || kontenData[idx].url, deskripsi };
+          }
+        } else {
+          const newKonten = {
+            id: 'BK_' + Date.now(),
+            judul, bidang, tipe,
+            url: url || '#',
+            deskripsi,
+            tanggal: new Date().toLocaleDateString('id-ID'),
+            penulis: currentUser ? currentUser.nama : 'Guru BK'
+          };
+          kontenData.unshift(newKonten);
+        }
+
+        saveLocalData();
+        renderAdminKontenTable();
+        renderPengumumanSlider();
+        renderKontenCards();
+        closeTambahKontenModal();
+        showToast('Konten berhasil disimpan!', 'success');
+      } catch (err) {
+        showToast('Kesalahan: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i><span>Simpan & Publikasikan Konten</span>';
+      }
+    }
+
+    function editKonten(id) {
+      const item = kontenData.find(k => k.id.toString() === id.toString());
+      if (!item) return;
+
+      document.getElementById('modal-konten-title').innerText = 'Edit Materi / Pengumuman';
+      document.getElementById('fk-id').value = item.id;
+      document.getElementById('fk-judul').value = item.judul;
+      document.getElementById('fk-bidang').value = item.bidang;
+      document.getElementById('fk-tipe').value = item.tipe;
+      document.getElementById('fk-url').value = item.url || '';
+      document.getElementById('fk-deskripsi').value = item.deskripsi || '';
+      switchMetodeSumber('link');
+      handleTipeChange();
+      document.getElementById('modal-konten').classList.remove('hidden');
+    }
+
+    async function deleteKonten(id) {
+      showConfirm('Hapus materi bimbingan ini?', async () => {
+        try {
+          if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+            await fetch(SCRIPT_URL, {
+              method: 'POST',
+              body: JSON.stringify({ action: 'deleteKonten', id: id })
+            });
+          }
+          kontenData = kontenData.filter(k => k.id.toString() !== id.toString());
+          saveLocalData();
+          renderAdminKontenTable();
+          renderPengumumanSlider();
+          renderKontenCards();
+          showToast('Materi berhasil dihapus.', 'info');
+        } catch (e) {
+          showToast('Gagal menghapus materi.', 'error');
+        }
+      });
+    }
+
+    /**
+     * =========================================================================
+     * PENGELOLAAN KONSELING & PEMELIHARAAN SPREADSHEET
+     * =========================================================================
+     */
+    function renderAdminKonselingTable() {
+      const tbody = document.getElementById('table-admin-konseling');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (konselingData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Belum ada permohonan konseling masuk.</td></tr>`;
+        return;
+      }
+
+      konselingData.forEach(item => {
+        const isSelesai = item.status === 'Selesai';
+        const cleanWa = (item.noWa || '').replace(/[^0-9]/g, '');
+        const waLink = cleanWa ? `https://wa.me/${cleanWa.startsWith('0') ? '62' + cleanWa.slice(1) : cleanWa}` : '#';
+
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-slate-50/70 transition-colors ${isSelesai ? 'opacity-60 bg-slate-50/40' : ''}`;
+        tr.innerHTML = `
+          <td class="py-3.5 px-4">
+            <p class="font-bold text-slate-900">${escapeHtml(item.nama)}</p>
+            <p class="text-[10px] text-slate-500 font-semibold">Kelas: ${escapeHtml(item.kelas)}</p>
+          </td>
+          <td class="py-3.5 px-4 font-semibold text-slate-700">${escapeHtml(item.bidang)}</td>
+          <td class="py-3.5 px-4 max-w-xs">
+            <p class="line-clamp-2 text-slate-600 leading-snug">${escapeHtml(item.pesan)}</p>
+          </td>
+          <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">${item.tanggal || '-'}</td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            <select onchange="updateStatusKonseling('${item.id}', this.value)" class="text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-200 focus:outline-none">
+              <option value="Menunggu Respons" ${item.status === 'Menunggu Respons' ? 'selected' : ''}>Menunggu</option>
+              <option value="Terjadwal" ${item.status === 'Terjadwal' ? 'selected' : ''}>Terjadwal</option>
+              <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+            </select>
+          </td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">
+            <div class="flex items-center justify-center space-x-1">
+              ${cleanWa ? `<a href="${waLink}" target="_blank" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50" title="Hubungi Siswa via WhatsApp"><i class="fa-brands fa-whatsapp text-sm"></i></a>` : ''}
+              <button onclick="deleteKonseling('${item.id}')" class="p-2 rounded-lg text-rose-500 hover:bg-rose-50" title="Hapus Data"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function updateStatusKonseling(id, newStatus) {
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'updateStatusKonseling', id: id, status: newStatus })
+          });
+        }
+        const item = konselingData.find(c => c.id.toString() === id.toString());
+        if (item) item.status = newStatus;
+        saveLocalData();
+        renderAdminKonselingTable();
+        showToast('Status konseling diperbarui!', 'success');
+      } catch (err) {
+        showToast('Gagal update status.', 'error');
+      }
+    }
+
+    async function deleteKonseling(id) {
+      showConfirm('Hapus data konseling ini?', async () => {
+        try {
+          if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+            await fetch(SCRIPT_URL, {
+              method: 'POST',
+              body: JSON.stringify({ action: 'deleteKonseling', id: id })
+            });
+          }
+          konselingData = konselingData.filter(c => c.id.toString() !== id.toString());
+          saveLocalData();
+          renderAdminKonselingTable();
+          showToast('Data konseling berhasil dihapus.', 'info');
+        } catch (err) {
+          showToast('Gagal menghapus data.', 'error');
+        }
+      });
+    }
+
+    async function bersihkanDataSelesai() {
+      const selesaiCount = konselingData.filter(c => c.status === 'Selesai').length;
+      if (selesaiCount === 0) {
+        showToast('Tidak ada data berstatus selesai yang perlu dibersihkan.', 'info');
+        return;
+      }
+
+      showConfirm(`Bersihkan ${selesaiCount} data konseling yang sudah 'Selesai'? Tindakan ini membuat database tetap cepat.`, async () => {
+        try {
+          if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+            await fetch(SCRIPT_URL, {
+              method: 'POST',
+              body: JSON.stringify({ action: 'cleanCompletedKonseling' })
+            });
+          }
+          konselingData = konselingData.filter(c => c.status !== 'Selesai');
+          saveLocalData();
+          renderAdminKonselingTable();
+          showToast(`Berhasil membersihkan ${selesaiCount} data selesai!`, 'success');
+        } catch (e) {
+          showToast('Gagal membersihkan database.', 'error');
+        }
+      });
+    }
+
+    function bukaSpreadsheet() {
+      if (spreadsheetUrl) {
+        window.open(spreadsheetUrl, '_blank');
+      } else {
+        window.open('https://docs.google.com/spreadsheets', '_blank');
+      }
+    }
+
+    function openMaintenanceModal() {
+      document.getElementById('modal-maintenance').classList.remove('hidden');
+    }
+    function closeMaintenanceModal() {
+      document.getElementById('modal-maintenance').classList.add('hidden');
+    }
+
+    /**
+     * =========================================================================
+     * PROFIL GURU BK & PEMULIHAN OTP
+     * =========================================================================
+     */
+    function openEditProfilModal() {
+      if (!currentUser) return;
+      document.getElementById('prof-nama').value = currentUser.nama || '';
+      document.getElementById('prof-jabatan').value = currentUser.jabatan || '';
+      
+      const nipRaw = currentUser.nip || '';
+      if (nipRaw.startsWith('NUPTK:')) {
+        document.getElementById('prof-id-type').value = 'NUPTK';
+        document.getElementById('prof-nip-val').value = nipRaw.replace('NUPTK:', '').trim();
+      } else {
+        document.getElementById('prof-id-type').value = 'NIP';
+        document.getElementById('prof-nip-val').value = nipRaw.replace('NIP:', '').trim();
+      }
+
+      document.getElementById('prof-email').value = currentUser.email || '';
+      document.getElementById('prof-username').value = '';
+      document.getElementById('prof-password').value = '';
+      document.getElementById('modal-profil').classList.remove('hidden');
+    }
+
+    function closeEditProfilModal() {
+      document.getElementById('modal-profil').classList.add('hidden');
+    }
+
+    async function handleSaveProfil(e) {
+      e.preventDefault();
+      const nama = document.getElementById('prof-nama').value.trim();
+      const jabatan = document.getElementById('prof-jabatan').value.trim();
+      const idType = document.getElementById('prof-id-type').value;
+      const nipVal = document.getElementById('prof-nip-val').value.trim();
+      const fullNip = nipVal ? `${idType}: ${nipVal}` : '-';
+      const email = document.getElementById('prof-email').value.trim();
+      const newUsername = document.getElementById('prof-username').value.trim();
+      const newPassword = document.getElementById('prof-password').value.trim();
+
+      const payload = {
+        action: 'updateProfile',
+        currentUsername: currentUser.username,
+        nama, jabatan, nip: fullNip, email,
+        newUsername: newUsername || undefined,
+        newPassword: newPassword || undefined
+      };
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            currentUser = result.profile;
+          }
+        } else {
+          currentUser.nama = nama;
+          currentUser.jabatan = jabatan;
+          currentUser.nip = fullNip;
+          currentUser.email = email;
+          if (newUsername) currentUser.username = newUsername;
+        }
+
+        displayAdminDashboard();
+        closeEditProfilModal();
+        showToast('Profil Guru BK berhasil diperbarui!', 'success');
+      } catch (err) {
+        showToast('Gagal update profil: ' + err.toString(), 'error');
+      }
+    }
+
+    function openForgotPasswordModal() {
+      document.getElementById('forgot-step-1').classList.remove('hidden');
+      document.getElementById('forgot-step-2').classList.add('hidden');
+      document.getElementById('modal-forgot').classList.remove('hidden');
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById('modal-forgot').classList.add('hidden');
+    }
+
+    let forgotTargetIdentifier = '';
+
+    async function handleKirimOtp(e) {
+      e.preventDefault();
+      const idf = document.getElementById('forgot-identifier').value.trim();
+      const btn = document.getElementById('btn-kirim-otp');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Mengirim OTP...</span>';
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'requestOtp', identifier: idf })
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            forgotTargetIdentifier = idf;
+            document.getElementById('forgot-step-1').classList.add('hidden');
+            document.getElementById('forgot-step-2').classList.remove('hidden');
+            showToast(result.message, 'success');
+          } else {
+            showToast(result.message || 'Akun tidak ditemukan.', 'error');
+          }
+        } else {
+          // Demo OTP
+          forgotTargetIdentifier = idf;
+          document.getElementById('forgot-step-1').classList.add('hidden');
+          document.getElementById('forgot-step-2').classList.remove('hidden');
+          showToast('Kode OTP percontohan: 123456', 'info');
+        }
+      } catch (err) {
+        showToast('Gagal mengirim OTP: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i><span>Kirim Kode OTP</span>';
+      }
+    }
+
+    async function handleVerifikasiOtpReset(e) {
+      e.preventDefault();
+      const otp = document.getElementById('forgot-otp').value.trim();
+      const newPass = document.getElementById('forgot-new-password').value.trim();
+      const btn = document.getElementById('btn-reset-pass');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Menyimpan...</span>';
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'resetPasswordOtp',
+              identifier: forgotTargetIdentifier,
+              otp: otp,
+              newPassword: newPass
+            })
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            closeForgotPasswordModal();
+            showToast('Kata sandi berhasil diubah! Silakan login.', 'success');
+          } else {
+            showToast(result.message || 'OTP tidak valid.', 'error');
+          }
+        } else {
+          closeForgotPasswordModal();
+          showToast('Kata sandi berhasil diperbarui!', 'success');
+        }
+      } catch (err) {
+        showToast('Kesalahan reset: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check-double"></i><span>Simpan Kata Sandi Baru</span>';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * KUSTOMISASI TAMPILAN & TEMA WEBSITE
+     * =========================================================================
+     */
+    function toggleLogoConfigType() {
+      const type = document.getElementById('cfg-logo-type').value;
+      document.getElementById('cfg-logo-icon-box').classList.toggle('hidden', type !== 'icon');
+      document.getElementById('cfg-logo-upload-box').classList.toggle('hidden', type !== 'upload');
+      document.getElementById('cfg-logo-url-box').classList.toggle('hidden', type !== 'url');
+    }
+
+    function toggleHeroBgType() {
+      const type = document.getElementById('cfg-hero-bgtype').value;
+      document.getElementById('cfg-hero-upload-box').classList.toggle('hidden', type !== 'upload');
+      document.getElementById('cfg-hero-url-box').classList.toggle('hidden', type !== 'url');
+    }
+
+    function updateHeroOverlay(val) {
+      const overlay = document.getElementById('hero-bg-overlay');
+      if (overlay) {
+        overlay.style.backgroundColor = `rgba(12, 35, 64, ${val / 100})`;
+      }
+    }
+
+    function applyPalettePreset(primary, dark, accent) {
+      document.getElementById('cfg-color-primary').value = primary;
+      document.getElementById('cfg-hex-primary').value = primary;
+      document.getElementById('cfg-color-dark').value = dark;
+      document.getElementById('cfg-hex-dark').value = dark;
+      document.getElementById('cfg-color-accent').value = accent;
+      document.getElementById('cfg-hex-accent').value = accent;
+      applyDynamicColors(primary, dark, accent);
+    }
+
+    function applyDynamicColors(primary, dark, accent) {
+      document.documentElement.style.setProperty('--color-primary', primary);
+      document.documentElement.style.setProperty('--color-dark', dark);
+      document.documentElement.style.setProperty('--color-accent', accent);
+    }
+
+    function applySiteSettings(st) {
+      if (!st) return;
+      siteSettings = { ...siteSettings, ...st };
+
+      // Logo
+      const logoIcon = document.getElementById('nav-logo-icon');
+      const logoImg = document.getElementById('nav-logo-img');
+      if (siteSettings.logoType === 'icon' || !siteSettings.logoUrl) {
+        if (logoImg) logoImg.classList.add('hidden');
+        if (logoIcon) {
+          logoIcon.className = `fa-solid ${siteSettings.logoIcon || 'fa-graduation-cap'} text-xl`;
+          logoIcon.classList.remove('hidden');
+        }
+      } else {
+        if (logoIcon) logoIcon.classList.add('hidden');
+        if (logoImg) {
+          logoImg.src = siteSettings.logoUrl;
+          logoImg.classList.remove('hidden');
+        }
+      }
+
+      // Teks Hero
+      if (siteSettings.heroBadge) document.getElementById('hero-text-badge').innerText = siteSettings.heroBadge;
+      if (siteSettings.heroTitle) document.getElementById('hero-text-title').innerText = siteSettings.heroTitle;
+      if (siteSettings.heroTitleHighlight) document.getElementById('hero-text-highlight').innerText = siteSettings.heroTitleHighlight;
+      if (siteSettings.heroCaption) document.getElementById('hero-text-caption').innerText = siteSettings.heroCaption;
+
+      // Hero Background & Overlay
+      const heroContainer = document.getElementById('hero-banner-container');
+      const heroOverlay = document.getElementById('hero-bg-overlay');
+      if (siteSettings.heroBgType !== 'pattern' && siteSettings.heroBgUrl) {
+        heroContainer.style.backgroundImage = `url('${siteSettings.heroBgUrl}')`;
+        heroContainer.style.backgroundSize = 'cover';
+        heroContainer.style.backgroundPosition = 'center';
+      }
+
+      if (siteSettings.heroBgOverlay && heroOverlay) {
+        updateHeroOverlay(siteSettings.heroBgOverlay);
+      }
+
+      // Warna
+      if (siteSettings.colorPrimary && siteSettings.colorDark) {
+        applyDynamicColors(siteSettings.colorPrimary, siteSettings.colorDark, siteSettings.colorAccent || '#f59e0b');
+      }
+    }
+
+    async function handleSaveSettings(e) {
+      e.preventDefault();
+      const btn = document.getElementById('cfg-save-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Menyimpan Pengaturan...</span>';
+
+      const newSt = {
+        logoType: document.getElementById('cfg-logo-type').value,
+        logoIcon: document.getElementById('cfg-logo-icon').value,
+        logoUrl: document.getElementById('cfg-logo-url').value.trim(),
+        heroBadge: document.getElementById('cfg-hero-badge').value.trim(),
+        heroTitle: document.getElementById('cfg-hero-title').value.trim(),
+        heroTitleHighlight: document.getElementById('cfg-hero-highlight').value.trim(),
+        heroCaption: document.getElementById('cfg-hero-caption').value.trim(),
+        heroBgType: document.getElementById('cfg-hero-bgtype').value,
+        heroBgUrl: document.getElementById('cfg-hero-url').value.trim(),
+        heroBgOverlay: document.getElementById('cfg-hero-overlay').value,
+        colorPrimary: document.getElementById('cfg-hex-primary').value.trim(),
+        colorDark: document.getElementById('cfg-hex-dark').value.trim(),
+        colorAccent: document.getElementById('cfg-hex-accent').value.trim()
+      };
+
+      try {
+        if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'updateSettings', ...newSt })
+          });
+        }
+        applySiteSettings(newSt);
+        localStorage.setItem('ebk_settings', JSON.stringify(newSt));
+        showToast('Tampilan dan warna website berhasil diperbarui!', 'success');
+      } catch (err) {
+        showToast('Gagal menyimpan tema: ' + err.toString(), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i><span>Simpan Perubahan Tampilan & Tema</span>';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * UTILITAS PEMBANTU & INISIALISASI APLIKASI
+     * =========================================================================
+     */
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      let bg = 'bg-slate-900 text-white';
+      let icon = 'fa-circle-info text-sky-400';
+      if (type === 'success') {
+        bg = 'bg-emerald-950 text-white border-emerald-800';
+        icon = 'fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        bg = 'bg-rose-950 text-white border-rose-800';
+        icon = 'fa-circle-exclamation text-rose-400';
+      }
+
+      toast.className = `${bg} pointer-events-auto border px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-xs max-w-sm transition-all duration-300 transform translate-y-3 opacity-0`;
+      toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span class="flex-1 font-medium">${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      }, 20);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function showConfirm(msg, onConfirm) {
+      const res = window.confirm(msg);
+      if (res && onConfirm) onConfirm();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function checkTimeRangeMatch(tglStr, filterType) {
+      try {
+        const parts = tglStr.split('/');
+        let dateObj;
+        if (parts.length === 3) {
+          dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+        } else {
+          dateObj = new Date(tglStr);
+        }
+        if (isNaN(dateObj.getTime())) return true;
+
+        const diffTime = Math.abs(new Date() - dateObj);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (filterType === 'harian') return diffDays <= 1;
+        if (filterType === 'mingguan') return diffDays <= 7;
+        if (filterType === 'bulanan') return diffDays <= 30;
+        if (filterType === 'tahunan') return diffDays <= 365;
+        return true;
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function formatDateMatch(tglStr, isoDate) {
+      if (!tglStr || !isoDate) return false;
+      const [year, month, day] = isoDate.split('-');
+      const targetA = `${parseInt(day)}/${parseInt(month)}/${year}`;
+      const targetB = `${day}/${month}/${year}`;
+      return tglStr.includes(targetA) || tglStr.includes(targetB) || tglStr.includes(isoDate);
+    }
+
+    function saveLocalData() {
+      localStorage.setItem('ebk_konten', JSON.stringify(kontenData));
+      localStorage.setItem('ebk_konseling', JSON.stringify(konselingData));
+    }
+
+    async function loadInitialData() {
+      // 1. Muat Cache Pengaturan Tampilan
+      const cachedSt = localStorage.getItem('ebk_settings');
+      if (cachedSt) {
+        try { applySiteSettings(JSON.parse(cachedSt)); } catch (e) {}
+      }
+
+      // 2. Muat Cache Konten & Konseling
+      const localKonten = localStorage.getItem('ebk_konten');
+      if (localKonten) {
+        try { kontenData = JSON.parse(localKonten); } catch (e) {}
+      }
+      const localKonseling = localStorage.getItem('ebk_konseling');
+      if (localKonseling) {
+        try { konselingData = JSON.parse(localKonseling); } catch (e) {}
+      }
+
+      // 3. Render Tampilan Awal
+      renderPengumumanSlider();
+      renderKontenCards();
+
+      // 4. Sinkronisasi Data Publik dari Apps Script jika URL sudah diisi
+      if (SCRIPT_URL && SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI") {
+        try {
+          const res = await fetch(`${SCRIPT_URL}?action=getPublicData`);
+          const result = await res.json();
+          if (result.status === 'success') {
+            if (result.data) {
+              kontenData = result.data;
+              saveLocalData();
+              renderPengumumanSlider();
+              renderKontenCards();
+            }
+            if (result.settings) {
+              applySiteSettings(result.settings);
+              localStorage.setItem('ebk_settings', JSON.stringify(result.settings));
+            }
+          }
+        } catch (err) {
+          console.log("Koneksi offline atau skrip belum diterapkan:", err);
+        }
+      }
+    }
+
+    async function loadAdminData(token) {
+      displayAdminDashboard();
+      if (SCRIPT_URL && SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbw15Z7OzT_aF0dlcQh7xxrovzIgtJdqPi-LrImRwJ23IZENCtvWu-AJ6eJeqXol28llgQ/exec") {
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'getAdminData', token: token })
+          });
+          const result = await res.json();
+          if (result.status === 'success') {
+            if (result.konten) kontenData = result.konten;
+            if (result.konseling) konselingData = result.konseling;
+            if (result.spreadsheetUrl) spreadsheetUrl = result.spreadsheetUrl;
+            if (result.settings) applySiteSettings(result.settings);
+            saveLocalData();
+            renderAdminKontenTable();
+            renderAdminKonselingTable();
+            renderPengumumanSlider();
+            renderKontenCards();
+          }
+        } catch (err) {
+          console.error("Gagal mengambil data admin:", err);
+        }
+      }
+    }
+
+    // Jalankan inisialisasi saat window dimuat
+    window.addEventListener('DOMContentLoaded', () => {
+      loadInitialData();
+    });
+  </script>
+</body>
+</html>
