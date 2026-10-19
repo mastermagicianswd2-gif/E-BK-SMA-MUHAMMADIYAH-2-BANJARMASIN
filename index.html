@@ -1119,7 +1119,7 @@
      * Masukkan URL Web App Google Apps Script Anda (berakhiran /exec) di bawah ini
      * sebelum Anda melakukan commit / push file ini ke repository GitHub:
      */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznrysCLwiFiWXwhjIg13BGWUxg4bLfCu1wrOw6k1rniFE_bNi-osPDTxDRUQeSUihN/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgg5AZleCojzwqk6pyMzdtCR64Ytug3xDw4mHJI-B_HVoFFqbdlBkBdmZSk4YBSsRkOw/exec";
 
     // State Akun Lokal Cadangan (Aktif jika SCRIPT_URL belum dimasukkan)
     let localAdminAccount = {
@@ -1635,6 +1635,12 @@
         title.innerText = 'Mode Mandiri (Offline)';
         title.className = 'font-bold text-amber-700';
         desc.innerText = message || 'Atur SCRIPT_URL di file index.html di GitHub untuk sinkronisasi';
+        // Alasan kegagalan ditampilkan penuh (tidak dipotong satu baris)
+        desc.className = 'text-[10px] text-slate-500 whitespace-normal break-words leading-snug';
+        let up = desc.parentElement;
+        for (let i = 0; i < 2 && up; i++) { up.classList.remove('truncate'); up = up.parentElement; }
+        const card = document.getElementById('connection-status-card');
+        if (card) card.classList.remove('items-center');
       }
     }
 
@@ -3984,6 +3990,25 @@
       localStorage.setItem('ebk_konseling', JSON.stringify(konselingData));
     }
 
+    // Menebak penyebab saat Apps Script tidak menjawab dengan JSON yang benar
+    function classifyBackendResponse(txt, httpStatus) {
+      const t = String(txt || '');
+      if (/accounts\.google\.com|ServiceLogin|Sign in|Masuk\b/i.test(t) && /<html/i.test(t)) {
+        return 'Akses deploy bukan "Siapa saja": halaman login Google yang dikembalikan. Deploy > Manage deployments > Edit > Who has access: Anyone > Deploy.';
+      }
+      if (/Authorization is required|authorization|Otorisasi|izin yang diperlukan/i.test(t)) {
+        return 'Izin Apps Script belum disetujui. Di editor jalankan fungsi apa saja (mis. BUAT_DATABASE_SEKARANG), setujui izin, lalu Deploy > New version.';
+      }
+      if (/Script function not found|doGet/i.test(t) && /not found|tidak ditemukan/i.test(t)) {
+        return 'Fungsi doGet tidak ditemukan: kode backend belum tersimpan atau belum di-deploy sebagai versi baru.';
+      }
+      if (/unable to open the file|tidak dapat dibuka|Halaman Tidak Ditemukan|Page Not Found|404/i.test(t)) {
+        return 'Link Apps Script tidak ditemukan: URL salah atau deployment sudah dihapus. Salin ulang Web app URL (berakhiran /exec).';
+      }
+      const plain = t.replace(/<style[\s\S]*?<\/style>|<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
+      return 'Jawaban server bukan data yang valid (HTTP ' + httpStatus + '): ' + (plain || 'kosong');
+    }
+
     async function loadInitialData() {
       // Set batas minimal tanggal konseling siswa ke hari ini
       const jadwalTglInput = document.getElementById('cs-jadwal-tgl');
@@ -4028,8 +4053,13 @@
       if (isBackendConnected()) {
         try {
           const res = await fetch(`${SCRIPT_URL}?action=getPublicData`, { redirect: 'follow' });
-          const result = await res.json();
-          if (result.status === 'success') {
+          const rawText = await res.text();
+          let result = null;
+          try { result = JSON.parse(rawText); } catch (pe) { result = null; }
+          if (!result) {
+            console.warn('Jawaban Apps Script bukan JSON:', rawText.slice(0, 300));
+            updateConnectionStatusUI(false, classifyBackendResponse(rawText, res.status));
+          } else if (result.status === 'success') {
             updateConnectionStatusUI(true, 'Sinkron dengan Google Sheets');
             if (result.data) {
               kontenData = result.data;
@@ -4046,7 +4076,7 @@
           }
         } catch (err) {
           console.log("Koneksi Apps Script terputus:", err);
-          updateConnectionStatusUI(false, 'Link terpasang tetapi tidak bisa dibaca (' + (err && err.name ? err.name : 'error') + '). Pastikan deploy Apps Script: akses "Siapa saja" dan URL berakhiran /exec.');
+          updateConnectionStatusUI(false, 'Browser tidak dapat menjangkau Apps Script (' + (err && err.message ? err.message : 'error') + '). Periksa: link berakhiran /exec, deploy "Siapa saja", dan koneksi/ekstensi pemblokir iklan.');
         }
 
         // Jika Guru BK sedang dalam kondisi login, tarik data admin lengkap
