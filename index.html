@@ -829,7 +829,7 @@
 
       <!-- Kotak Pemutar Video Terpadu -->
       <div id="preview-video-container" class="aspect-video w-full rounded-2xl overflow-hidden bg-black relative flex items-center justify-center shadow-inner hidden">
-        <iframe id="preview-iframe" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <iframe id="preview-iframe" class="w-full h-full border-0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>
       </div>
 
       <!-- Kotak Tautan Berkas Dokumen Eksternal -->
@@ -1119,7 +1119,7 @@
      * Masukkan URL Web App Google Apps Script Anda (berakhiran /exec) di bawah ini
      * sebelum Anda melakukan commit / push file ini ke repository GitHub:
      */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgg5AZleCojzwqk6pyMzdtCR64Ytug3xDw4mHJI-B_HVoFFqbdlBkBdmZSk4YBSsRkOw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw15Z7OzT_aF0dlcQh7xxrovzIgtJdqPi-LrImRwJ23IZENCtvWu-AJ6eJeqXol28llgQ/exec";
 
     // State Akun Lokal Cadangan (Aktif jika SCRIPT_URL belum dimasukkan)
     let localAdminAccount = {
@@ -1613,7 +1613,7 @@
     function isBackendConnected() {
       return Boolean(
         SCRIPT_URL &&
-        SCRIPT_URL !== "MASUKKAN_URL_WEB_APP_APPS_SCRIPT_DISINI" &&
+        SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbzgg5AZleCojzwqk6pyMzdtCR64Ytug3xDw4mHJI-B_HVoFFqbdlBkBdmZSk4YBSsRkOw/exec" &&
         SCRIPT_URL.startsWith('https://script.google.com')
       );
     }
@@ -2126,7 +2126,7 @@
         </g>
       </svg>`;
 
-      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg).replace(/'/g, '%27');
     }
 
     // Thumbnail YouTube 16:9 penuh (tanpa pita hitam), sama seperti thumbnail asli di YouTube
@@ -3032,7 +3032,7 @@
         fileBase64: selectedFileBase64,
         fileName: selectedFileName,
         fileMimeType: selectedFileMime,
-        thumbnail: effectiveThumb,
+        thumbnail: (effectiveThumb && effectiveThumb.startsWith('data:')) ? '' : effectiveThumb,
         thumbnailBase64: thumbToUpload,
         thumbnailName: selectedThumbName || ('sampul_' + Date.now() + '.jpg'),
         thumbnailMime: selectedThumbMime || 'image/jpeg'
@@ -3043,6 +3043,7 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Menyimpan...</span>';
       }
 
+      let serverNewId = null;
       try {
         if (isBackendConnected()) {
           const res = await fetch(SCRIPT_URL, {
@@ -3051,11 +3052,18 @@
             body: JSON.stringify(payload),
             redirect: 'follow'
           });
-          const result = await res.json();
-          if (result.status === 'success') {
-            if (result.url) url = result.url;
-            if (result.thumbnail) effectiveThumb = result.thumbnail;
+          const rawText = await res.text();
+          let result = null;
+          try { result = JSON.parse(rawText); } catch (pe) { result = null; }
+          if (!result) {
+            throw new Error(classifyBackendResponse(rawText, res.status));
           }
+          if (result.status !== 'success') {
+            throw new Error(result.message || 'Server menolak penyimpanan konten.');
+          }
+          if (result.url) url = result.url;
+          if (result.thumbnail) effectiveThumb = result.thumbnail;
+          if (result.id && !id) serverNewId = result.id;
         }
 
         if (id) {
@@ -3072,7 +3080,7 @@
           }
         } else {
           const newKonten = {
-            id: 'BK_' + Date.now(),
+            id: serverNewId || ('BK_' + Date.now()),
             judul, bidang, tipe,
             url: url || '#',
             deskripsi,
@@ -3091,7 +3099,8 @@
         closeTambahKontenModal();
         showToast('Konten berhasil disimpan & diperbarui!', 'success');
       } catch (err) {
-        showToast('Kesalahan saat menyimpan: ' + err.toString(), 'error');
+        showToast('Konten TIDAK tersimpan ke Spreadsheet: ' + (err && err.message ? err.message : err.toString()), 'error');
+        console.error('Gagal menyimpan konten:', err);
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -3916,7 +3925,7 @@
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-3');
         setTimeout(() => toast.remove(), 300);
-      }, 3500);
+      }, type === 'error' || msg.length > 90 ? 9000 : 3500);
     }
 
     let confirmCallback = null;
