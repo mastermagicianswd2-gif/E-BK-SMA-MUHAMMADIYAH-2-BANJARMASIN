@@ -689,6 +689,10 @@
               <span>Buat Folder Baru</span>
             </button>
           </div>
+          <div id="asm-outdated-banner" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-800 leading-relaxed">
+            <strong>Apps Script masih memakai Kode.gs versi lama</strong>, sehingga assesmen belum bisa tersimpan ke Spreadsheet.
+            Ganti isi Kode.gs dengan versi terbaru, lalu <em>Deploy &gt; Manage deployments &gt; Edit &gt; Version: New version &gt; Deploy</em>.
+          </div>
           <div id="admin-assesmen-list" class="space-y-4"></div>
         </div>
 
@@ -1217,6 +1221,8 @@
     let konselingData = [];
     let assesmenData = [];
     let assesmenOpen = {};
+    let serverOutdated = false;      // true bila Apps Script masih memakai Kode.gs lama
+    let serverDbName = '';
     let currentUser = null;
     let spreadsheetUrl = "https://docs.google.com/spreadsheets";
 
@@ -3316,6 +3322,8 @@
     function renderAssesmenAdmin() {
       const box = document.getElementById('admin-assesmen-list');
       if (!box) return;
+      const banner = document.getElementById('asm-outdated-banner');
+      if (banner) banner.classList.toggle('hidden', !(isBackendConnected() && serverOutdated));
       const folders = getAssesmenFolders();
 
       if (folders.length === 0) {
@@ -4419,7 +4427,12 @@
             console.warn('Jawaban Apps Script bukan JSON:', rawText.slice(0, 300));
             updateConnectionStatusUI(false, classifyBackendResponse(rawText, res.status));
           } else if (result.status === 'success') {
-            updateConnectionStatusUI(true, 'Sinkron dengan Google Sheets');
+            serverOutdated = !result.version;
+            serverDbName = result.spreadsheetName || '';
+            updateConnectionStatusUI(true, serverOutdated
+              ? 'Terhubung, tetapi Kode.gs di Apps Script masih versi lama. Perbarui lalu Deploy > New version.'
+              : 'Sinkron dengan Google Sheets' + (serverDbName ? ': ' + serverDbName : ''));
+            if (result.spreadsheetUrl) spreadsheetUrl = result.spreadsheetUrl;
             if (result.data) {
               kontenData = result.data;
               saveLocalData();
