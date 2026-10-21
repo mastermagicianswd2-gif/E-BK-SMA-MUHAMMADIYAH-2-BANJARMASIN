@@ -412,7 +412,7 @@
         </div>
         <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Ruang Cerita & Konseling Siswa</h2>
         <p class="text-slate-500 text-xs sm:text-sm max-w-lg mx-auto">
-          Setiap pesan yang kamu kirimkan hanya akan dibaca dan ditindaklanjuti oleh Guru BK SMA Muhammadiyah 2 Banjarmasin secara tertutup.
+          Isi formulir di bawah ini untuk menyampaikan cerita, permasalahan, atau permintaan konseling kepada Guru BK.
         </p>
       </div>
 
@@ -1218,7 +1218,7 @@
           label: appTarget === 'TikTok' ? 'Buka di TikTok' : (appTarget === 'Instagram' ? 'Buka di Instagram' : 'Putar Video'),
           icon: appTarget ? 'fa-solid fa-arrow-up-right-from-square' : 'fa-solid fa-play',
           badgeLabel: vInfo ? vInfo.label : 'Video',
-          badgeIcon: vInfo ? vInfo.icon : 'fa-solid fa-play',
+          badgeIcon: vInfo ? vInfo.icon : 'fa-solid fa-video',
           badgeClass: vInfo ? `${vInfo.badgeBg} text-white` : 'bg-red-600 text-white',
           btnClass: 'bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 hover:border-red-600',
           isPlayable: true
@@ -2242,13 +2242,6 @@
                   <span>${escapeHtml(item.tipe || 'Materi')}</span>
                 </span>
               </div>
-              ${btnConfig.isPlayable ? `
-                <div class="absolute inset-0 flex items-center justify-center bg-black/25">
-                  <div class="w-9 h-9 rounded-full bg-white/90 text-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-play text-xs ml-0.5"></i>
-                  </div>
-                </div>
-              ` : ''}
             </div>
             <div class="p-4 space-y-2">
               <div class="flex items-center justify-between text-[10px] text-slate-400">
