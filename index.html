@@ -106,10 +106,6 @@
             <i class="fa-solid fa-book-open text-xs"></i>
             <span>Pusat Materi</span>
           </button>
-          <button onclick="showTab('assesmen')" id="btn-nav-assesmen" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
-            <i class="fa-solid fa-clipboard-list text-xs"></i>
-            <span>Assesmen</span>
-          </button>
           <button onclick="showTab('konseling')" id="btn-nav-konseling" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-comments text-xs"></i>
             <span>Konseling</span>
@@ -142,10 +138,6 @@
       <button id="mbtn-nav-materi" onclick="showTab('materi'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
         <i class="fa-solid fa-book-open w-5 text-center"></i>
         <span>Pusat Materi</span>
-      </button>
-      <button id="mbtn-nav-assesmen" onclick="showTab('assesmen'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
-        <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
-        <span>Assesmen</span>
       </button>
       <button id="mbtn-nav-konseling" onclick="showTab('konseling'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
         <i class="fa-solid fa-comments w-5 text-center"></i>
@@ -385,7 +377,7 @@
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pusat Sumber Belajar</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Pusat Informasi dan Edukasi</h2>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Materi & Media Edukasi BK</h2>
           <p class="text-slate-500 text-sm mt-1">Video edukatif, panduan karir, modul belajar, infografis, dan dokumen resmi BK.</p>
         </div>
 
@@ -410,21 +402,6 @@
       <div id="materi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Kartu materi akan dirender dinamis via JavaScript -->
       </div>
-    </section>
-
-    <section id="tab-assesmen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Instrumen & Angket</span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Assesmen BK</h2>
-          <p class="text-slate-500 text-sm mt-1">Kumpulan assesmen yang dikelompokkan dalam folder. Pilih folder, lalu buka tautan assesmen yang tersedia.</p>
-        </div>
-        <div class="relative w-full md:w-72">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-          <input type="text" id="assesmen-search-input" oninput="renderAssesmenPublic()" placeholder="Cari assesmen..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
-        </div>
-      </div>
-      <div id="assesmen-public-list" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </section>
 
     <section id="tab-konseling" class="hidden max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
@@ -581,7 +558,7 @@
         </div>
 
         <!-- Tab Navigasi Dasbor Admin -->
-        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
+        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3">
           <button onclick="switchAdminTab('konten')" id="admin-tab-btn-konten" class="px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-layer-group"></i>
             <span>Kelola Materi & Pengumuman</span>
@@ -594,10 +571,6 @@
           <button onclick="switchAdminTab('tema')" id="admin-tab-btn-tema" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-palette"></i>
             <span>Kustomisasi Tampilan & Tema</span>
-          </button>
-          <button onclick="switchAdminTab('assesmen')" id="admin-tab-btn-assesmen" class="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span>Kelola Assesmen</span>
           </button>
         </div>
 
@@ -677,25 +650,6 @@
         </div>
 
         <!-- Sub-Tab C: Kustomisasi Tampilan & Tema -->
-        <!-- Sub-Tab: Kelola Assesmen -->
-        <div id="admin-subtab-assesmen" class="hidden space-y-4">
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <h3 class="text-base font-bold text-slate-900">Kelola Assesmen</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Buat folder assesmen, lalu tambahkan tautan assesmen di dalamnya.</p>
-            </div>
-            <button onclick="openAssesmenModal('Folder')" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center space-x-2">
-              <i class="fa-solid fa-folder-plus"></i>
-              <span>Buat Folder Baru</span>
-            </button>
-          </div>
-          <div id="asm-outdated-banner" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-800 leading-relaxed">
-            <strong>Apps Script masih memakai Kode.gs versi lama</strong>, sehingga assesmen belum bisa tersimpan ke Spreadsheet.
-            Ganti isi Kode.gs dengan versi terbaru, lalu <em>Deploy &gt; Manage deployments &gt; Edit &gt; Version: New version &gt; Deploy</em>.
-          </div>
-          <div id="admin-assesmen-list" class="space-y-4"></div>
-        </div>
-
         <div id="admin-subtab-tema" class="hidden space-y-6">
           <form onsubmit="handleSaveSettings(event)" class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
             <div>
@@ -1127,40 +1081,6 @@
   </div>
 
   <!-- Modal Konfirmasi Tindakan Kustom (Bebas dari window.confirm / alert) -->
-  <div id="modal-assesmen" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto">
-      <button type="button" onclick="closeAssesmenModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center" title="Tutup"><i class="fa-solid fa-xmark"></i></button>
-      <div class="flex items-center space-x-3 pr-8">
-        <div id="asm-modal-icon" class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-folder"></i></div>
-        <h3 id="asm-modal-title" class="text-base font-bold text-slate-900">Buat Folder Baru</h3>
-      </div>
-      <form id="form-assesmen" onsubmit="handleSaveAssesmen(event)" class="space-y-4">
-        <input type="hidden" id="asm-id">
-        <input type="hidden" id="asm-tipe">
-        <div id="asm-folder-wrap" class="hidden space-y-1.5">
-          <label class="block text-xs font-bold text-slate-600">Folder</label>
-          <select id="asm-folder" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"></select>
-        </div>
-        <div class="space-y-1.5">
-          <label id="asm-judul-label" class="block text-xs font-bold text-slate-600">Nama Folder</label>
-          <input type="text" id="asm-judul" required maxlength="150" placeholder="Contoh: Asesmen Minat & Bakat" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
-        </div>
-        <div id="asm-url-wrap" class="hidden space-y-1.5">
-          <label class="block text-xs font-bold text-slate-600">Link Assesmen</label>
-          <input type="text" id="asm-url" placeholder="https://forms.gle/..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
-        </div>
-        <div class="space-y-1.5">
-          <label class="block text-xs font-bold text-slate-600">Keterangan <span class="font-normal text-slate-400">(opsional)</span></label>
-          <textarea id="asm-deskripsi" rows="3" maxlength="400" placeholder="Keterangan singkat" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"></textarea>
-        </div>
-        <button type="submit" id="asm-save-btn" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
-          <i class="fa-solid fa-floppy-disk"></i>
-          <span>Simpan</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
   <div id="modal-confirm" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center">
       <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl mx-auto">
@@ -1219,10 +1139,6 @@
     // State Aplikasi
     let kontenData = [];
     let konselingData = [];
-    let assesmenData = [];
-    let assesmenOpen = {};
-    let serverOutdated = false;      // true bila Apps Script masih memakai Kode.gs lama
-    let serverDbName = '';
     let currentUser = null;
     let spreadsheetUrl = "https://docs.google.com/spreadsheets";
 
@@ -1697,7 +1613,7 @@
     function isBackendConnected() {
       return Boolean(
         SCRIPT_URL &&
-        SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxJ7Gog5Y3P9nwPT-LGpZ-G0DhepV-HvkWlD81g6GSPhqUhkTFIvK4e130MR15YGAsg2w/exec" &&
+        SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbwwPhQiLiYgjuOPrQcLp_VU9yZswdQP4AxKu1_nCB3sSSKoaju2kIBr7Qu1ZWkgNq1j/exec" &&
         SCRIPT_URL.startsWith('https://script.google.com')
       );
     }
@@ -1729,7 +1645,7 @@
     }
 
     function showTab(tabName) {
-      const tabs = ['beranda', 'layanan', 'materi', 'assesmen', 'konseling', 'admin'];
+      const tabs = ['beranda', 'layanan', 'materi', 'konseling', 'admin'];
       tabs.forEach(t => {
         const sec = document.getElementById(`tab-${t}`);
         if (sec) sec.classList.add('hidden');
@@ -1769,8 +1685,6 @@
           targetBtn.className = 'px-3.5 py-2 rounded-xl text-sm font-semibold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
         }
       }
-
-      if (tabName === 'assesmen') renderAssesmenPublic();
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -2781,22 +2695,20 @@
     }
 
     function switchAdminTab(subTab) {
-      const tabs = ['konten', 'konseling', 'tema', 'assesmen'];
+      const tabs = ['konten', 'konseling', 'tema'];
       tabs.forEach(t => {
         document.getElementById(`admin-subtab-${t}`).classList.add('hidden');
-        document.getElementById(`admin-tab-btn-${t}`).className = 'shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2';
+        document.getElementById(`admin-tab-btn-${t}`).className = 'px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2';
       });
 
       document.getElementById(`admin-subtab-${subTab}`).classList.remove('hidden');
-      document.getElementById(`admin-tab-btn-${subTab}`).className = 'shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
+      document.getElementById(`admin-tab-btn-${subTab}`).className = 'px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
 
       if (subTab === 'konseling') {
         renderAdminKonselingTable();
         updateKonselingBadge();
       } else if (subTab === 'konten') {
         renderAdminKontenTable();
-      } else if (subTab === 'assesmen') {
-        renderAssesmenAdmin();
       }
     }
 
@@ -3228,279 +3140,6 @@
       handleTipeChange();
       document.getElementById('modal-konten').classList.remove('hidden');
     }
-
-
-    /* ===================== ASSESMEN (folder + tautan) ===================== */
-    function saveAssesmenLocal() {
-      try { localStorage.setItem('ebk_assesmen', JSON.stringify(assesmenData)); } catch (e) {}
-    }
-
-    function getAssesmenFolders() {
-      return assesmenData.filter(x => x.tipe === 'Folder');
-    }
-
-    function getAssesmenLinks(folderId) {
-      return assesmenData.filter(x => x.tipe === 'Link' && String(x.folderId) === String(folderId));
-    }
-
-    function normalizeAsmUrl(u) {
-      u = String(u || '').trim();
-      if (!u) return '';
-      if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
-      return u;
-    }
-
-    function toggleAssesmenFolder(id) {
-      assesmenOpen[id] = !assesmenOpen[id];
-      const body = document.getElementById('asm-body-' + id);
-      const chev = document.getElementById('asm-chevron-' + id);
-      if (body) body.classList.toggle('hidden', !assesmenOpen[id]);
-      if (chev) chev.style.transform = assesmenOpen[id] ? 'rotate(180deg)' : '';
-    }
-
-    function renderAssesmenPublic() {
-      const box = document.getElementById('assesmen-public-list');
-      if (!box) return;
-      const q = ((document.getElementById('assesmen-search-input') || {}).value || '').trim().toLowerCase();
-      const folders = getAssesmenFolders();
-
-      if (folders.length === 0) {
-        box.innerHTML = `<div class="md:col-span-2 py-16 text-center text-slate-400">
-          <i class="fa-regular fa-folder-open text-4xl mb-3 text-slate-300 block"></i>
-          <p class="font-semibold text-sm">Belum ada assesmen yang tersedia.</p>
-          <p class="text-xs mt-1">Assesmen akan tampil di sini setelah ditambahkan oleh Guru BK.</p>
-        </div>`;
-        return;
-      }
-
-      let html = '';
-      let shown = 0;
-      folders.forEach(f => {
-        const allLinks = getAssesmenLinks(f.id);
-        const folderMatch = !q || (f.judul || '').toLowerCase().includes(q) || (f.deskripsi || '').toLowerCase().includes(q);
-        const links = q && !folderMatch
-          ? allLinks.filter(l => (l.judul || '').toLowerCase().includes(q) || (l.deskripsi || '').toLowerCase().includes(q))
-          : allLinks;
-        if (q && !folderMatch && links.length === 0) return;
-        shown++;
-
-        const isOpen = q ? true : !!assesmenOpen[f.id];
-        const fid = escapeHtml(f.id);
-        const linkHtml = links.length === 0
-          ? `<p class="text-xs text-slate-400 px-2 py-3">Belum ada assesmen di folder ini.</p>`
-          : links.map(l => `
-              <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 hover:bg-sky-50 border border-transparent hover:border-sky-100 transition-all group">
-                <div class="w-9 h-9 rounded-lg bg-white text-sky-600 flex items-center justify-center shrink-0 shadow-2xs"><i class="fa-solid fa-clipboard-check text-sm"></i></div>
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-semibold text-slate-800 group-hover:text-sky-700">${escapeHtml(l.judul)}</p>
-                  ${l.deskripsi ? `<p class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(l.deskripsi)}</p>` : ''}
-                </div>
-                <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-400 group-hover:text-sky-600 shrink-0"></i>
-              </a>`).join('');
-
-        html += `
-          <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden self-start">
-            <button onclick="toggleAssesmenFolder('${fid}')" class="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-slate-50/60 transition-colors">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-folder text-lg"></i></div>
-                <div class="min-w-0">
-                  <h3 class="font-bold text-slate-900 text-sm">${escapeHtml(f.judul)}</h3>
-                  <p class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(f.deskripsi || '')}${f.deskripsi ? ' &middot; ' : ''}${allLinks.length} assesmen</p>
-                </div>
-              </div>
-              <i id="asm-chevron-${fid}" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform shrink-0" style="${isOpen ? 'transform:rotate(180deg)' : ''}"></i>
-            </button>
-            <div id="asm-body-${fid}" class="${isOpen ? '' : 'hidden'} border-t border-slate-100 p-3 space-y-2">${linkHtml}</div>
-          </div>`;
-      });
-
-      box.innerHTML = shown === 0
-        ? `<div class="md:col-span-2 py-12 text-center text-slate-400 text-sm">Tidak ada assesmen yang cocok dengan pencarian.</div>`
-        : html;
-    }
-
-    function renderAssesmenAdmin() {
-      const box = document.getElementById('admin-assesmen-list');
-      if (!box) return;
-      const banner = document.getElementById('asm-outdated-banner');
-      if (banner) banner.classList.toggle('hidden', !(isBackendConnected() && serverOutdated));
-      const folders = getAssesmenFolders();
-
-      if (folders.length === 0) {
-        box.innerHTML = `<div class="bg-white rounded-2xl border border-dashed border-slate-300 py-12 text-center text-slate-400">
-          <i class="fa-regular fa-folder-open text-3xl mb-2 text-slate-300 block"></i>
-          <p class="font-semibold text-xs">Belum ada folder assesmen.</p>
-          <p class="text-[10px] mt-0.5">Klik "Buat Folder Baru" untuk memulai.</p>
-        </div>`;
-        return;
-      }
-
-      box.innerHTML = folders.map(f => {
-        const links = getAssesmenLinks(f.id);
-        const fid = escapeHtml(f.id);
-        const rows = links.length === 0
-          ? `<p class="text-xs text-slate-400 px-4 py-4">Folder masih kosong. Klik "Tambah Link" untuk mengisi.</p>`
-          : links.map(l => `
-              <div class="flex items-center gap-3 px-4 py-3">
-                <i class="fa-solid fa-link text-slate-300 text-xs"></i>
-                <div class="min-w-0 flex-1">
-                  <p class="text-xs font-semibold text-slate-800">${escapeHtml(l.judul)}</p>
-                  <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-sky-600 hover:underline break-all">${escapeHtml(l.url)}</a>
-                </div>
-                <button onclick="openAssesmenModal('Link','${escapeHtml(l.id)}')" class="p-2 rounded-lg text-sky-600 hover:bg-sky-50" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button onclick="deleteAssesmen('${escapeHtml(l.id)}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
-              </div>`).join('');
-        return `
-          <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
-            <div class="flex items-center gap-3 p-4 bg-slate-50/70 border-b border-slate-100 flex-wrap">
-              <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-folder"></i></div>
-              <div class="min-w-0 flex-1">
-                <h4 class="font-bold text-sm text-slate-900">${escapeHtml(f.judul)}</h4>
-                <p class="text-[11px] text-slate-500">${links.length} link${f.deskripsi ? ' &middot; ' + escapeHtml(f.deskripsi) : ''}</p>
-              </div>
-              <button onclick="openAssesmenModal('Link', null, '${fid}')" class="px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-[11px] font-semibold flex items-center space-x-1.5"><i class="fa-solid fa-plus"></i><span>Tambah Link</span></button>
-              <button onclick="openAssesmenModal('Folder','${fid}')" class="p-2 rounded-lg text-sky-600 hover:bg-sky-50" title="Ubah folder"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button onclick="deleteAssesmen('${fid}')" class="p-2 rounded-lg text-rose-600 hover:bg-rose-50" title="Hapus folder"><i class="fa-solid fa-trash-can"></i></button>
-            </div>
-            <div class="divide-y divide-slate-100">${rows}</div>
-          </div>`;
-      }).join('');
-    }
-
-    function openAssesmenModal(tipe, id, folderId) {
-      const isFolder = tipe === 'Folder';
-      const existing = id ? assesmenData.find(x => String(x.id) === String(id)) : null;
-
-      if (!isFolder && getAssesmenFolders().length === 0) {
-        showToast('Buat folder terlebih dahulu sebelum menambahkan link.', 'info');
-        return;
-      }
-
-      document.getElementById('asm-id').value = existing ? existing.id : '';
-      document.getElementById('asm-tipe').value = isFolder ? 'Folder' : 'Link';
-      document.getElementById('asm-judul').value = existing ? existing.judul : '';
-      document.getElementById('asm-url').value = existing && !isFolder ? existing.url : '';
-      document.getElementById('asm-deskripsi').value = existing ? (existing.deskripsi || '') : '';
-
-      document.getElementById('asm-judul-label').innerText = isFolder ? 'Nama Folder' : 'Judul Assesmen';
-      document.getElementById('asm-judul').placeholder = isFolder ? 'Contoh: Asesmen Minat & Bakat' : 'Contoh: Angket Gaya Belajar';
-      document.getElementById('asm-url-wrap').classList.toggle('hidden', isFolder);
-      document.getElementById('asm-folder-wrap').classList.toggle('hidden', isFolder);
-      document.getElementById('asm-modal-title').innerText = (existing ? 'Ubah ' : (isFolder ? 'Buat ' : 'Tambah ')) + (isFolder ? 'Folder' + (existing ? '' : ' Baru') : 'Link Assesmen');
-      document.getElementById('asm-modal-icon').innerHTML = `<i class="fa-solid ${isFolder ? 'fa-folder' : 'fa-link'}"></i>`;
-
-      if (!isFolder) {
-        const sel = document.getElementById('asm-folder');
-        sel.innerHTML = getAssesmenFolders().map(f => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.judul)}</option>`).join('');
-        sel.value = existing ? existing.folderId : (folderId || getAssesmenFolders()[0].id);
-      }
-      document.getElementById('modal-assesmen').classList.remove('hidden');
-    }
-
-    function closeAssesmenModal() {
-      document.getElementById('modal-assesmen').classList.add('hidden');
-    }
-
-    async function handleSaveAssesmen(e) {
-      if (e) e.preventDefault();
-      const id = document.getElementById('asm-id').value.trim();
-      const tipe = document.getElementById('asm-tipe').value === 'Folder' ? 'Folder' : 'Link';
-      const judul = document.getElementById('asm-judul').value.trim();
-      const deskripsi = document.getElementById('asm-deskripsi').value.trim();
-      const folderId = tipe === 'Link' ? document.getElementById('asm-folder').value : '';
-      const url = tipe === 'Link' ? normalizeAsmUrl(document.getElementById('asm-url').value) : '';
-
-      if (!judul) { showToast('Judul wajib diisi.', 'error'); return; }
-      if (tipe === 'Link') {
-        if (!folderId) { showToast('Pilih folder terlebih dahulu.', 'error'); return; }
-        if (!/^https?:\/\/[^\s]+\.[^\s]+/i.test(url)) { showToast('Link assesmen tidak valid.', 'error'); return; }
-      }
-
-      const btn = document.getElementById('asm-save-btn');
-      const idleHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Menyimpan...</span>';
-
-      try {
-        const penulis = (currentUser && (currentUser.nama || currentUser.username)) || 'Guru BK';
-        let item = { id: id || ('ASM_' + Date.now() + '_' + Math.floor(Math.random() * 10000)), tipe, folderId, judul, url, deskripsi, penulis,
-                     tanggal: new Date().toLocaleDateString('id-ID') };
-
-        if (isBackendConnected()) {
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'saveAssesmen', id, tipe, folderId, judul, url, deskripsi, penulis }),
-            redirect: 'follow'
-          });
-          const rawText = await res.text();
-          let result = null;
-          try { result = JSON.parse(rawText); } catch (pe) { result = null; }
-          if (!result) throw new Error(classifyBackendResponse(rawText, res.status));
-          if (result.status !== 'success') {
-            let msg = result.message || 'Server menolak penyimpanan.';
-            if (/Aksi tidak dikenal/i.test(msg)) msg += ' Perbarui Kode.gs di Apps Script lalu Deploy > New version.';
-            throw new Error(msg);
-          }
-          if (result.item) item = result.item;
-        }
-
-        const idx = assesmenData.findIndex(x => String(x.id) === String(item.id));
-        if (idx >= 0) assesmenData[idx] = Object.assign({}, assesmenData[idx], item);
-        else assesmenData.push(item);
-        saveAssesmenLocal();
-        renderAssesmenAdmin();
-        renderAssesmenPublic();
-        closeAssesmenModal();
-        showToast(isBackendConnected() ? 'Assesmen berhasil disimpan.' : 'Assesmen disimpan di perangkat ini saja (Apps Script belum terhubung).', isBackendConnected() ? 'success' : 'info');
-      } catch (err) {
-        showToast('Assesmen TIDAK tersimpan ke Spreadsheet: ' + (err && err.message ? err.message : err), 'error');
-        console.error('Gagal menyimpan assesmen:', err);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = idleHtml;
-      }
-    }
-
-    function deleteAssesmen(id) {
-      const target = assesmenData.find(x => String(x.id) === String(id));
-      if (!target) return;
-      const isFolder = target.tipe === 'Folder';
-      const n = isFolder ? getAssesmenLinks(id).length : 0;
-      const msg = isFolder
-        ? `Hapus folder "${target.judul}"${n ? ' beserta ' + n + ' link di dalamnya' : ''}?`
-        : `Hapus link "${target.judul}"?`;
-
-      showConfirm(msg, async () => {
-        try {
-          if (isBackendConnected()) {
-            const res = await fetch(SCRIPT_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: 'deleteAssesmen', id }),
-              redirect: 'follow'
-            });
-            const rawText = await res.text();
-            let result = null;
-            try { result = JSON.parse(rawText); } catch (pe) { result = null; }
-            if (!result) throw new Error(classifyBackendResponse(rawText, res.status));
-            if (result.status !== 'success') {
-              let m = result.message || 'Server menolak penghapusan.';
-              if (/Aksi tidak dikenal/i.test(m)) m += ' Perbarui Kode.gs di Apps Script lalu Deploy > New version.';
-              throw new Error(m);
-            }
-          }
-          assesmenData = assesmenData.filter(x => String(x.id) !== String(id) && !(isFolder && String(x.folderId) === String(id)));
-          saveAssesmenLocal();
-          renderAssesmenAdmin();
-          renderAssesmenPublic();
-          showToast(isFolder ? 'Folder berhasil dihapus.' : 'Link berhasil dihapus.', 'info');
-        } catch (err) {
-          showToast('Gagal menghapus dari Spreadsheet: ' + (err && err.message ? err.message : err), 'error');
-        }
-      });
-    }
-    /* ===================== /ASSESMEN ===================== */
 
     function deleteKonten(id) {
       if (!id) return;
@@ -4395,10 +4034,6 @@
       if (localKonten) {
         try { kontenData = JSON.parse(localKonten); } catch (e) {}
       }
-      const localAssesmen = localStorage.getItem('ebk_assesmen');
-      if (localAssesmen) {
-        try { assesmenData = JSON.parse(localAssesmen) || []; } catch (e) {}
-      }
       const localKonseling = localStorage.getItem('ebk_konseling');
       if (localKonseling) {
         try { konselingData = JSON.parse(localKonseling); } catch (e) {}
@@ -4427,22 +4062,12 @@
             console.warn('Jawaban Apps Script bukan JSON:', rawText.slice(0, 300));
             updateConnectionStatusUI(false, classifyBackendResponse(rawText, res.status));
           } else if (result.status === 'success') {
-            serverOutdated = !result.version;
-            serverDbName = result.spreadsheetName || '';
-            updateConnectionStatusUI(true, serverOutdated
-              ? 'Terhubung, tetapi Kode.gs di Apps Script masih versi lama. Perbarui lalu Deploy > New version.'
-              : 'Sinkron dengan Google Sheets' + (serverDbName ? ': ' + serverDbName : ''));
-            if (result.spreadsheetUrl) spreadsheetUrl = result.spreadsheetUrl;
+            updateConnectionStatusUI(true, 'Sinkron dengan Google Sheets');
             if (result.data) {
               kontenData = result.data;
               saveLocalData();
               renderPengumumanSlider();
               renderKontenCards();
-            }
-            if (Array.isArray(result.assesmen)) {
-              assesmenData = result.assesmen;
-              saveAssesmenLocal();
-              renderAssesmenPublic();
             }
             if (result.settings) {
               applySiteSettings(result.settings);
