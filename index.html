@@ -9,6 +9,7 @@
   <!-- Tailwind CSS & Font Awesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- Google Fonts: Inter -->
@@ -70,6 +71,46 @@
     .smooth-transition {
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* ===== ASSESMEN: animasi kartu kuis & cetak laporan (hanya aktif untuk modul Assesmen) ===== */
+    @keyframes asmCardIn {
+      0% { opacity: 0; transform: translateY(14px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .asm-card-animate {
+      animation: asmCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .asm-btn-press:active {
+      transform: scale(0.96);
+    }
+
+    @media print {
+      body.print-asm {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+        font-size: 11pt;
+      }
+      body.print-asm header,
+      body.print-asm footer,
+      body.print-asm #toast-container,
+      body.print-asm .asm-no-print {
+        display: none !important;
+      }
+      body.print-asm #tab-assesmen {
+        max-width: none !important;
+        padding: 0 !important;
+      }
+      body.print-asm #printReportArea {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+      }
+      body.print-asm #printReportArea * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
@@ -106,6 +147,38 @@
             <i class="fa-solid fa-book-open text-xs"></i>
             <span>Pusat Materi</span>
           </button>
+          <div class="relative" id="asm-dropdown-wrap">
+            <button onclick="toggleAsmMenu(event)" id="btn-nav-assesmen" aria-haspopup="true" aria-expanded="false" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
+              <i class="fa-solid fa-clipboard-list text-xs"></i>
+              <span>Assesmen</span>
+              <i id="asm-menu-chevron" class="fa-solid fa-chevron-down text-[9px] transition-transform"></i>
+            </button>
+            <div id="asm-menu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-xl p-1.5 z-50">
+              <button onclick="openAsesmen('minat')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-50 flex items-center space-x-3 group transition-all">
+                <span class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-xs group-hover:bg-sky-600 group-hover:text-white transition-all"><i class="fa-solid fa-compass"></i></span>
+                <span class="flex-1">
+                  <span class="block text-xs font-bold text-slate-800">Tes Minat</span>
+                  <span class="block text-[10px] text-slate-500">Minat karier Holland (RIASEC)</span>
+                </span>
+              </button>
+              <button onclick="openAsesmen('bakat')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-50 flex items-center space-x-3 group transition-all">
+                <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-xs group-hover:bg-amber-500 group-hover:text-white transition-all"><i class="fa-solid fa-puzzle-piece"></i></span>
+                <span class="flex-1">
+                  <span class="block text-xs font-bold text-slate-800">Tes Bakat</span>
+                  <span class="block text-[10px] text-slate-500">Potensi &amp; kemampuan diri</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
+              </button>
+              <button onclick="openAsesmen('gaya')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-50 flex items-center space-x-3 group transition-all">
+                <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs group-hover:bg-emerald-600 group-hover:text-white transition-all"><i class="fa-solid fa-book-open-reader"></i></span>
+                <span class="flex-1">
+                  <span class="block text-xs font-bold text-slate-800">Tes Gaya Belajar</span>
+                  <span class="block text-[10px] text-slate-500">Cara belajar paling efektif</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
+              </button>
+            </div>
+          </div>
           <button onclick="showTab('konseling')" id="btn-nav-konseling" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-sky-600 hover:bg-slate-50 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-comments text-xs"></i>
             <span>Konseling</span>
@@ -139,6 +212,27 @@
         <i class="fa-solid fa-book-open w-5 text-center"></i>
         <span>Pusat Materi</span>
       </button>
+      <button id="mbtn-nav-assesmen" onclick="toggleMobileAsm()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
+        <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
+        <span>Assesmen</span>
+        <i id="mobile-asm-chevron" class="fa-solid fa-chevron-down text-[10px] ml-auto transition-transform"></i>
+      </button>
+      <div id="mobile-asm-sub" class="hidden pl-5 space-y-1">
+        <button onclick="openAsesmen('minat'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 flex items-center space-x-3">
+          <i class="fa-solid fa-compass w-5 text-center text-sky-600"></i>
+          <span>Tes Minat</span>
+        </button>
+        <button onclick="openAsesmen('bakat'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 flex items-center space-x-3">
+          <i class="fa-solid fa-puzzle-piece w-5 text-center text-amber-600"></i>
+          <span>Tes Bakat</span>
+          <span class="ml-auto px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
+        </button>
+        <button onclick="openAsesmen('gaya'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 flex items-center space-x-3">
+          <i class="fa-solid fa-book-open-reader w-5 text-center text-emerald-600"></i>
+          <span>Tes Gaya Belajar</span>
+          <span class="ml-auto px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
+        </button>
+      </div>
       <button id="mbtn-nav-konseling" onclick="showTab('konseling'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
         <i class="fa-solid fa-comments w-5 text-center"></i>
         <span>Konseling Siswa</span>
@@ -401,6 +495,446 @@
       <!-- Grid Kartu Konten Publik -->
       <div id="materi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Kartu materi akan dirender dinamis via JavaScript -->
+      </div>
+    </section>
+
+    <section id="tab-assesmen" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+
+      <!-- ===== HUB ASSESMEN ===== -->
+      <div id="asm-view-hub" class="space-y-8">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pemetaan Diri Peserta Didik</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Assesmen Bimbingan & Konseling</h2>
+          <p class="text-slate-500 text-sm">Pilih jenis assesmen untuk mengenali minat, bakat, dan gaya belajarmu.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div onclick="openAsesmen('minat')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-compass"></i>
+            </div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-bold text-slate-900 text-base">Tes Minat</h3>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase tracking-wider">Tersedia</span>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">Temukan kode kepribadian karier Holland (RIASEC) beserta rekomendasi jurusan dan profesi yang selaras. 108 pernyataan.</p>
+          </div>
+
+          <div onclick="openAsesmen('bakat')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-amber-300 hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all">
+              <i class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-bold text-slate-900 text-base">Tes Bakat</h3>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 uppercase tracking-wider">Segera</span>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">Kenali potensi dan kemampuan khusus yang kamu miliki sebagai dasar pengembangan diri.</p>
+          </div>
+
+          <div onclick="openAsesmen('gaya')" class="cursor-pointer group bg-white p-6 rounded-2xl border border-slate-200/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-bold text-slate-900 text-base">Tes Gaya Belajar</h3>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 uppercase tracking-wider">Segera</span>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">Pahami cara belajar yang paling efektif untukmu: visual, auditori, atau kinestetik.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SEGERA HADIR: TES BAKAT ===== -->
+      <div id="asm-view-bakat" class="hidden max-w-xl mx-auto">
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 shadow-sm text-center space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mx-auto">
+            <i class="fa-solid fa-puzzle-piece"></i>
+          </div>
+          <h2 class="text-xl font-extrabold text-slate-900">Tes Bakat</h2>
+          <p class="text-xs text-slate-500 leading-relaxed">Tes ini sedang disiapkan oleh Guru BK dan akan segera tersedia.</p>
+          <button onclick="showAsmView('hub')" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all">
+            <i class="fa-solid fa-arrow-left mr-1.5"></i> Kembali ke Assesmen
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== SEGERA HADIR: TES GAYA BELAJAR ===== -->
+      <div id="asm-view-gaya" class="hidden max-w-xl mx-auto">
+        <div class="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 shadow-sm text-center space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
+            <i class="fa-solid fa-book-open-reader"></i>
+          </div>
+          <h2 class="text-xl font-extrabold text-slate-900">Tes Gaya Belajar</h2>
+          <p class="text-xs text-slate-500 leading-relaxed">Tes ini sedang disiapkan oleh Guru BK dan akan segera tersedia.</p>
+          <button onclick="showAsmView('hub')" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all">
+            <i class="fa-solid fa-arrow-left mr-1.5"></i> Kembali ke Assesmen
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== TES MINAT (RIASEC) ===== -->
+      <div id="asm-view-minat" class="hidden space-y-6">
+
+        <!-- LANGKAH 1: IDENTITAS -->
+        <div id="stepIntro" class="asm-no-print space-y-6">
+          <button onclick="showAsmView('hub')" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition-all flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            <span>Kembali ke Assesmen</span>
+          </button>
+
+          <div class="relative bg-pattern-subtle text-white rounded-3xl overflow-hidden p-6 md:p-10 shadow-xl">
+            <div class="absolute inset-0 bg-slate-950/60 pointer-events-none"></div>
+            <div class="relative max-w-2xl space-y-3">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-sky-200 text-xs font-semibold">
+                  <i class="fa-solid fa-bolt-lightning text-amber-300 mr-1.5"></i> Kuis Interaktif
+                </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-xs font-semibold">
+                  108 Soal Cepat
+                </span>
+              </div>
+              <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight">Tes Minat: Kecenderungan Pilihan Karier</h2>
+              <p class="text-sm md:text-base text-slate-300 leading-relaxed">
+                Jawab serangkaian pernyataan untuk menemukan kode kepribadian Holland (RIASEC)-mu: <em>Realistic, Investigative, Artistic, Social, Enterprising, &amp; Conventional</em>.
+              </p>
+            </div>
+            <div class="absolute -right-8 -bottom-8 opacity-10 text-white pointer-events-none">
+              <i class="fa-solid fa-shapes text-9xl"></i>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-sm">
+            <h3 class="text-base font-bold text-slate-900 mb-1">Data Diri Peserta Didik</h3>
+            <p class="text-xs text-slate-500 mb-5">Data ini akan tercantum pada lembar hasil laporan yang dapat dicetak atau disimpan ke PDF.</p>
+
+            <form id="identityForm" onsubmit="asmStartTest(event)" class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Siswa <span class="text-rose-500">*</span></label>
+                  <input type="text" id="inputNama" required placeholder="Contoh: Muhammad Farhan" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas / Tingkat <span class="text-rose-500">*</span></label>
+                  <input type="text" id="inputKelas" required placeholder="Contoh: XII MIPA 2 / XI RPL 1" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Sekolah / Lembaga <span class="text-rose-500">*</span></label>
+                  <input type="text" id="inputSekolah" required placeholder="Contoh: SMA Muhammadiyah 2 Banjarmasin" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Pelaksanaan</label>
+                  <input type="date" id="inputTanggal" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:bg-white focus:outline-none">
+                </div>
+              </div>
+
+              <div class="p-4 bg-sky-50/70 border border-sky-100 rounded-2xl space-y-1.5">
+                <h4 class="text-xs font-bold text-slate-800 flex items-center">
+                  <i class="fa-solid fa-gamepad mr-2 text-sky-600"></i> Cara Mengerjakan
+                </h4>
+                <ul class="list-disc pl-9 space-y-1 text-[11px] text-slate-600 leading-relaxed">
+                  <li>Pernyataan ditampilkan satu per satu dalam kartu kuis.</li>
+                  <li>Pilih <strong>"Sesuai / Suka"</strong> jika pernyataan cocok dengan minat atau kemampuanmu.</li>
+                  <li>Pilih <strong>"Tidak Sesuai"</strong> jika kurang cocok atau tidak kamu sukai.</li>
+                </ul>
+              </div>
+
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-play"></i>
+                <span>Mulai Kuis Interaktif</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- LANGKAH 2: KUIS -->
+        <div id="stepQuiz" class="asm-no-print hidden space-y-6">
+
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-4 md:p-5 shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0" id="categoryTabsBar">
+                <button type="button" onclick="asmJumpToCategory(0)" id="catBtn-0" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">R</button>
+                <button type="button" onclick="asmJumpToCategory(1)" id="catBtn-1" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">I</button>
+                <button type="button" onclick="asmJumpToCategory(2)" id="catBtn-2" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">A</button>
+                <button type="button" onclick="asmJumpToCategory(3)" id="catBtn-3" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">S</button>
+                <button type="button" onclick="asmJumpToCategory(4)" id="catBtn-4" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">E</button>
+                <button type="button" onclick="asmJumpToCategory(5)" id="catBtn-5" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition">C</button>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button type="button" onclick="asmToggleSound()" id="soundToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center">
+                  <i class="fa-solid fa-volume-high mr-1.5 text-sky-600"></i> Suara
+                </button>
+                <button type="button" onclick="asmOpenQuestionMap()" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold transition flex items-center">
+                  <i class="fa-solid fa-grip mr-1.5"></i> Peta Soal (<span id="answeredPillCount">0/108</span>)
+                </button>
+                <button type="button" onclick="asmToggleViewMode()" id="viewModeBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center">
+                  <i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-xs text-slate-500 font-medium">
+                <span id="quizProgressLabel">Pertanyaan 1 dari 108</span>
+                <span id="quizProgressPercent" class="font-bold text-sky-600">0% Selesai</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div id="quizGlobalProgressBar" class="bg-gradient-to-r from-sky-600 to-cyan-500 h-2.5 rounded-full transition-all duration-300" style="width: 1%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODE KARTU -->
+          <div id="quizCardMode" class="space-y-4">
+            <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-slate-900 flex items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center text-lg shadow-sm" id="cardCategoryIcon">
+                  <i class="fa-solid fa-wrench"></i>
+                </div>
+                <div>
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-sky-600 block" id="cardCategoryTag">Kelompok R</span>
+                  <h4 class="font-bold text-sm md:text-base leading-tight" id="cardCategoryTitle">Realistic</h4>
+                </div>
+              </div>
+              <span class="text-xs font-semibold bg-white border border-sky-200 text-sky-800 px-3 py-1 rounded-xl shrink-0" id="categorySubCounter">Butir 1 dari 18</span>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-sm relative overflow-hidden asm-card-animate" id="activeQuestionCard">
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-sky-700 px-3 py-1 rounded-full border border-sky-200">
+                  <i class="fa-solid fa-circle-question mr-1.5 text-sky-600"></i> No. <span id="cardQuestionNumber" class="ml-1">1</span>
+                </span>
+                <div id="cardCurrentStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500">Belum Dijawab</div>
+              </div>
+
+              <div class="py-4 md:py-6 min-h-[110px] flex items-center">
+                <h3 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-800 leading-snug tracking-tight" id="cardQuestionText">Saya suka memperbaiki alat-alat listrik.</h3>
+              </div>
+
+              <p class="text-xs text-slate-400 mb-6 italic">Apakah pernyataan di atas sesuai dan menggambarkan kesukaan atau kemampuan dirimu?</p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button type="button" onclick="asmAnswerCard(true)" id="btnCardYes" class="asm-btn-press group p-4 sm:p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 hover:bg-emerald-500 text-emerald-900 hover:text-white transition-all shadow-sm hover:shadow-md flex items-center text-left">
+                  <div class="flex items-center space-x-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500 text-white group-hover:bg-white group-hover:text-emerald-600 flex items-center justify-center text-xl transition">
+                      <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                      <span class="block font-black text-base sm:text-lg">SESUAI / SUKA</span>
+                      <span class="block text-xs opacity-80 font-medium">Cocok dengan diri saya</span>
+                    </div>
+                  </div>
+                </button>
+
+                <button type="button" onclick="asmAnswerCard(false)" id="btnCardNo" class="asm-btn-press group p-4 sm:p-5 rounded-2xl border-2 border-slate-300 bg-slate-50/70 hover:bg-slate-700 text-slate-800 hover:text-white transition-all shadow-sm hover:shadow-md flex items-center text-left">
+                  <div class="flex items-center space-x-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-slate-200 text-slate-700 group-hover:bg-white group-hover:text-slate-800 flex items-center justify-center text-xl transition">
+                      <i class="fa-solid fa-xmark"></i>
+                    </div>
+                    <div>
+                      <span class="block font-black text-base sm:text-lg">TIDAK SESUAI</span>
+                      <span class="block text-xs opacity-80 font-medium">Kurang cocok / lewati</span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-xs">
+                <button type="button" onclick="asmPrevQuestion()" id="btnCardPrev" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition flex items-center disabled:opacity-40">
+                  <i class="fa-solid fa-arrow-left mr-1.5"></i> Sebelumnya
+                </button>
+                <button type="button" onclick="asmNextQuestion()" id="btnCardNext" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition flex items-center">
+                  Selanjutnya <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODE LEMBAR -->
+          <div id="quizListMode" class="hidden space-y-4">
+            <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-slate-900 flex items-start space-x-3">
+              <div class="text-2xl text-sky-600 mt-0.5" id="listCatIcon"><i class="fa-solid fa-wrench"></i></div>
+              <div>
+                <h4 class="font-bold text-sm md:text-base" id="listCatName">Realistic</h4>
+                <p class="text-xs text-slate-600 mt-0.5 leading-relaxed" id="listCatDesc"></p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200/90 p-5 md:p-8 shadow-sm space-y-3" id="questionsListContainer"></div>
+
+            <div class="flex items-center justify-between pt-2">
+              <button type="button" id="btnListPrev" onclick="asmNavigateCategory(-1)" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Kategori Sebelumnya
+              </button>
+              <button type="button" id="btnListNext" onclick="asmNavigateCategory(1)" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition flex items-center">
+                Kategori Selanjutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h4 class="font-bold text-sm flex items-center">
+                <i class="fa-solid fa-award text-amber-400 mr-2"></i> Selesai Mengerjakan Kuis?
+              </h4>
+              <p class="text-xs text-slate-300 mt-0.5" id="bottomFinishNotice">Kamu dapat melihat hasil analisis sekarang atau melengkapi butir soal yang tersisa.</p>
+            </div>
+            <button type="button" onclick="asmSubmitAssessment()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold shadow-lg shadow-sky-500/25 transition flex items-center justify-center">
+              <i class="fa-solid fa-chart-pie mr-2"></i> Lihat Hasil Asesmen &amp; PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- LANGKAH 3: HASIL -->
+        <div id="stepResult" class="hidden space-y-6">
+
+          <div class="asm-no-print bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-2 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-slate-800">Tes Minat Berhasil Diselesaikan!</p>
+                <p class="text-[10px] text-slate-500">Cetak atau simpan sebagai PDF untuk arsip pribadimu.</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="asmPrintReport()" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold rounded-xl shadow-md shadow-sky-500/20 transition flex items-center">
+                <i class="fa-solid fa-print mr-2"></i> Cetak / Simpan PDF
+              </button>
+              <button onclick="asmRestartTest()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center">
+                <i class="fa-solid fa-rotate-right mr-1.5"></i> Tes Ulang
+              </button>
+            </div>
+          </div>
+
+          <div id="printReportArea" class="bg-white rounded-3xl p-6 md:p-10 border border-slate-200/90 shadow-sm">
+
+            <div class="border-b-2 border-slate-900 pb-4 mb-6">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow shrink-0">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </div>
+                  <div>
+                    <h2 class="text-lg md:text-xl font-extrabold uppercase tracking-wide text-slate-900 leading-tight">Laporan Hasil Tes Minat Karier</h2>
+                    <p class="text-xs md:text-sm font-semibold text-slate-600">Pemetaan kecenderungan pilihan jurusan &amp; karier (Model Holland - RIASEC)</p>
+                    <p class="text-xs text-slate-500" id="reportSchoolSub">Layanan Bimbingan dan Konseling Sekolah</p>
+                  </div>
+                </div>
+                <div class="text-right text-xs text-slate-500 hidden sm:block shrink-0">
+                  <p class="font-bold text-slate-800">DOKUMEN PSIKOEDUKASI</p>
+                  <p>Kode: RIASEC-K-108</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 rounded-2xl p-4 md:p-5 border border-slate-200 mb-6">
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Identitas Peserta Didik</h4>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs md:text-sm">
+                <div>
+                  <span class="text-slate-500 block text-xs">Nama Lengkap:</span>
+                  <span class="font-bold text-slate-900" id="resNama">-</span>
+                </div>
+                <div>
+                  <span class="text-slate-500 block text-xs">Kelas / Jurusan:</span>
+                  <span class="font-bold text-slate-900" id="resKelas">-</span>
+                </div>
+                <div>
+                  <span class="text-slate-500 block text-xs">Sekolah / Instansi:</span>
+                  <span class="font-bold text-slate-900" id="resSekolah">-</span>
+                </div>
+                <div>
+                  <span class="text-slate-500 block text-xs">Tanggal Tes:</span>
+                  <span class="font-bold text-slate-900" id="resTanggal">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-sky-50 border border-sky-200 rounded-2xl p-5 mb-8">
+              <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-sky-700 bg-sky-100 px-3 py-1 rounded-full">Tipe Kepribadian &amp; Minat Dominan</span>
+                  <h3 class="text-xl md:text-2xl font-black text-slate-900 mt-2" id="resHollandCode">---</h3>
+                  <p class="text-xs md:text-sm text-slate-600 mt-1 max-w-xl" id="resHollandTagline"></p>
+                </div>
+                <div class="text-center md:text-right bg-white p-3.5 rounded-xl border border-sky-100 shadow-sm min-w-[160px]">
+                  <span class="text-xs text-slate-500 block">Tipe Tertinggi (Utama)</span>
+                  <span class="text-lg font-extrabold text-sky-600" id="resPrimaryType">-</span>
+                  <span class="text-xs text-slate-500 block mt-0.5" id="resPrimaryScore">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-center">
+              <div class="lg:col-span-6 bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+                <h5 class="text-xs font-bold text-slate-600 uppercase mb-2">Diagram Radar Profil Minat (RIASEC)</h5>
+                <div class="w-full max-w-[320px] aspect-square">
+                  <canvas id="riasecChart"></canvas>
+                </div>
+              </div>
+              <div class="lg:col-span-6 space-y-2">
+                <h5 class="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Perolehan Skor Setiap Dimensi (Maks 18)</h5>
+                <div id="scoreBarsContainer" class="space-y-2.5"></div>
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h4 class="text-base font-bold text-slate-900 border-b border-slate-200 pb-2 mb-3 flex items-center">
+                <i class="fa-solid fa-user-check text-sky-600 mr-2"></i> Analisis Karakteristik Minat Utama
+              </h4>
+              <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-xs md:text-sm text-slate-700 leading-relaxed space-y-3" id="resPersonalityDesc"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div class="rounded-2xl p-5 border border-emerald-200 bg-emerald-50/40">
+                <h4 class="text-sm md:text-base font-bold text-emerald-950 flex items-center mb-3">
+                  <i class="fa-solid fa-graduation-cap text-emerald-600 mr-2"></i> Rekomendasi Jurusan Studi Lanjut
+                </h4>
+                <p class="text-xs text-slate-600 mb-3">Pilihan program studi perguruan tinggi / vokasi (D3/D4/S1) yang selaras:</p>
+                <ul id="resStudyMajorList" class="space-y-2 text-xs md:text-sm text-slate-800"></ul>
+              </div>
+              <div class="rounded-2xl p-5 border border-sky-200 bg-sky-50/40">
+                <h4 class="text-sm md:text-base font-bold text-sky-950 flex items-center mb-3">
+                  <i class="fa-solid fa-briefcase text-sky-600 mr-2"></i> Rekomendasi Lapangan Karier &amp; Profesi
+                </h4>
+                <p class="text-xs text-slate-600 mb-3">Prospek pekerjaan dan lingkungan kerja yang paling berpotensi mendukung keberhasilanmu:</p>
+                <ul id="resCareerList" class="space-y-2 text-xs md:text-sm text-slate-800"></ul>
+              </div>
+            </div>
+
+            <div class="mb-10 bg-amber-50/60 rounded-2xl p-5 border border-amber-200">
+              <h4 class="text-sm md:text-base font-bold text-amber-950 flex items-center mb-2">
+                <i class="fa-solid fa-lightbulb text-amber-600 mr-2"></i> Saran Pengembangan Diri &amp; Eksplorasi Minat
+              </h4>
+              <p class="text-xs md:text-sm text-amber-900/90 leading-relaxed" id="resDevTips"></p>
+            </div>
+
+            <div class="pt-6 border-t border-slate-300">
+              <p class="text-xs text-slate-500 text-center mb-6">
+                Hasil tes ini merupakan instrumen penjajakan awal minat. Konsultasikan dengan Guru BK atau Konselor Sekolah untuk tindak lanjut.
+              </p>
+              <div class="grid grid-cols-3 text-center text-xs text-slate-700 gap-4">
+                <div>
+                  <p>Mengetahui,</p>
+                  <p class="font-semibold">Orang Tua / Wali Siswa</p>
+                  <div class="h-16"></div>
+                  <p class="border-t border-slate-400 inline-block px-4 sm:px-8 font-medium">( ............................ )</p>
+                </div>
+                <div>
+                  <p>Peserta Didik Bersangkutan,</p>
+                  <p class="font-semibold">Siswa</p>
+                  <div class="h-16"></div>
+                  <p class="border-t border-slate-400 inline-block px-4 sm:px-8 font-medium" id="signatureStudentName">( ............................ )</p>
+                </div>
+                <div>
+                  <p>Guru Pembimbing /</p>
+                  <p class="font-semibold">Guru Bimbingan Konseling</p>
+                  <div class="h-16"></div>
+                  <p class="border-t border-slate-400 inline-block px-4 sm:px-8 font-medium">( ............................ )</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1095,6 +1629,61 @@
     </div>
   </div>
 
+  <!-- MODAL ASSESMEN: PETA SOAL (GRID NAVIGATOR) -->
+  <div id="modalQuestionMap" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base flex items-center">
+            <i class="fa-solid fa-grip text-sky-600 mr-2"></i> Peta Butir Pertanyaan (108 Soal)
+          </h3>
+          <p class="text-xs text-slate-500">Klik nomor untuk langsung melompat ke pertanyaan terkait.</p>
+        </div>
+        <button onclick="asmCloseQuestionMap()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="px-5 py-3 border-b border-slate-100 flex flex-wrap gap-3 text-xs text-slate-600">
+        <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-emerald-500 mr-1.5 inline-block"></span> Sesuai</span>
+        <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-slate-300 mr-1.5 inline-block"></span> Tidak Sesuai</span>
+        <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md border-2 border-dashed border-slate-300 mr-1.5 inline-block"></span> Belum Dijawab</span>
+      </div>
+
+      <div class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+        <div id="questionGridContainer" class="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-12 gap-2 text-center text-xs font-bold"></div>
+      </div>
+
+      <div class="p-4 border-t border-slate-100 flex justify-between items-center gap-3">
+        <span id="questionMapSummary" class="text-xs text-slate-600 font-medium">0 / 108 Terjawab</span>
+        <button onclick="asmCloseQuestionMap()" class="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-500/20 transition-all">
+          Tutup &amp; Lanjutkan Kuis
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ASSESMEN: KUIS SELESAI -->
+  <div id="modalFinishPrompt" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 text-center shadow-2xl space-y-4">
+      <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <h3 class="font-bold text-slate-900 text-base">Tes Minat Selesai!</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">
+        Kamu telah menyelesaikan seluruh pernyataan tes minat Holland (RIASEC). Sistem siap menganalisis tipe dominan, rekomendasi program studi, dan prospek kariermu.
+      </p>
+      <div class="flex flex-col gap-2 pt-1">
+        <button onclick="asmConfirmFinish()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Buka Hasil &amp; Rekomendasi Karier</span>
+        </button>
+        <button onclick="asmReviewFromFinish()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Periksa / Ubah Jawaban Terlebih Dahulu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notifikasi Elegan -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
@@ -1645,7 +2234,7 @@
     }
 
     function showTab(tabName) {
-      const tabs = ['beranda', 'layanan', 'materi', 'konseling', 'admin'];
+      const tabs = ['beranda', 'layanan', 'materi', 'assesmen', 'konseling', 'admin'];
       tabs.forEach(t => {
         const sec = document.getElementById(`tab-${t}`);
         if (sec) sec.classList.add('hidden');
@@ -4086,6 +4675,853 @@
           loadAdminData();
         }
       }
+    }
+
+
+    // =========================================================================
+    // 🧭 ASSESMEN — MENU, TES MINAT (HOLLAND RIASEC)
+    // 18 pernyataan tiap kategori (total 108 butir). Semua fungsi & id diawali "asm"
+    // agar tidak bentrok dengan kode E-BK lainnya.
+    // =========================================================================
+
+    /* ---------- Menu Assesmen (dropdown desktop & submenu mobile) ---------- */
+    function toggleAsmMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('asm-menu');
+      const btn = document.getElementById('btn-nav-assesmen');
+      const chev = document.getElementById('asm-menu-chevron');
+      if (!menu) return;
+      const willOpen = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !willOpen);
+      if (btn) btn.setAttribute('aria-expanded', String(willOpen));
+      if (chev) chev.classList.toggle('rotate-180', willOpen);
+    }
+
+    function closeAsmMenu() {
+      const menu = document.getElementById('asm-menu');
+      const btn = document.getElementById('btn-nav-assesmen');
+      const chev = document.getElementById('asm-menu-chevron');
+      if (menu) menu.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (chev) chev.classList.remove('rotate-180');
+    }
+
+    function toggleMobileAsm() {
+      const sub = document.getElementById('mobile-asm-sub');
+      const chev = document.getElementById('mobile-asm-chevron');
+      if (!sub) return;
+      const willOpen = sub.classList.contains('hidden');
+      sub.classList.toggle('hidden', !willOpen);
+      if (chev) chev.classList.toggle('rotate-180', willOpen);
+    }
+
+    document.addEventListener('click', (ev) => {
+      const wrap = document.getElementById('asm-dropdown-wrap');
+      if (wrap && !wrap.contains(ev.target)) closeAsmMenu();
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') closeAsmMenu();
+    });
+
+    function showAsmView(view) {
+      ['hub', 'minat', 'bakat', 'gaya'].forEach(v => {
+        const el = document.getElementById(`asm-view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== view);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openAsesmen(jenis) {
+      closeAsmMenu();
+      showTab('assesmen');
+      showAsmView(jenis);
+    }
+
+    /* ---------- Master data RIASEC ---------- */
+    const ASM_RIASEC_DATA = [
+      {
+        id: "R",
+        name: "Realistic",
+        alias: "Praktikal, Mekanik & Realistis",
+        icon: "fa-wrench",
+        color: "#f97316", // Orange
+        bgClass: "bg-orange-50 text-orange-700 border-orange-200",
+        description: "Menyukai aktivitas fisik, menggunakan perkakas, mesin, alat listrik, otomotif, kegiatan lapangan, konstruksi, atau alam bebas. Menyukai pekerjaan yang konkret dan menghasilkan wujud nyata.",
+        questions: [
+          "Saya suka memperbaiki alat-alat listrik.",
+          "Saya suka memperbaiki motor.",
+          "Saya suka memperbaiki peralatan mekanik.",
+          "Saya suka menggunakan perkakas bengkel dan mesin.",
+          "Saya mampu membuat gambar dengan skala.",
+          "Saya mampu menggunakan peralatan mesin (misal bor listrik atau mesin jahit).",
+          "Saya mampu melakukan perbaikan kecil pada alat listrik.",
+          "Saya mampu melakukan perbaikan kecil pada pipa air, keran, dll.",
+          "Saya tertarik menjadi mekanik pesawat terbang.",
+          "Saya tertarik menjadi penanggung jawab keamanan.",
+          "Saya tertarik menjadi mekanik/montir mobil.",
+          "Saya tertarik menjadi pengrajin kayu.",
+          "Saya tertarik menjadi spesialis perikanan/margasatwa.",
+          "Saya tertarik menjadi operator alat-alat berat.",
+          "Saya tertarik menjadi pengawas konstruksi bangunan.",
+          "Saya tertarik menjadi pengemudi bis.",
+          "Saya tertarik menjadi insinyur otomotif.",
+          "Saya tertarik menjadi ahli mesin."
+        ],
+        majors: [
+          "Teknik Mesin & Otomotif",
+          "Teknik Sipil & Konstruksi Gedung",
+          "Teknik Elektro & Mekatronika",
+          "Teknik Penerbangan (Aerospace)",
+          "Ilmu Kelautan, Perikanan & Kehutanan",
+          "Pertanian / Agroteknologi",
+          "Pendidikan Vokasi Teknik / Politeknik"
+        ],
+        careers: [
+          "Insinyur Mesin / Insinyur Otomotif",
+          "Teknisi Mekanik Pesawat Terbang / Alat Berat",
+          "Pengawas Proyek Konstruksi & Bangunan",
+          "Ahli Perikanan / Konservasi Alam & Kehutanan",
+          "Spesialis Robotika & Sistem Kelistrikan",
+          "Arsitek Lanskap & Pelaksana Lapangan"
+        ],
+        advice: "Tingkatkan keterampilan teknis bersertifikasi, asah kemampuan pemecahan masalah alat secara langsung melalui magang praktis, dan ikuti perkembangan teknologi manufaktur presisi atau otomasi industri."
+      },
+      {
+        id: "I",
+        name: "Investigative",
+        alias: "Analitis, Riset & Ilmiah",
+        icon: "fa-flask",
+        color: "#0284c7", // Blue
+        bgClass: "bg-sky-50 text-sky-700 border-sky-200",
+        description: "Menyukai kegiatan observasi, meneliti fenomena alam/sosial, eksperimen laboratorium, memecahkan teka-teki logika, perhitungan matematika, dan mempelajari teori-teori ilmiah mendalam.",
+        questions: [
+          "Saya suka membaca buku ilmiah atau majalah ilmiah.",
+          "Saya suka bekerja di laboratorium.",
+          "Saya suka mengerjakan suatu proyek ilmiah.",
+          "Saya suka mempelajari suatu teori ilmiah.",
+          "Saya suka membaca mengenai topic khusus atau keinginan sendiri.",
+          "Saya suka menerapkan matematika dalam masalah praktis.",
+          "Saya mampu melakukan percobaan atau penelitian ilmiah.",
+          "Saya mampu memprogram komputer untuk pelajari masalah ilmiah.",
+          "Saya mampu menginterpretasikan rumus kimia sederhana.",
+          "Saya mampu mengerti mengapa satelit buatan manusia tidak jatuh ke bumi.",
+          "Saya mampu menyebutkan tiga makanan yang memiliki protein tinggi.",
+          "Saya tertarik menjadi ahli biologi/hayati.",
+          "Saya tertarik menjadi ahli astronomi/bintang.",
+          "Saya tertarik menjadi teknisi laboratorium medis.",
+          "Saya tertarik menjadi ahli kimia.",
+          "Saya tertarik menjadi ilmuwan peneliti.",
+          "Saya tertarik menjadi ahli geologi.",
+          "Saya tertarik menjadi pekerja riset ilmiah."
+        ],
+        majors: [
+          "Pendidikan Dokter / Farmasi / Biomedis",
+          "Ilmu Komputer / Informatika & Data Science",
+          "Matematika & Statistika Terapan",
+          "Fisika / Kimia / Biologi Murni",
+          "Teknik Geologi & Geofisika",
+          "Bioteknologi & Rekayasa Genetik"
+        ],
+        careers: [
+          "Ilmuwan Peneliti (R&D Scientist)",
+          "Dokter / Spesialis Laboratorium Medis",
+          "Data Analyst / Data Scientist / AI Specialist",
+          "Ahli Biologi / Ahli Kimia / Geolog",
+          "Software Developer & Computer Scientist",
+          "Analis Riset Kebijakan & Dosen Akademisi"
+        ],
+        advice: "Perdalam metodologi penelitian, biasakan membaca jurnal ilmiah bereputasi, latih logika pemrograman atau analisis data kuantitatif, dan ikuti olimpiade sains atau kompetisi karya tulis ilmiah."
+      },
+      {
+        id: "A",
+        name: "Artistic",
+        alias: "Kreatif, Seni & Imajinatif",
+        icon: "fa-palette",
+        color: "#ec4899", // Pink
+        bgClass: "bg-pink-50 text-pink-700 border-pink-200",
+        description: "Menyukai ekspresi bebas, kreativitas, seni rupa, musik, menulis cerita/puisi, desain, teater, dan tidak menyukai lingkungan kerja yang kaku, penuh aturan berlebihan atau serba rutin.",
+        questions: [
+          "Saya suka membuat sketsa, menggambar atau melukis.",
+          "Saya suka menjadi pemain dalam kelompok musik, okestra, atau teater.",
+          "Saya suka merancang perabotan, pakaian atau poster.",
+          "Saya suka bermain dalam suatu band, kelompok, atau orchestra.",
+          "Saya suka memainkan alat musik.",
+          "Saya suka menulis untuk suatu majalah atau koran.",
+          "Saya suka membuat lukisan atau foto orang.",
+          "Saya suka menulis novel atau cerita.",
+          "Saya suka membaca atau menulis puisi.",
+          "Saya mampu memainkan alat musik.",
+          "Saya mampu bermain dalam drama.",
+          "Saya mampu menginterpretasikan cerita atau bahan bacaan.",
+          "Saya mampu membuat sketsa orang sehingga dapat dikenali.",
+          "Saya mampu melukis atau membuat patung.",
+          "Saya tertarik menjadi pemain musik.",
+          "Saya tertarik menjadi penulis novel.",
+          "Saya tertarik menjadi aktor/aktris.",
+          "Saya tertarik menjadi wartawan."
+        ],
+        majors: [
+          "Desain Komunikasi Visual (DKV) & Desain Grafis",
+          "Desain Interior & Arsitektur",
+          "Seni Musik / Seni Pertunjukan / Teater",
+          "Sinematografi, Televisi & Perfilman",
+          "Sastra, Linguistik & Jurnalistik",
+          "Animasi & Desain Game Digital"
+        ],
+        careers: [
+          "Desainer Grafis / UI & UX Designer",
+          "Penulis Novel / Content Creator / Copywriter",
+          "Wartawan / Jurnalis / Redaktur Media",
+          "Musisi / Komposer / Sound Engineer",
+          "Aktor / Sutradara / Animator",
+          "Creative Director di Agensi Periklanan"
+        ],
+        advice: "Bangun portofolio karya digital sejak dini, pelajari software kreasi kreatif modern (seperti Figma, Premiere, Blender), dan kombinasikan seni murni dengan kebutuhan industri digital masa kini."
+      },
+      {
+        id: "S",
+        name: "Social",
+        alias: "Sosial, Edukasi & Humanis",
+        icon: "fa-hand-holding-heart",
+        color: "#10b981", // Emerald
+        bgClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        description: "Menyukai kegiatan yang membantu orang lain, mengajar, memberi nasihat, merawat, membimbing, dan memecahkan masalah interpersonal. Hangat, empatik, dan pandai menjalin komunikasi.",
+        questions: [
+          "Saya suka bertemu dengan pengamat sosial atau pendidikan.",
+          "Saya suka bekerja untuk palang merah sebagai relawan.",
+          "Saya suka membantu orang lain dengan masalah pribadinya.",
+          "Saya suka menjaga/mengurus dan mengawasi anak-anak.",
+          "Saya suka mempelajari kenakalan remaja.",
+          "Saya mampu mudah bicara dengan semua orang.",
+          "Saya mampu memimpin diskusi kelompok.",
+          "Saya mampu pandai dalam menjelaskan sesuatu kepada orang lain.",
+          "Saya mampu berpartisipasi dalam pencarian dana atau amal.",
+          "Saya mampu mengajar anak-anak dengan mudah.",
+          "Saya mampu mengajar orang dewasa dengan mudah.",
+          "Saya mampu pandai dalam menolong orang lain yang sedang bingung atau bermasalah.",
+          "Saya mampu dalam menghibur dan menemani orang yang lebih tua dari saya.",
+          "Saya mampu orang mencari saya untuk menceritakan masalah mereka.",
+          "Saya tertarik menjadi kepala sekolah.",
+          "Saya tertarik menjadi konselor masalah pribadi.",
+          "Saya tertarik menjadi pekerja sosial.",
+          "Saya tertarik menjadi konselor kejuruan dan pekerjaan."
+        ],
+        majors: [
+          "Bimbingan & Konseling (BK)",
+          "Psikologi",
+          "Pendidikan Guru (PGSD / Guru Mata Pelajaran)",
+          "Ilmu Kesejahteraan Sosial",
+          "Keperawatan / Kebidanan / Kesehatan Masyarakat",
+          "Hubungan Masyarakat (Public Relations)"
+        ],
+        careers: [
+          "Konselor Pribadi & Karier / Guru BK",
+          "Psikolog Klinis / Konsultan SDM (HRD)",
+          "Guru Sekolah / Dosen / Fasilitator Pelatihan",
+          "Pekerja Sosial di Lembaga Kemanusiaan / NGO",
+          "Tenaga Medis Keperawatan / Fisioterapis",
+          "Spesialis Hubungan Masyarakat & Pelayanan Publik"
+        ],
+        advice: "Latih keterampilan active listening (mendengarkan secara aktif), perluas jejaring organisasi sosial/relawan, dan kuasai dasar-dasar psikologi komunikasi serta mediasi resolusi konflik."
+      },
+      {
+        id: "E",
+        name: "Enterprising",
+        alias: "Pemimpin, Wirausaha & Persuasif",
+        icon: "fa-briefcase",
+        color: "#8b5cf6", // Purple
+        bgClass: "bg-purple-50 text-purple-700 border-purple-200",
+        description: "Menyukai kegiatan mempengaruhi orang lain, memimpin kelompok, menjual produk/ide, berwirausaha, bernegosiasi, dan meraih target prestasi atau keuntungan organisasi.",
+        questions: [
+          "Saya suka mempengaruhi orang lain.",
+          "Saya suka menjual suatu produk.",
+          "Saya suka mempelajari strategi untuk keberhasilan bisnis.",
+          "Saya suka menjadi pemimpin dalam kelompok.",
+          "Saya suka memimpin kelompok dalam meraih tujuan tertentu.",
+          "Saya mampu saya memenangkan penghargaan sebagai tenaga penjual atau pemimpin.",
+          "Saya mampu saya tahu bagaimana menjadi pemimpin yang berhasil/sukses.",
+          "Saya mampu saya seorang pembicara di depan umum yang baik.",
+          "Saya mampu saya dapat mengelola usaha kecil.",
+          "Saya mampu saya dapat membuat kelompok sosial atau kerja berjalan dengan baik.",
+          "Saya mampu saya dikenal dapat berbicara dengan orang yang sulit/keras kepala.",
+          "Saya mampu saya dapat mengelola kampanye penjualan.",
+          "Saya mampu saya dapat mengatur pekerjaan orang lain.",
+          "Saya mampu saya seorang yang berambisi dan cenderung bicara apa adanya.",
+          "Saya mampu dan pandai mempengaruhi orang untuk melakukan sesuatu menurut cara saya.",
+          "Saya mampu saya seorang tenaga penjual yang baik.",
+          "Saya tertarik menjadi eksekutif periklanan.",
+          "Saya tertarik menjadi pembawa acara/mc."
+        ],
+        majors: [
+          "Manajemen Bisnis & Administrasi Bisnis",
+          "Pemasaran Digital (Digital Marketing)",
+          "Ilmu Komunikasi & Public Speaking",
+          "Hukum Bisnis & Hubungan Internasional",
+          "Kewirausahaan (Entrepreneurship)",
+          "Ekonomi Pembangunan & Keuangan"
+        ],
+        careers: [
+          "Entrepreneur / Pemilik Usaha Startup",
+          "Manajer Pemasaran & Penjualan (Sales Director)",
+          "Eksekutif Periklanan & Branding Manager",
+          "Pembawa Acara (MC) / Public Speaker / Broadcaster",
+          "Konsultan Manajemen & Negosiator Bisnis",
+          "Politisi / Diplomat / Pejabat Eksekutif"
+        ],
+        advice: "Asah keterampilan public speaking dan presentasi persuasif, pelajari literasi manajemen risiko bisnis, dan ambil peran kepemimpinan aktif dalam kepengurusan OSIS atau komunitas kepemudaan."
+      },
+      {
+        id: "C",
+        name: "Conventional",
+        alias: "Teratur, Terstruktur & Administratif",
+        icon: "fa-folder-tree",
+        color: "#0d9488", // Teal
+        bgClass: "bg-teal-50 text-teal-700 border-teal-200",
+        description: "Menyukai pekerjaan teratur dengan data, angka, arsip, pembukuan, catatan akurat, sistematis, patuh terhadap prosedur jelas, rapi, teliti, serta cermat dalam detail administratif.",
+        questions: [
+          "Saya suka melakukan pekerjaan surat menyurat atau masalah perkantoran.",
+          "Saya suka melakukan operasi matematika dalam bisnis atau pembukuan.",
+          "Saya suka membuat catatan pengeluaran yang terperinci.",
+          "Saya suka menyusun sistem pengarsipan.",
+          "Saya suka membuat daftar inventaris dari persediaan atau produk.",
+          "Saya mampu mengetik sepuluh jari dengan cepat.",
+          "Saya mampu menjalankan mesin duplikator/mesin penjumlah.",
+          "Saya mampu mengarsip surat dan berkas-berkas lain.",
+          "Saya mampu melakukan pekerjaan administrasi kantor.",
+          "Saya mampu menggunakan program pembukuan.",
+          "Saya mampu melakukan tugas administratif dalam waktu singkat.",
+          "Saya mampu menempatkan kredit dan debet.",
+          "Saya mampu mencatat dengan cermat pembayaran/penjualan.",
+          "Saya tertarik menjadi manajer penjualan.",
+          "Saya tertarik menjadi ahli pembukuan.",
+          "Saya tertarik menjadi kasir bank.",
+          "Saya tertarik menjadi analisis keuangan.",
+          "Saya tertarik menjadi penaksir biaya."
+        ],
+        majors: [
+          "Akuntansi & Keuangan Terapan",
+          "Administrasi Perkantoran & Logistik",
+          "Sistem Informasi Manajemen Akuntansi",
+          "Perbankan & Keuangan Syariah",
+          "Ilmu Perpustakaan, Tata Kelola Arsip & Data",
+          "Manajemen Pajak & Kepabeanan"
+        ],
+        careers: [
+          "Akuntan Publik / Auditor Internal",
+          "Analis Keuangan / Credit Analyst / Estimator Biaya",
+          "Staf Administrasi Perkantoran & Tata Usaha",
+          "Teller Bank / Kepala Layanan Kasir",
+          "Manajer Data Kearsipan & Inventaris Logistik",
+          "Spesialis Perpajakan & Verifikator Anggaran"
+        ],
+        advice: "Kuasai software spreadsheet lanjutan (Microsoft Excel/Google Sheets), sertifikasi akuntansi dasar atau administrasi database, dan biasakan bekerja dengan ketelitian tinggi tanpa mengorbankan kecepatan."
+      }
+    ];
+
+    /* ---------- State ---------- */
+    const ASM_TOTAL = 108;
+    const ASM_PER_CAT = 18;
+
+    let asmStudent = { nama: '', kelas: '', sekolah: '', tanggal: '' };
+    let asmFlatQuestions = [];
+    ASM_RIASEC_DATA.forEach((cat, catIdx) => {
+      cat.questions.forEach((qText, itemIdx) => {
+        asmFlatQuestions.push({
+          globalIndex: asmFlatQuestions.length,
+          categoryIndex: catIdx,
+          categoryId: cat.id,
+          categoryName: cat.name,
+          categoryAlias: cat.alias,
+          categoryIcon: cat.icon,
+          itemIndex: itemIdx,
+          text: qText
+        });
+      });
+    });
+
+    // null = belum dijawab, true = sesuai/suka, false = tidak sesuai
+    let asmAnswers = Array(ASM_TOTAL).fill(null);
+    let asmCurrentQ = 0;
+    let asmCurrentCat = 0;
+    let asmViewMode = 'card';
+    let asmSoundOn = true;
+    let asmAudioCtx = null;
+    let asmChart = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const tgl = document.getElementById('inputTanggal');
+      if (tgl) tgl.value = new Date().toISOString().split('T')[0];
+    });
+
+    /* ---------- Efek suara (Web Audio API) ---------- */
+    function asmPlaySound(type) {
+      if (!asmSoundOn) return;
+      try {
+        if (!asmAudioCtx) asmAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (asmAudioCtx.state === 'suspended') asmAudioCtx.resume();
+        const now = asmAudioCtx.currentTime;
+
+        if (type === 'yes') {
+          const osc = asmAudioCtx.createOscillator();
+          const gain = asmAudioCtx.createGain();
+          osc.connect(gain); gain.connect(asmAudioCtx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.start(now); osc.stop(now + 0.18);
+        } else if (type === 'no') {
+          const osc = asmAudioCtx.createOscillator();
+          const gain = asmAudioCtx.createGain();
+          osc.connect(gain); gain.connect(asmAudioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(329.63, now);
+          osc.frequency.linearRampToValueAtTime(261.63, now + 0.09);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          osc.start(now); osc.stop(now + 0.09);
+        } else if (type === 'finish') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = asmAudioCtx.createOscillator();
+            const gain = asmAudioCtx.createGain();
+            osc.connect(gain); gain.connect(asmAudioCtx.destination);
+            const start = now + (i * 0.08);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.16, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+            osc.start(start); osc.stop(start + 0.28);
+          });
+        }
+      } catch (e) { /* Web Audio tidak didukung: abaikan */ }
+    }
+
+    function asmToggleSound() {
+      asmSoundOn = !asmSoundOn;
+      const btn = document.getElementById('soundToggleBtn');
+      if (asmSoundOn) {
+        btn.innerHTML = '<i class="fa-solid fa-volume-high mr-1.5 text-sky-600"></i> Suara: Aktif';
+        btn.className = 'px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-volume-xmark mr-1.5 text-slate-400"></i> Suara: Mati';
+        btn.className = 'px-3 py-1.5 rounded-xl bg-slate-100 text-slate-400 text-xs font-semibold transition flex items-center';
+      }
+    }
+
+    /* ---------- Langkah 1: mulai tes ---------- */
+    function asmStartTest(e) {
+      e.preventDefault();
+      const nama = document.getElementById('inputNama').value.trim();
+      const kelas = document.getElementById('inputKelas').value.trim();
+      const sekolah = document.getElementById('inputSekolah').value.trim();
+      const tanggal = document.getElementById('inputTanggal').value;
+
+      if (!nama || !kelas || !sekolah) {
+        showToast('Isi nama, kelas, dan sekolah terlebih dahulu sebelum memulai tes.', 'error');
+        return;
+      }
+
+      asmStudent = { nama, kelas, sekolah, tanggal };
+      asmAnswers = Array(ASM_TOTAL).fill(null);
+      asmCurrentQ = 0;
+      asmCurrentCat = 0;
+
+      document.getElementById('stepIntro').classList.add('hidden');
+      document.getElementById('stepQuiz').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      asmRenderCard();
+    }
+
+    /* ---------- Langkah 2: mesin kartu kuis ---------- */
+    function asmRenderCard() {
+      const q = asmFlatQuestions[asmCurrentQ];
+      asmCurrentCat = q.categoryIndex;
+
+      document.getElementById('cardQuestionNumber').innerText = q.globalIndex + 1;
+      document.getElementById('cardQuestionText').innerText = q.text;
+      document.getElementById('cardCategoryTag').innerText = `Kelompok ${q.categoryId} (Holland)`;
+      document.getElementById('cardCategoryTitle').innerText = `${q.categoryName} (${q.categoryAlias})`;
+      document.getElementById('categorySubCounter').innerText = `Butir ${q.itemIndex + 1} dari ${ASM_PER_CAT}`;
+      document.getElementById('cardCategoryIcon').innerHTML = `<i class="fa-solid ${q.categoryIcon}"></i>`;
+
+      const curAns = asmAnswers[q.globalIndex];
+      const badge = document.getElementById('cardCurrentStatusBadge');
+      const yesBtn = document.getElementById('btnCardYes');
+      const noBtn = document.getElementById('btnCardNo');
+
+      yesBtn.classList.remove('ring-4', 'ring-emerald-300');
+      noBtn.classList.remove('ring-4', 'ring-slate-400');
+
+      if (curAns === true) {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300';
+        badge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Dijawab: Sesuai';
+        yesBtn.classList.add('ring-4', 'ring-emerald-300');
+      } else if (curAns === false) {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-slate-200 text-slate-700';
+        badge.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i> Dijawab: Tidak Sesuai';
+        noBtn.classList.add('ring-4', 'ring-slate-400');
+      } else {
+        badge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500';
+        badge.innerText = 'Belum Dijawab';
+      }
+
+      const cardEl = document.getElementById('activeQuestionCard');
+      cardEl.classList.remove('asm-card-animate');
+      void cardEl.offsetWidth;
+      cardEl.classList.add('asm-card-animate');
+
+      document.getElementById('btnCardPrev').disabled = (asmCurrentQ === 0);
+      asmUpdateProgress();
+    }
+
+    function asmAnswerCard(isMatch) {
+      asmAnswers[asmCurrentQ] = isMatch;
+      asmPlaySound(isMatch ? 'yes' : 'no');
+
+      if (asmCurrentQ < ASM_TOTAL - 1) {
+        asmCurrentQ++;
+        asmRenderCard();
+      } else {
+        asmRenderCard();
+        asmPlaySound('finish');
+        document.getElementById('modalFinishPrompt').classList.remove('hidden');
+      }
+    }
+
+    function asmPrevQuestion() {
+      if (asmCurrentQ > 0) { asmCurrentQ--; asmRenderCard(); }
+    }
+
+    function asmNextQuestion() {
+      if (asmCurrentQ < ASM_TOTAL - 1) { asmCurrentQ++; asmRenderCard(); }
+    }
+
+    function asmJumpToQuestion(globalIdx) {
+      asmCurrentQ = globalIdx;
+      if (asmViewMode === 'card') {
+        asmRenderCard();
+      } else {
+        asmJumpToCategory(asmFlatQuestions[globalIdx].categoryIndex);
+      }
+      asmCloseQuestionMap();
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function asmJumpToCategory(catIdx) {
+      asmCurrentCat = catIdx;
+      asmCurrentQ = catIdx * ASM_PER_CAT;
+      if (asmViewMode === 'card') asmRenderCard();
+      else { asmRenderList(); asmUpdateProgress(); }
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    /* ---------- Progres & tab kategori ---------- */
+    function asmUpdateProgress() {
+      const answered = asmAnswers.filter(a => a !== null).length;
+      const percent = Math.round((answered / ASM_TOTAL) * 100);
+
+      document.getElementById('quizProgressLabel').innerText = `Pertanyaan ${asmCurrentQ + 1} dari ${ASM_TOTAL}`;
+      document.getElementById('quizProgressPercent').innerText = `${percent}% Terjawab (${answered}/${ASM_TOTAL})`;
+      document.getElementById('quizGlobalProgressBar').style.width = `${Math.max(percent, 2)}%`;
+      document.getElementById('answeredPillCount').innerText = `${answered}/${ASM_TOTAL}`;
+
+      ASM_RIASEC_DATA.forEach((c, idx) => {
+        const btn = document.getElementById(`catBtn-${idx}`);
+        const yesCount = asmAnswers.slice(idx * ASM_PER_CAT, (idx + 1) * ASM_PER_CAT).filter(a => a === true).length;
+
+        if (idx === asmCurrentCat) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-sky-600 bg-sky-600 text-white shadow-md shadow-sky-500/20';
+        } else if (yesCount > 0) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-300 bg-emerald-50 text-emerald-800';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100';
+        }
+        btn.innerHTML = `${c.id} <span class="text-[10px] opacity-75">(${yesCount})</span>`;
+      });
+    }
+
+    /* ---------- Mode kartu <-> mode lembar ---------- */
+    function asmToggleViewMode() {
+      const btn = document.getElementById('viewModeBtn');
+      if (asmViewMode === 'card') {
+        asmViewMode = 'list';
+        document.getElementById('quizCardMode').classList.add('hidden');
+        document.getElementById('quizListMode').classList.remove('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-clone mr-1.5 text-sky-600"></i> Mode Kartu Kuis';
+        asmRenderList();
+        asmUpdateProgress();
+      } else {
+        asmViewMode = 'card';
+        document.getElementById('quizListMode').classList.add('hidden');
+        document.getElementById('quizCardMode').classList.remove('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar';
+        asmRenderCard();
+      }
+    }
+
+    function asmRenderList() {
+      const cat = ASM_RIASEC_DATA[asmCurrentCat];
+      document.getElementById('listCatName').innerText = `${cat.name} (${cat.alias})`;
+      document.getElementById('listCatDesc').innerText = cat.description;
+      document.getElementById('listCatIcon').innerHTML = `<i class="fa-solid ${cat.icon}"></i>`;
+
+      const container = document.getElementById('questionsListContainer');
+      container.innerHTML = '';
+
+      const startIdx = asmCurrentCat * ASM_PER_CAT;
+      for (let i = 0; i < ASM_PER_CAT; i++) {
+        const gIdx = startIdx + i;
+        const isYes = asmAnswers[gIdx] === true;
+        const isNo = asmAnswers[gIdx] === false;
+
+        const row = document.createElement('div');
+        row.className = `p-3.5 md:p-4 rounded-2xl border transition flex items-center justify-between gap-3 ${
+          isYes ? 'bg-emerald-50/70 border-emerald-300' : 'bg-white border-slate-200/90 hover:bg-slate-50'
+        }`;
+        row.innerHTML = `
+          <div class="flex items-start space-x-3">
+            <span class="text-xs font-bold text-slate-400 mt-0.5">${gIdx + 1}.</span>
+            <span class="text-xs md:text-sm font-medium text-slate-800 leading-relaxed">${escapeHtml(cat.questions[i])}</span>
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <button type="button" onclick="asmSetAnswerList(${gIdx}, true)" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+              isYes ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800'
+            }"><i class="fa-solid fa-check mr-1"></i> Sesuai</button>
+            <button type="button" onclick="asmSetAnswerList(${gIdx}, false)" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+              isNo ? 'bg-slate-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+            }"><i class="fa-solid fa-xmark mr-1"></i> Tidak</button>
+          </div>`;
+        container.appendChild(row);
+      }
+
+      const prev = document.getElementById('btnListPrev');
+      prev.disabled = (asmCurrentCat === 0);
+      prev.style.opacity = (asmCurrentCat === 0) ? '0.4' : '1';
+    }
+
+    function asmSetAnswerList(globalIdx, val) {
+      asmAnswers[globalIdx] = val;
+      asmPlaySound(val ? 'yes' : 'no');
+      asmRenderList();
+      asmUpdateProgress();
+    }
+
+    function asmNavigateCategory(dir) {
+      const next = asmCurrentCat + dir;
+      if (next >= 0 && next < ASM_RIASEC_DATA.length) asmJumpToCategory(next);
+    }
+
+    /* ---------- Peta soal ---------- */
+    function asmOpenQuestionMap() {
+      const container = document.getElementById('questionGridContainer');
+      container.innerHTML = '';
+
+      const answered = asmAnswers.filter(a => a !== null).length;
+      document.getElementById('questionMapSummary').innerText = `${answered} dari ${ASM_TOTAL} pertanyaan terjawab`;
+
+      asmFlatQuestions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => asmJumpToQuestion(idx);
+
+        const ans = asmAnswers[idx];
+        let cls = 'py-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center ';
+        if (idx === asmCurrentQ) cls += 'ring-2 ring-sky-500 ring-offset-1 ';
+
+        if (ans === true) cls += 'bg-emerald-500 text-white border-emerald-600';
+        else if (ans === false) cls += 'bg-slate-200 text-slate-700 border-slate-300';
+        else cls += 'bg-white text-slate-400 border-dashed border-slate-300 hover:border-sky-400';
+
+        btn.className = cls;
+        btn.innerHTML = `<span>${idx + 1}</span><span class="text-[9px] opacity-75 font-normal">${q.categoryId}</span>`;
+        container.appendChild(btn);
+      });
+
+      document.getElementById('modalQuestionMap').classList.remove('hidden');
+    }
+
+    function asmCloseQuestionMap() {
+      document.getElementById('modalQuestionMap').classList.add('hidden');
+    }
+
+    function asmConfirmFinish() {
+      document.getElementById('modalFinishPrompt').classList.add('hidden');
+      asmSubmitAssessment();
+    }
+
+    function asmReviewFromFinish() {
+      document.getElementById('modalFinishPrompt').classList.add('hidden');
+      asmOpenQuestionMap();
+    }
+
+    /* ---------- Langkah 3: hitung & tampilkan hasil ---------- */
+    function asmComputeScores() {
+      return ASM_RIASEC_DATA.map((cat, catIdx) => {
+        const count = asmAnswers.slice(catIdx * ASM_PER_CAT, (catIdx + 1) * ASM_PER_CAT).filter(a => a === true).length;
+        return {
+          id: cat.id,
+          name: cat.name,
+          alias: cat.alias,
+          score: count,
+          percentage: Math.round((count / ASM_PER_CAT) * 100),
+          color: cat.color,
+          categoryObj: cat
+        };
+      });
+    }
+
+    function asmSubmitAssessment() {
+      const scores = asmComputeScores();
+      const totalChecked = scores.reduce((sum, s) => sum + s.score, 0);
+
+      if (totalChecked === 0) {
+        showToast('Belum ada pernyataan yang kamu pilih "Sesuai". Pilih minimal satu butir terlebih dahulu.', 'error');
+        return;
+      }
+
+      // Urutan seri mengikuti urutan R-I-A-S-E-C (sama dengan perhitungan di server)
+      const sorted = scores
+        .map((s, i) => ({ s, i }))
+        .sort((a, b) => (b.s.score - a.s.score) || (a.i - b.i))
+        .map(x => x.s);
+      const [top1, top2, top3] = sorted;
+
+      const hollandCode = `${top1.id}${top2.id}${top3.id}`;
+      const hollandFullName = `${top1.name} - ${top2.name} - ${top3.name}`;
+
+      document.getElementById('resNama').innerText = asmStudent.nama;
+      document.getElementById('resKelas').innerText = asmStudent.kelas;
+      document.getElementById('resSekolah').innerText = asmStudent.sekolah;
+      document.getElementById('reportSchoolSub').innerText = `Layanan Bimbingan & Konseling • ${asmStudent.sekolah}`;
+
+      const dateObj = new Date(asmStudent.tanggal || new Date());
+      document.getElementById('resTanggal').innerText = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('signatureStudentName').innerText = `( ${asmStudent.nama} )`;
+
+      document.getElementById('resHollandCode').innerText = `${hollandCode} (${hollandFullName})`;
+      document.getElementById('resHollandTagline').innerText = `Kamu memiliki kecenderungan minat tertinggi pada kelompok ${top1.name} (${top1.alias}), didukung oleh karakteristik ${top2.name} dan ${top3.name}.`;
+      document.getElementById('resPrimaryType').innerText = `${top1.name} (${top1.id})`;
+      document.getElementById('resPrimaryScore').innerText = `${top1.score} dari ${ASM_PER_CAT} butir (${top1.percentage}%)`;
+
+      const barsContainer = document.getElementById('scoreBarsContainer');
+      barsContainer.innerHTML = '';
+      scores.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200/90';
+        row.innerHTML = `
+          <div class="flex justify-between items-center text-xs mb-1 gap-2">
+            <span class="font-bold text-slate-800">${s.name} (${s.id}) - <span class="font-normal text-slate-500">${s.alias}</span></span>
+            <span class="font-bold text-slate-900 shrink-0">${s.score} / ${ASM_PER_CAT} <span class="text-slate-400 font-normal">(${s.percentage}%)</span></span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="h-2 rounded-full transition-all duration-500" style="width: ${s.percentage}%; background-color: ${s.color};"></div>
+          </div>`;
+        barsContainer.appendChild(row);
+      });
+
+      document.getElementById('resPersonalityDesc').innerHTML = `
+        <p><strong>Profil Minat Utama (${top1.name}):</strong> ${top1.categoryObj.description}</p>
+        <p><strong>Profil Pendukung (${top2.name}):</strong> ${top2.categoryObj.description}</p>
+        <p class="text-slate-600 italic">Berdasarkan hasil tes minat, kamu paling berpotensi berkembang pesat ketika berada di lingkungan yang memfasilitasi karakter <strong>${top1.name}</strong> dan <strong>${top2.name}</strong>.</p>`;
+
+      const majorList = document.getElementById('resStudyMajorList');
+      majorList.innerHTML = '';
+      [...new Set([...top1.categoryObj.majors, ...top2.categoryObj.majors.slice(0, 3)])].forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start';
+        li.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-xs mt-1 mr-2 shrink-0"></i><span>${m}</span>`;
+        majorList.appendChild(li);
+      });
+
+      const careerList = document.getElementById('resCareerList');
+      careerList.innerHTML = '';
+      [...new Set([...top1.categoryObj.careers, ...top2.categoryObj.careers.slice(0, 3)])].forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start';
+        li.innerHTML = `<i class="fa-solid fa-briefcase text-sky-500 text-xs mt-1 mr-2 shrink-0"></i><span>${c}</span>`;
+        careerList.appendChild(li);
+      });
+
+      document.getElementById('resDevTips').innerHTML = `
+        <strong>Fokus Penguatan Tipe ${top1.name}:</strong> ${top1.categoryObj.advice}
+        Padukan juga kekuatan ini dengan tipe <strong>${top2.name}</strong> agar pilihan kariermu semakin kuat dan relevan di masa depan.`;
+
+      asmRenderChart(scores);
+
+      document.getElementById('stepQuiz').classList.add('hidden');
+      document.getElementById('stepResult').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    }
+
+    function asmRenderChart(scores) {
+      const canvas = document.getElementById('riasecChart');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      if (asmChart) asmChart.destroy();
+
+      // Warna grafik mengikuti warna utama tema situs
+      const primary = (getComputedStyle(document.documentElement).getPropertyValue('--color-primary') || '').trim() || '#0284c7';
+
+      asmChart = new Chart(canvas.getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: scores.map(s => `${s.name} (${s.id})`),
+          datasets: [{
+            label: 'Skor Minat Kamu',
+            data: scores.map(s => s.score),
+            fill: true,
+            backgroundColor: primary + '40',
+            borderColor: primary,
+            pointBackgroundColor: primary,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: primary,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(203, 213, 225, 0.6)' },
+              grid: { color: 'rgba(203, 213, 225, 0.6)' },
+              suggestedMin: 0,
+              suggestedMax: ASM_PER_CAT,
+              ticks: { stepSize: 3, font: { size: 9 }, backdropColor: 'transparent' },
+              pointLabels: { font: { size: 11, weight: 'bold', family: 'Inter, sans-serif' }, color: '#1e293b' }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    /* ---------- Cetak laporan (hanya lembar laporan yang tercetak) ---------- */
+    function asmPrintReport() {
+      document.body.classList.add('print-asm');
+      const cleanup = () => {
+        document.body.classList.remove('print-asm');
+        window.removeEventListener('afterprint', cleanup);
+      };
+      window.addEventListener('afterprint', cleanup);
+      window.print();
+    }
+
+    /* ---------- Tes ulang ---------- */
+    function asmRestartTest() {
+      asmAnswers = Array(ASM_TOTAL).fill(null);
+      asmCurrentQ = 0;
+      asmCurrentCat = 0;
+
+      if (asmViewMode === 'list') asmToggleViewMode();
+
+      document.getElementById('stepResult').classList.add('hidden');
+      document.getElementById('stepIntro').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
