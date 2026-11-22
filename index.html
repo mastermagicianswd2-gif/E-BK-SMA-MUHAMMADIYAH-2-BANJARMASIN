@@ -70,6 +70,87 @@
     .smooth-transition {
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* ===== ANIMASI TOMBOL, KARTU & TRANSISI (halus, hormati "kurangi gerakan") ===== */
+    @keyframes ebkFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ebkFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes ebkPopIn   { from { opacity: 0; transform: translateY(18px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes ebkPopOut  { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(10px) scale(0.97); } }
+    @keyframes ebkTabIn   { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ebkSwap    { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes ebkSpin    { to { transform: rotate(360deg); } }
+    @keyframes ebkRipple  { to { transform: scale(1); opacity: 0; } }
+
+    /* Jendela popup/modal: latar memudar, kartu naik perlahan */
+    div[id^="modal-"]:not(.hidden) { animation: ebkFadeIn 0.25s ease backwards; }
+    div[id^="modal-"]:not(.hidden) > div { animation: ebkPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+    div[id^="modal-"].ebk-closing { animation: ebkFadeOut 0.2s ease forwards; pointer-events: none; }
+    div[id^="modal-"].ebk-closing > div { animation: ebkPopOut 0.2s ease forwards; }
+    #popup-info-card.ebk-swap { animation: ebkSwap 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* Perpindahan halaman / sub-tab */
+    section[id^="tab-"]:not(.hidden),
+    div[id^="admin-subtab-"]:not(.hidden),
+    div[id^="asm-view-"]:not(.hidden) { animation: ebkTabIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+
+    /* Tombol: transisi halus, menekan terasa "masuk", tombol utama terangkat saat disorot */
+    button:not(:disabled),
+    a[class*="rounded-"][class*="px-"] {
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease,
+                  background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease,
+                  opacity 0.2s ease, filter 0.2s ease;
+    }
+    button:not(:disabled):not([class*="translate"]):active,
+    a[class*="rounded-"][class*="px-"]:active {
+      transform: scale(0.95);
+      transition-duration: 0.08s;
+    }
+    button[class*="shadow-"]:not(:disabled):not([class*="translate"]):hover,
+    a[class*="rounded-"][class*="px-"][class*="shadow-"]:hover {
+      transform: translateY(-2px);
+    }
+    button[class*="shadow-"]:not(:disabled):not([class*="translate"]):hover:active,
+    a[class*="rounded-"][class*="px-"][class*="shadow-"]:hover:active {
+      transform: translateY(0) scale(0.95);
+    }
+    button:disabled { cursor: not-allowed; }
+    button:focus-visible,
+    a[class*="rounded-"][class*="px-"]:focus-visible {
+      outline: 2px solid var(--color-primary, #0284c7);
+      outline-offset: 2px;
+    }
+
+    /* Kartu yang bisa diklik */
+    div[onclick].cursor-pointer { transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+    div[onclick].cursor-pointer:hover { transform: translateY(-3px); }
+    div[onclick].cursor-pointer:active { transform: scale(0.985); }
+
+    /* Efek riak saat tombol ditekan */
+    .ebk-ripple-host { overflow: hidden; }
+    .ebk-ripple {
+      position: absolute; border-radius: 50%; background: currentColor; opacity: 0.25;
+      transform: scale(0); animation: ebkRipple 0.6s ease-out forwards; pointer-events: none;
+    }
+
+    /* Keadaan memuat: tombol menampilkan putaran selama data dikirim */
+    button.is-loading { pointer-events: none; opacity: 0.85; }
+    button.is-loading::after {
+      content: ''; flex-shrink: 0; width: 0.95em; height: 0.95em; margin-left: 0.5rem;
+      border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+      animation: ebkSpin 0.7s linear infinite;
+    }
+    button.is-loading.is-loading-icon { justify-content: center; }
+    button.is-loading.is-loading-icon > * { display: none; }
+    button.is-loading.is-loading-icon::after { margin-left: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      div[id^="modal-"], div[id^="modal-"] > div,
+      section[id^="tab-"], div[id^="admin-subtab-"], div[id^="asm-view-"],
+      #popup-info-card { animation: none !important; }
+      button, a[class*="rounded-"][class*="px-"], div[onclick].cursor-pointer {
+        transition: none !important; transform: none !important;
+      }
+      .ebk-ripple { display: none; }
     }
   </style>
 </head>
@@ -838,7 +919,7 @@
 
             <!-- Bagian 1: Logo Website -->
             <div class="border-t border-slate-100 pt-5 space-y-4">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">1. an Logo Aplikasi</label>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">1. Pengaturan Logo Aplikasi</label>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Logo</label>
@@ -1276,7 +1357,7 @@
 
   <!-- MODAL: POPUP PENGUMUMAN (tampil ke siswa saat membuka web) -->
   <div id="modal-popup-info" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4" onclick="if (event.target === this) closePopupInfo()">
-    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl max-h-[90vh] flex flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="popup-info-judul">
+    <div id="popup-info-card" class="bg-white rounded-3xl max-w-md w-full shadow-2xl max-h-[90vh] flex flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="popup-info-judul">
       <div id="popup-info-image-wrap" class="hidden shrink-0 bg-slate-100 relative">
         <img id="popup-info-image" src="" alt="" referrerpolicy="no-referrer" class="w-full max-h-[45vh] object-contain mx-auto block" onerror="document.getElementById('popup-info-image-wrap').classList.add('hidden')">
         <button onclick="closePopupInfo()" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-slate-900/60 hover:bg-slate-900/80 text-white text-lg leading-none flex items-center justify-center" aria-label="Tutup">&times;</button>
@@ -4360,6 +4441,9 @@
       renderKontenCards();
       updateKonselingBadge();
 
+      // Popup terakhir langsung tampil dari cache (tanpa menunggu server), lalu disinkronkan
+      showCachedPopups();
+
       if (isBackendConnected()) {
         try {
           const res = await fetch(`${SCRIPT_URL}?action=getPublicData`, { redirect: 'follow' });
@@ -4382,7 +4466,7 @@
               localStorage.setItem('ebk_settings', JSON.stringify(result.settings));
             }
             if (Array.isArray(result.popups)) {
-              showPopupPengumuman(result.popups);
+              syncPopupFromServer(result.popups);
             }
           } else {
             updateConnectionStatusUI(false, 'Apps Script menjawab error: ' + (result.message || 'tidak diketahui'));
@@ -4399,6 +4483,90 @@
       }
     }
 
+
+    // =========================================================================
+    // ✨ GERAK UI — riak tombol & indikator memuat otomatis pada tombol yang memanggil server
+    // =========================================================================
+    (function () {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* Riak saat tombol ditekan */
+      document.addEventListener('click', (e) => {
+        if (reduce) return;
+        const b = e.target.closest && e.target.closest('button');
+        if (!b || b.disabled) return;
+        const rect = b.getBoundingClientRect();
+        if (rect.width < 24 || rect.width > 520) return;
+
+        const setRelative = getComputedStyle(b).position === 'static';
+        if (setRelative) b.style.position = 'relative';
+        b.classList.add('ebk-ripple-host');
+
+        const size = Math.max(rect.width, rect.height) * 2;
+        const cx = e.detail === 0 ? rect.width / 2 : e.clientX - rect.left;
+        const cy = e.detail === 0 ? rect.height / 2 : e.clientY - rect.top;
+        const r = document.createElement('span');
+        r.className = 'ebk-ripple';
+        r.style.cssText = `width:${size}px;height:${size}px;left:${cx - size / 2}px;top:${cy - size / 2}px;`;
+        b.appendChild(r);
+
+        setTimeout(() => {
+          r.remove();
+          if (!b.querySelector('.ebk-ripple')) {
+            b.classList.remove('ebk-ripple-host');
+            if (setRelative) b.style.position = '';
+          }
+        }, 650);
+      }, true);
+
+      /* Tombol yang memicu permintaan ke Apps Script otomatis menampilkan putaran sampai selesai */
+      let lastBtn = null;
+      let lastBtnTime = 0;
+      let pending = 0;
+      const loadingBtns = new Set();
+
+      document.addEventListener('click', (e) => {
+        const b = e.target.closest && e.target.closest('button');
+        if (b && !b.disabled && !b.closest('header')) {
+          lastBtn = b;
+          lastBtnTime = Date.now();
+        }
+      }, true);
+
+      function clearLoading() {
+        loadingBtns.forEach(b => {
+          b.classList.remove('is-loading', 'is-loading-icon');
+          b.removeAttribute('aria-busy');
+        });
+        loadingBtns.clear();
+      }
+
+      const origFetch = window.fetch.bind(window);
+      window.fetch = function (input, init) {
+        const url = typeof input === 'string' ? input : ((input && input.url) || '');
+        pending++;
+
+        if (lastBtn && Date.now() - lastBtnTime < 600 && String(url).indexOf('script.google.com') > -1) {
+          const b = lastBtn;
+          lastBtn = null;
+          if (document.body.contains(b)) {
+            b.classList.add('is-loading');
+            if (!b.textContent.trim()) b.classList.add('is-loading-icon');
+            b.setAttribute('aria-busy', 'true');
+            loadingBtns.add(b);
+            setTimeout(clearLoading, 45000); // pengaman
+          }
+        }
+
+        const p = origFetch(input, init);
+        const done = () => {
+          pending = Math.max(0, pending - 1);
+          if (pending === 0) setTimeout(() => { if (pending === 0) clearLoading(); }, 250);
+        };
+        p.then(done, done);
+        return p;
+      };
+    })();
 
     // =========================================================================
     // 📢 POPUP PENGUMUMAN — tampil ke siswa saat web dibuka, diatur Guru BK
@@ -4475,15 +4643,105 @@
       try { sessionStorage.setItem('ebk_popup_dismissed', JSON.stringify(arr)); } catch (e) {}
     }
 
-    function showPopupPengumuman(list) {
-      if (!Array.isArray(list) || !list.length) return;
+    /* ---------- Cache: popup langsung tampil saat halaman dibuka / di-refresh ---------- */
+    const POPUP_CACHE_KEY = 'ebk_popup_cache';
+    const POPUP_CACHE_MAX_AGE = 6 * 60 * 60 * 1000;
+    let popupShowTimer = null;
+
+    function popupWithinSchedule(p) {
+      const now = popupNowWita();
+      if (p.mulai && now < p.mulai) return false;
+      if (p.sampai && now > p.sampai) return false;
+      return true;
+    }
+
+    function savePopupCache(list) {
+      try { localStorage.setItem(POPUP_CACHE_KEY, JSON.stringify({ t: Date.now(), list: list })); } catch (e) {}
+    }
+
+    function loadPopupCache() {
+      try {
+        const c = JSON.parse(localStorage.getItem(POPUP_CACHE_KEY) || 'null');
+        if (!c || !Array.isArray(c.list) || Date.now() - c.t > POPUP_CACHE_MAX_AGE) return [];
+        return c.list.filter(p => p && p.id && popupWithinSchedule(p));
+      } catch (e) { return []; }
+    }
+
+    function pendingPopups(list) {
       const dismissed = getPopupDismissed();
-      popupQueue = list.filter(p => p && p.id && dismissed.indexOf(popupKey(p)) === -1);
-      if (!popupQueue.length) return;
+      return list.filter(p => p && p.id && dismissed.indexOf(popupKey(p)) === -1);
+    }
+
+    // Beri jeda singkat agar halaman selesai tergambar dulu, lalu popup muncul perlahan
+    function schedulePopupShow(queue) {
+      clearTimeout(popupShowTimer);
+      if (!queue.length) return;
+      const wait = Math.max(120, 500 - Math.round(performance.now()));
+      popupShowTimer = setTimeout(() => openPopupQueue(queue), wait);
+    }
+
+    function openPopupQueue(queue) {
+      const modal = document.getElementById('modal-popup-info');
+      if (!modal || !queue.length) return;
+      popupQueue = queue;
       popupIndex = 0;
       popupPreviewMode = false;
       renderPopupInfo();
-      document.getElementById('modal-popup-info').classList.remove('hidden');
+
+      // Tunggu foto siap (maks 1,5 detik) agar popup tidak "melompat" saat foto datang
+      let revealed = false;
+      const reveal = () => {
+        if (revealed) return;
+        revealed = true;
+        modal.classList.remove('ebk-closing');
+        modal.classList.remove('hidden');
+      };
+      const first = queue[0];
+      if (first.gambar && /^https:\/\//i.test(first.gambar)) {
+        const pre = new Image();
+        pre.onload = reveal;
+        pre.onerror = reveal;
+        setTimeout(reveal, 1500);
+        pre.src = first.gambar;
+      } else {
+        reveal();
+      }
+    }
+
+    // Dipanggil saat halaman dibuka: tampilkan popup terakhir yang tersimpan tanpa menunggu server
+    function showCachedPopups() {
+      schedulePopupShow(pendingPopups(loadPopupCache()));
+    }
+
+    // Dipanggil saat data server tiba: cocokkan dengan yang sudah tampil, tanpa berkedip
+    function syncPopupFromServer(list) {
+      if (!Array.isArray(list)) return;
+      savePopupCache(list);
+      const fresh = pendingPopups(list);
+      const modal = document.getElementById('modal-popup-info');
+      const isOpen = modal && !modal.classList.contains('hidden') && !modal.classList.contains('ebk-closing') && !popupPreviewMode;
+
+      if (isOpen) {
+        const current = popupQueue[popupIndex];
+        const curKey = current ? popupKey(current) : '';
+        const idx = fresh.findIndex(p => popupKey(p) === curKey);
+        if (idx >= 0) {
+          const sameLen = fresh.length === popupQueue.length;
+          popupQueue = fresh;
+          popupIndex = idx;
+          if (!sameLen) renderPopupInfo();      // hanya titik penanda & tombol yang berubah
+        } else if (fresh.length) {
+          popupQueue = fresh;
+          popupIndex = 0;
+          renderPopupInfo();
+        } else {
+          popupQueue = [];                      // tidak berlaku lagi: tutup halus
+          closePopupInfo();
+        }
+        return;
+      }
+
+      schedulePopupShow(fresh);
     }
 
     function renderPopupInfo() {
@@ -4547,12 +4805,19 @@
       if (popupIndex < popupQueue.length - 1) {
         popupIndex++;
         renderPopupInfo();
+        const card = document.getElementById('popup-info-card');
+        if (card) {
+          card.classList.remove('ebk-swap');
+          void card.offsetWidth;
+          card.classList.add('ebk-swap');
+        }
       }
     }
 
     function closePopupInfo() {
       const modal = document.getElementById('modal-popup-info');
-      if (modal) modal.classList.add('hidden');
+      if (!modal || modal.classList.contains('hidden') || modal.classList.contains('ebk-closing')) return;
+
       if (!popupPreviewMode && popupQueue.length) {
         const dismissed = getPopupDismissed();
         popupQueue.forEach(p => { const k = popupKey(p); if (dismissed.indexOf(k) === -1) dismissed.push(k); });
@@ -4560,6 +4825,12 @@
       }
       popupQueue = [];
       popupPreviewMode = false;
+
+      modal.classList.add('ebk-closing');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('ebk-closing');
+      }, 220);
     }
 
     document.addEventListener('keydown', (ev) => {
@@ -4845,7 +5116,9 @@
       popupIndex = 0;
       popupPreviewMode = true;     // pratinjau tidak dihitung sebagai "sudah dilihat"
       renderPopupInfo();
-      document.getElementById('modal-popup-info').classList.remove('hidden');
+      const pm = document.getElementById('modal-popup-info');
+      pm.classList.remove('ebk-closing');
+      pm.classList.remove('hidden');
     }
 
     // =========================================================================
