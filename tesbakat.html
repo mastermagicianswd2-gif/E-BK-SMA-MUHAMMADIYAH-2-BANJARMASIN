@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tes Bakat &amp; Kecerdasan Majemuk (Multiple Intelligences)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts Inter (sama dengan index.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    // Konfigurasi warna identik dengan index.html agar tema E-BK ikut berlaku
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            themePrimary: 'var(--color-primary, #0284c7)',
+            themeDark: 'var(--color-dark, #0c2340)',
+            themeAccent: 'var(--color-accent, #f59e0b)',
+            sky: {
+              50:  'rgb(var(--sky-50, 240 249 255) / <alpha-value>)',
+              100: 'rgb(var(--sky-100, 224 242 254) / <alpha-value>)',
+              200: 'rgb(var(--sky-200, 186 230 253) / <alpha-value>)',
+              300: 'rgb(var(--sky-300, 125 211 252) / <alpha-value>)',
+              400: 'rgb(var(--sky-400, 56 189 248) / <alpha-value>)',
+              500: 'rgb(var(--sky-500, 14 165 233) / <alpha-value>)',
+              600: 'rgb(var(--sky-600, 2 132 199) / <alpha-value>)',
+              700: 'rgb(var(--sky-700, 3 105 161) / <alpha-value>)',
+              800: 'rgb(var(--sky-800, 7 89 133) / <alpha-value>)',
+              900: 'rgb(var(--sky-900, 12 74 110) / <alpha-value>)',
+            },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --color-primary: #0284c7;
+      --color-dark: #0c2340;
+      --color-accent: #f59e0b;
+    }
+
+    .bg-pattern-subtle {
+      background-color: var(--color-dark);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px), radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+
+    /* Saat ditanam di index.html: sembunyikan header/footer sendiri */
+    .embedded body { background-color: transparent; }
+    .embedded header, .embedded footer { display: none !important; }
+    .embedded main { padding-top: 0.25rem; padding-bottom: 1.5rem; }
+
+    /* Cetak laporan: bersih & formal (A4) */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 9.5pt !important;
+        line-height: 1.35 !important;
+      }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .page-break { page-break-before: always; }
+      .print-avoid-break {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .shadow-xl, .shadow-md, .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
+      #printReportArea {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      #printReportArea * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      @page { size: A4 portrait; margin: 1.2cm 1.4cm; }
+    }
+
+    @media screen {
+      .print-only { display: none !important; }
+    }
+
+    /* Animasi kartu kuis */
+    @keyframes quizCardIn {
+      0% { opacity: 0; transform: translateY(14px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .quiz-card-animate { animation: quizCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .btn-press:active { transform: scale(0.97); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="no-print bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center text-lg shadow-md shadow-sky-500/20 flex-shrink-0">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base md:text-lg leading-tight text-slate-900">Asesmen Bakat &amp; Talenta</h1>
+          <p class="text-xs text-slate-500 font-medium">SMA 2 Muhammadiyah Banjarmasin • Kecerdasan Majemuk</p>
+        </div>
+      </div>
+      <div id="navBadge" class="hidden md:flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-700">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="navStudentInfo">Belum Memulai</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 md:py-8">
+
+    <!-- NOTIFICATION MODAL (NO ALERT) -->
+    <div id="modalAlert" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden no-print">
+      <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-2xl border border-slate-100">
+        <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-4 mx-auto text-xl">
+          <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <h3 id="modalTitle" class="text-center font-bold text-lg text-slate-900 mb-2">Perhatian</h3>
+        <p id="modalMessage" class="text-center text-sm text-slate-600 mb-6 leading-relaxed">Harap lengkapi semua data sebelum melanjutkan.</p>
+        <button type="button" onclick="closeModal()" class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm rounded-xl transition shadow">
+          Mengerti
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL PETA 80 SOAL (GRID NAVIGATOR) -->
+    <div id="modalQuestionMap" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden no-print p-4">
+      <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="font-bold text-base md:text-lg text-slate-900 flex items-center">
+              <i class="fa-solid fa-grip text-sky-600 mr-2"></i> Peta Butir Pertanyaan (80 Soal)
+            </h3>
+            <p class="text-xs text-slate-500">Klik nomor untuk langsung melompat ke pertanyaan terkait.</p>
+          </div>
+          <button type="button" onclick="closeQuestionMapModal()" class="w-9 h-9 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 bg-white flex flex-wrap gap-3 text-xs">
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-emerald-500 mr-1.5 inline-block"></span> Sudah Dijawab (Skor 1–5)</span>
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md border-2 border-dashed border-slate-300 mr-1.5 inline-block"></span> Belum Dijawab</span>
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-sky-600 ring-2 ring-sky-300 mr-1.5 inline-block"></span> Sedang Dibuka</span>
+        </div>
+
+        <div class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+          <div id="questionGridContainer" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 text-center text-xs font-bold">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 bg-white flex justify-between items-center">
+          <span id="questionMapSummary" class="text-xs text-slate-600 font-medium">0 / 80 Terjawab</span>
+          <button type="button" onclick="closeQuestionMapModal()" class="px-5 py-2 bg-sky-600 text-white text-xs font-semibold rounded-xl hover:bg-sky-700 transition">
+            Tutup &amp; Lanjutkan Kuis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL SELESAI KUIS (CELEBRATION) -->
+    <div id="modalFinishPrompt" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden no-print p-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-100">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900 mb-2">Kuis Bakat &amp; Talenta Selesai!</h3>
+        <p class="text-xs md:text-sm text-slate-600 leading-relaxed mb-6">
+          Kamu telah menyelesaikan seluruh tahapan asesmen Kecerdasan Majemuk (Multiple Intelligences). Sistem siap menganalisis 3 talenta dominan, rekomendasi program studi, dan prospek karier impianmu.
+        </p>
+        <div class="flex flex-col gap-2.5">
+          <button type="button" onclick="confirmFinishAssessment()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-600/25">
+            <i class="fa-solid fa-chart-pie mr-2"></i> Buka Hasil &amp; Rekomendasi Karier
+          </button>
+          <button type="button" onclick="reviewFromFinishModal()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
+            <i class="fa-solid fa-list-check mr-2"></i> Periksa / Ubah Jawaban Terlebih Dahulu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 1: PENDAFTARAN & IDENTITAS ================= -->
+    <section id="stepIntro" class="no-print space-y-6">
+      <!-- Banner -->
+      <div class="bg-pattern-subtle rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-slate-950/60 pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl">
+          <div class="flex items-center space-x-2 mb-3">
+            <span class="inline-block py-1 px-3 rounded-full bg-white/20 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
+              <i class="fa-solid fa-bolt-lightning text-amber-300 mr-1.5"></i> Kuis Interaktif
+            </span>
+            <span class="inline-block py-1 px-3 rounded-full bg-emerald-500/30 text-emerald-200 text-xs font-semibold backdrop-blur-sm">
+              80 Soal Cepat
+            </span>
+          </div>
+          <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-3">
+            Kuis Kecerdasan Majemuk &amp; Talenta Diri
+          </h2>
+          <p class="text-sm md:text-base text-slate-300 leading-relaxed">
+            Jawab serangkaian butir pernyataan seru untuk menemukan 3 talenta kecerdasan majemuk tertinggimu: <em>Verbal-Linguistik, Logis-Matematis, Visual-Spasial, Kinestetik, Musikal, Interpersonal, Intrapersonal, &amp; Naturalis</em>.
+          </p>
+        </div>
+        <div class="absolute -right-10 -bottom-10 opacity-15 text-white pointer-events-none">
+          <i class="fa-solid fa-shapes text-9xl"></i>
+        </div>
+      </div>
+
+      <!-- Identity Form Card -->
+      <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center">
+          <i class="fa-solid fa-id-card text-sky-600 mr-2.5"></i> Masukkan Data Diri Peserta Didik
+        </h3>
+        <p class="text-xs text-slate-500 mb-6">Data ini akan tercantum secara resmi pada lembar hasil laporan yang dapat dicetak/disimpan ke PDF.</p>
+
+        <form id="identityForm" onsubmit="startTest(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap Siswa <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-regular fa-user absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputNama" required placeholder="Contoh: Muhammad Farhan" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kelas / Tingkat <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-solid fa-graduation-cap absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputKelas" required placeholder="Contoh: XII MIPA 2 / XI F-1" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Sekolah / Lembaga <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-solid fa-school absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputSekolah" required value="SMA 2 Muhammadiyah Banjarmasin" placeholder="SMA 2 Muhammadiyah Banjarmasin" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tanggal Pelaksanaan</label>
+              <div class="relative">
+                <i class="fa-regular fa-calendar absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="date" id="inputTanggal" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+          </div>
+
+          <!-- Petunjuk Pengerjaan Kuis Interaktif -->
+          <div class="mt-6 p-4 rounded-2xl bg-sky-50/60 border border-sky-100 text-slate-700 text-xs md:text-sm space-y-2">
+            <h4 class="font-bold text-sky-900 flex items-center">
+              <i class="fa-solid fa-gamepad mr-2 text-sky-600"></i> Cara Mengerjakan Kuis Bakat &amp; Talenta:
+            </h4>
+            <ul class="list-disc list-inside space-y-1 text-slate-600">
+              <li>Pernyataan akan ditampilkan satu per satu dalam kartu kuis interaktif yang cepat (tidak ada jawaban benar/salah).</li>
+              <li>Pilih tingkat kesesuaian dirimu pada skala <strong>1 sampai 5</strong>: <strong>1</strong> (Sangat Tidak Setuju), <strong>2</strong> (Tidak Setuju), <strong>3</strong> (Agak Setuju), <strong>4</strong> (Setuju), hingga <strong>5</strong> (Sangat Setuju).</li>
+              <li>Setelah semua dijawab, sistem otomatis mengurutkan <strong>3 kecerdasan majemuk tertinggi</strong> sebagai talenta utamamu.</li>
+            </ul>
+          </div>
+
+          <div class="pt-2 text-right">
+            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-lg shadow-sky-500/25 transition active:scale-[0.98]">
+              Mulai Kuis Interaktif <i class="fa-solid fa-play ml-2.5 text-xs"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 2: KUIS INTERAKTIF ARENA ================= -->
+    <section id="stepQuiz" class="no-print hidden space-y-6">
+      
+      <!-- Top Quiz Toolbar -->
+      <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <!-- Category Indicator Pills (A - H) -->
+          <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0" id="categoryTabsBar">
+            <button type="button" onclick="jumpToCategory(0)" id="catBtn-0" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">A</button>
+            <button type="button" onclick="jumpToCategory(1)" id="catBtn-1" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">B</button>
+            <button type="button" onclick="jumpToCategory(2)" id="catBtn-2" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">C</button>
+            <button type="button" onclick="jumpToCategory(3)" id="catBtn-3" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">D</button>
+            <button type="button" onclick="jumpToCategory(4)" id="catBtn-4" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">E</button>
+            <button type="button" onclick="jumpToCategory(5)" id="catBtn-5" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">F</button>
+            <button type="button" onclick="jumpToCategory(6)" id="catBtn-6" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">G</button>
+            <button type="button" onclick="jumpToCategory(7)" id="catBtn-7" class="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition">H</button>
+          </div>
+
+          <!-- Utility Buttons: Peta Soal, Switch Mode -->
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="openQuestionMapModal()" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold transition flex items-center">
+              <i class="fa-solid fa-grip mr-1.5"></i> Peta Soal (<span id="answeredPillCount">0/80</span>)
+            </button>
+            <button type="button" onclick="toggleViewMode()" id="viewModeBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center">
+              <i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar
+            </button>
+          </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between items-center text-xs text-slate-500 font-medium">
+            <span id="quizProgressLabel">Pertanyaan 1 dari 80</span>
+            <span id="quizProgressPercent" class="font-bold text-sky-600">0% Selesai</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div id="quizGlobalProgressBar" class="bg-gradient-to-r from-sky-600 to-sky-500 h-2.5 rounded-full transition-all duration-300" style="width: 1%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= QUIZ MODE A: INTERACTIVE CARD (DEFAULT) ================= -->
+      <div id="quizCardMode" class="space-y-4">
+        
+        <!-- Category Banner Header -->
+        <div id="currentCategoryBanner" class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-sky-900 flex items-center justify-between transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center text-lg shadow-sm" id="cardCategoryIcon">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-sky-600 block" id="cardCategoryTag">Kelompok A (Kecerdasan Majemuk)</span>
+              <h4 class="font-bold text-sm md:text-base leading-tight" id="cardCategoryTitle">Kecerdasan Verbal atau Linguistik</h4>
+            </div>
+          </div>
+          <span class="text-xs font-semibold bg-white/80 border border-sky-200 text-sky-800 px-3 py-1 rounded-xl flex-shrink-0" id="categorySubCounter">
+            Butir 1 dari 10
+          </span>
+        </div>
+
+        <!-- MAIN QUESTION CARD -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-lg relative overflow-hidden quiz-card-animate" id="activeQuestionCard">
+          
+          <!-- Top Badge & Answer Status -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="inline-flex items-center text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-sky-700 px-3 py-1 rounded-full border border-sky-200">
+              <i class="fa-solid fa-circle-question mr-1.5 text-sky-600"></i> No. <span id="cardQuestionNumber">1</span>
+            </span>
+
+            <div id="cardCurrentStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500">
+              Belum Dijawab
+            </div>
+          </div>
+
+          <!-- Question Prompt -->
+          <div class="py-4 md:py-6 min-h-[110px] flex items-center">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-800 leading-snug tracking-tight" id="cardQuestionText">
+              Saya seorang pembicara yang baik.
+            </h3>
+          </div>
+
+          <p class="text-xs text-slate-400 mb-6 italic">
+            Seberapa sesuai pernyataan di atas menggambarkan minat, kebiasaan, atau kemampuan dirimu?
+          </p>
+
+          <!-- 5-OPTION LIKERT SCALE QUIZ BUTTONS -->
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" id="cardScaleButtons">
+            <!-- Injected via JS for interactive active states -->
+          </div>
+
+          <!-- Bottom Card Controls -->
+          <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <button type="button" onclick="prevQuestion()" id="btnCardPrev" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition flex items-center disabled:opacity-40">
+              <i class="fa-solid fa-arrow-left mr-1.5"></i> Sebelumnya
+            </button>
+
+            <button type="button" onclick="nextQuestion()" id="btnCardNext" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition flex items-center">
+              Selanjutnya <i class="fa-solid fa-arrow-right ml-1.5"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= QUIZ MODE B: LIST / LEMBAR KATEGORI ================= -->
+      <div id="quizListMode" class="hidden space-y-4">
+        <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-sky-900 flex items-start space-x-3">
+          <div class="text-2xl text-sky-600 mt-0.5" id="listCatIcon">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm md:text-base" id="listCatName">A. Kecerdasan Verbal atau Linguistik</h4>
+            <p class="text-xs md:text-sm text-sky-800/80 mt-0.5 leading-relaxed" id="listCatDesc">
+              Deskripsi dimensi kecerdasan...
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 md:p-8 border border-slate-200/80 shadow-sm space-y-3" id="questionsListContainer">
+          <!-- 10 items injected here -->
+        </div>
+
+        <!-- Navigation Bottom Buttons in List Mode -->
+        <div class="flex items-center justify-between pt-2">
+          <button type="button" id="btnListPrev" onclick="navigateCategory(-1)" class="px-5 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition flex items-center">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Kategori Sebelumnya
+          </button>
+
+          <button type="button" id="btnListNext" onclick="navigateCategory(1)" class="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold shadow-md shadow-sky-500/20 transition flex items-center">
+            Kategori Selanjutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Card Finish -->
+      <div class="bg-gradient-to-r from-slate-900 to-sky-900 text-white rounded-3xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h4 class="font-bold text-sm sm:text-base flex items-center">
+            <i class="fa-solid fa-award text-amber-400 mr-2"></i> Selesai Mengerjakan Kuis?
+          </h4>
+          <p class="text-xs text-slate-300 mt-0.5" id="bottomFinishNotice">
+            Kamu dapat melihat hasil analisis sekarang atau melengkapi butir soal yang tersisa.
+          </p>
+        </div>
+        <button type="button" onclick="submitAssessment()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/30 transition flex items-center justify-center">
+          <i class="fa-solid fa-chart-pie mr-2"></i> Lihat Hasil Asesmen &amp; PDF
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================= SECTION 3: HASIL ASESMEN & REKOMENDASI ================= -->
+    <section id="stepResult" class="hidden space-y-6">
+
+      <!-- Action Buttons (No Print) -->
+      <div class="no-print bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <p class="text-xs md:text-sm font-semibold text-slate-800">Asesmen Bakat &amp; Kecerdasan Majemuk Berhasil Diselesaikan</p>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <button type="button" onclick="window.print()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow transition flex items-center">
+            <i class="fa-solid fa-print mr-2"></i> Cetak / Simpan PDF
+          </button>
+          <button type="button" onclick="restartTest()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-medium rounded-xl transition flex items-center">
+            <i class="fa-solid fa-rotate-right mr-1.5"></i> Tes Ulang
+          </button>
+        </div>
+      </div>
+
+      <!-- PRINTABLE REPORT CONTAINER (BERSIH & PROFESIONAL) -->
+      <div id="printReportArea" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm text-slate-900">
+        
+        <!-- KOP SURAT RESMI PEMERINTAH KOTA BANJARMASIN - SMA 2 MUHAMMADIYAH BANJARMASIN (TANPA LOGO, SIMETRIS) -->
+        <div class="border-b-4 border-double border-slate-900 pb-3 mb-5 text-slate-900 font-['Times_New_Roman',serif] text-center">
+          <h4 class="text-sm sm:text-base md:text-lg font-bold tracking-wider leading-snug uppercase">
+            PEMERINTAH KOTA BANJARMASIN
+          </h4>
+          <h4 class="text-sm sm:text-base md:text-lg font-bold tracking-wider leading-snug uppercase">
+            DINAS PENDIDIKAN
+          </h4>
+          <h3 class="text-base sm:text-lg md:text-xl font-extrabold tracking-wide leading-snug uppercase mt-0.5" id="reportSchoolTitle">
+            SMA 2 MUHAMMADIYAH BANJARMASIN
+          </h3>
+          <p class="text-[11px] sm:text-xs md:text-[13px] font-normal leading-tight mt-1 text-slate-800">
+            Jl. Mangga 3 Rt. 22 No. 47, Kebun Bunga, Kec. Banjarmasin Timur, Kota Banjarmasin, Kalimantan Selatan.
+          </p>
+        </div>
+
+        <div class="text-center mb-5">
+          <h3 class="text-sm md:text-base font-bold uppercase tracking-tight text-slate-900 underline decoration-1 underline-offset-4">
+            LAPORAN HASIL ASESMEN BAKAT &amp; KECERDASAN MAJEMUK
+          </h3>
+          <p class="text-[11px] text-slate-600 mt-1">
+            Unit Layanan Bimbingan dan Konseling (BK) • Pemetaan Talenta Studi Lanjut &amp; Karier Masa Depan
+          </p>
+        </div>
+
+        <!-- TABEL BIODATA PESERTA DIDIK -->
+        <div class="border border-slate-300 rounded-xl overflow-hidden mb-5 text-xs">
+          <table class="w-full text-left">
+            <tbody class="divide-y divide-slate-200">
+              <tr class="divide-x divide-slate-200">
+                <td class="w-1/4 bg-slate-50 py-2 px-3 font-semibold text-slate-600">Nama Lengkap</td>
+                <td class="w-1/4 py-2 px-3 font-bold text-slate-900" id="resNama">-</td>
+                <td class="w-1/4 bg-slate-50 py-2 px-3 font-semibold text-slate-600">Kelas / Tingkat</td>
+                <td class="w-1/4 py-2 px-3 font-bold text-slate-900" id="resKelas">-</td>
+              </tr>
+              <tr class="divide-x divide-slate-200">
+                <td class="bg-slate-50 py-2 px-3 font-semibold text-slate-600">Asal Sekolah</td>
+                <td class="py-2 px-3 font-bold text-slate-900" id="resSekolah">-</td>
+                <td class="bg-slate-50 py-2 px-3 font-semibold text-slate-600">Tanggal Asesmen</td>
+                <td class="py-2 px-3 font-bold text-slate-900" id="resTanggal">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- RINGKASAN 3 TALENTA DOMINAN (EXECUTIVE SUMMARY) -->
+        <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/70 mb-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-3">
+            <div>
+              <span class="text-[10px] font-bold tracking-wider uppercase text-slate-500">3 Talenta Kecerdasan Majemuk Tertinggi (Top 3)</span>
+              <h4 class="text-xl sm:text-2xl font-black tracking-wide text-slate-900" id="resTop3Code">---</h4>
+              <p class="text-xs font-semibold text-slate-700 mt-0.5" id="resTop3FullName">---</p>
+            </div>
+            <div class="bg-white border border-slate-300 rounded-lg px-4 py-2 text-right">
+              <span class="text-[10px] text-slate-500 uppercase font-bold block">Talenta Peringkat 1</span>
+              <span class="text-base font-extrabold text-slate-900" id="resPrimaryType">-</span>
+              <span class="text-[11px] text-slate-600 block" id="resPrimaryScore">-</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed" id="resTalentTagline">
+            Kombinasi 3 kecerdasan majemuk tertinggi berdasarkan skala pilihan pernyataan Anda.
+          </p>
+        </div>
+
+        <!-- VISUALISASI & TABEL SKOR 8 DIMENSI -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5 items-center print-avoid-break">
+          
+          <!-- Diagram Radar Kecerdasan Majemuk -->
+          <div class="md:col-span-5 border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center bg-white">
+            <h5 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1 text-center">Diagram Profil Talenta</h5>
+            <div class="w-full max-w-[250px] aspect-square flex items-center justify-center">
+              <canvas id="talentChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Tabel Skor Formal 8 Dimensi -->
+          <div class="md:col-span-7">
+            <h5 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Perolehan Skor Setiap Dimensi (Skala 10–50)</h5>
+            <div class="border border-slate-300 rounded-xl overflow-hidden text-xs">
+              <table class="w-full text-left">
+                <thead class="bg-slate-100 text-slate-700 border-b border-slate-300">
+                  <tr>
+                    <th class="py-1.5 px-3 font-bold">Dimensi Kecerdasan</th>
+                    <th class="py-1.5 px-2 text-center font-bold">Kode</th>
+                    <th class="py-1.5 px-2 text-center font-bold">Skor</th>
+                    <th class="py-1.5 px-2 text-center font-bold">Persen</th>
+                    <th class="py-1.5 px-3 text-center font-bold">Kategori</th>
+                  </tr>
+                </thead>
+                <tbody id="scoresTableBody" class="divide-y divide-slate-200">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- DESKRIPSI PROFIL KEPRIBADIAN & GAYA BELAJAR -->
+        <div class="border border-slate-200 rounded-xl p-4 mb-5 print-avoid-break">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2 mb-2">
+            Interpretasi Karakteristik Talenta &amp; Gaya Belajar Optimal
+          </h4>
+          <div class="text-xs text-slate-700 space-y-2 leading-relaxed" id="resPersonalityDesc">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- REKOMENDASI JURUSAN & PEKERJAAN (2 KOLOM BERSIH) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 print-avoid-break">
+          
+          <!-- Rekomendasi Jurusan Studi Lanjut -->
+          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 mb-2 flex items-center">
+              <i class="fa-solid fa-graduation-cap text-slate-700 mr-2"></i> Rekomendasi Jurusan Studi Lanjut
+            </h4>
+            <p class="text-[11px] text-slate-500 mb-2">Pilihan Program Studi Perguruan Tinggi / Vokasi:</p>
+            <ul id="resStudyMajorList" class="space-y-1.5 text-xs text-slate-800">
+              <!-- Majors injected -->
+            </ul>
+          </div>
+
+          <!-- Rekomendasi Karier & Profesi -->
+          <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/50">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 mb-2 flex items-center">
+              <i class="fa-solid fa-briefcase text-slate-700 mr-2"></i> Rekomendasi Bidang Karier &amp; Profesi
+            </h4>
+            <p class="text-[11px] text-slate-500 mb-2">Prospek pekerjaan dan lingkungan kerja yang relevan:</p>
+            <ul id="resCareerList" class="space-y-1.5 text-xs text-slate-800">
+              <!-- Careers injected -->
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- SARAN PENGEMBANGAN DIRI -->
+        <div class="border border-slate-200 rounded-xl p-4 mb-6 bg-slate-50/40 print-avoid-break">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5 flex items-center">
+            <i class="fa-solid fa-compass text-slate-700 mr-2"></i> Saran Eksplorasi &amp; Pengembangan Talenta
+          </h4>
+          <p class="text-xs text-slate-700 leading-relaxed" id="resDevTips">
+            <!-- Tips injected -->
+          </p>
+        </div>
+
+        <!-- LEMBAR PENGESAHAN TANDA TANGAN RESMI -->
+        <div class="pt-3 border-t border-slate-300 print-avoid-break">
+          <div class="flex justify-between items-center text-[11px] text-slate-500 mb-5">
+            <span>Instrumen: Tes Talenta / Kecerdasan Majemuk (80 Item)</span>
+            <span id="signDateText">-</span>
+          </div>
+
+          <div class="grid grid-cols-3 text-center text-xs text-slate-800 gap-4">
+            <div>
+              <p class="text-slate-500 text-[11px]">Mengetahui,</p>
+              <p class="font-semibold mt-0.5">Orang Tua / Wali Siswa</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium">( ............................................ )</p>
+            </div>
+            <div>
+              <p class="text-slate-500 text-[11px]">Peserta Didik,</p>
+              <p class="font-semibold mt-0.5">Siswa Bersangkutan</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium" id="signatureStudentName">( ............................................ )</p>
+            </div>
+            <div>
+              <p class="text-slate-500 text-[11px]">Konselor /</p>
+              <p class="font-semibold mt-0.5">Guru Bimbingan Konseling</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium">( ............................................ )</p>
+            </div>
+          </div>
+
+          <!-- FOOTER CETAK LAPORAN -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex flex-wrap justify-between items-center text-[10px] text-slate-500">
+            <span>Sistem Asesmen Bakat &amp; Kecerdasan Majemuk</span>
+            <span class="font-medium text-slate-600">Copyright &copy; 2026 Bimbingan dan Konseling FKIP ULM</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="no-print border-t border-slate-200 bg-white py-5 mt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1.5">
+      <p>Aplikasi Asesmen &amp; Kuis Bakat Berbasis Instrumen Tes Kecerdasan Majemuk • Terdiri dari 80 Butir Pernyataan</p>
+      <p class="font-semibold text-slate-700">Copyright &copy; 2026 Bimbingan dan Konseling FKIP ULM</p>
+    </div>
+  </footer>
+
+  <!-- ================= LOGIC & DATA SCRIPT ================= -->
+  <script>
+
+    // ================= JEMBATAN KE index.html (saat ditanam via iframe) =================
+    (function () {
+      if (window.self === window.top) return;               // dibuka langsung: tidak perlu jembatan
+      document.documentElement.classList.add('embedded');
+      window.addEventListener('message', function (ev) {
+        if (ev.source !== window.parent) return;
+        var d = ev.data;
+        if (!d || d.type !== 'ebk-theme' || typeof d.vars !== 'object') return;
+        Object.keys(d.vars).forEach(function (k) {
+          var v = String(d.vars[k]);
+          if (/^--[a-z0-9-]+$/i.test(k) && /^[#a-z0-9 ,.()%\/-]*$/i.test(v)) {
+            document.documentElement.style.setProperty(k, v);
+          }
+        });
+      });
+      try { window.parent.postMessage({ type: 'tesbakat-ready' }, '*'); } catch (e) {}
+    })();
+
+    /*
+     * MASTER DATA INSTRUMEN TES KECERDASAN MAJEMUK (TES TALENTA)
+     * 8 Kelompok Kecerdasan x 10 Butir Pernyataan (Total 80 Butir)
+     */
+    const talentData = [
+      {
+        id: "A",
+        name: "Verbal-Linguistik",
+        alias: "Kecerdasan Verbal atau Linguistik",
+        icon: "fa-book-open",
+        color: "#4f46e5",
+        description: "Memiliki kepekaan tinggi terhadap makna kata, tata bahasa, serta kelancaran berbicara dan menulis. Unggul dalam berdiskusi, bercerita, membaca, menyusun argumen verbal, dan menyerap materi melalui bacaan atau catatan tertulis.",
+        questions: [
+          "Saya seorang pembicara yang baik.",
+          "Saya senang bercerita, termasuk cerita dongeng dan cerita yang lucu.",
+          "Saya memiliki ingatan yang baik untuk hal-hal yang sepele.",
+          "Dalam berargumentasi (berpendapat) saya cenderung menggunakan kata-kata sindiran.",
+          "Jika sesuatu rusak dan tidak berfungsi saya akan membaca panduannya terlebih dahulu.",
+          "Saya membaca buku hanya sebagai hobi.",
+          "Saya senang membicarakan dan menulis ide-ide saya.",
+          "Dalam kerja kelompok untuk menyiapkan sebuah presentasi, saya lebih memilih untuk menulis dan melakukan riset pustaka.",
+          "Jika saya harus mengingat sesuatu, saya menciptakan irama atau kata-kata yang membantu saya untuk mengingatnya.",
+          "Saya suka permainan kata-kata, seperti scrabble atau puzzle."
+        ],
+        majors: [
+          "Ilmu Komunikasi, Jurnalistik & Penyiaran",
+          "Sastra Indonesia / Sastra Inggris / Linguistik",
+          "Ilmu Hukum & Kenotariatan",
+          "Pendidikan Bahasa & Sastra",
+          "Hubungan Masyarakat (Public Relations)",
+          "Ilmu Perpustakaan & Kearsipan Digital"
+        ],
+        careers: [
+          "Jurnalis / Wartawan / Redaktur Media",
+          "Penulis Buku / Copywriter / Content Strategist",
+          "Pengacara / Jaksa / Konsultan Hukum",
+          "Presenter / Penyiar / Public Speaker",
+          "Penerjemah & Editor Bahasa",
+          "Dosen / Guru Bahasa & Sastra"
+        ],
+        advice: "Asah kemampuan menulis esai, karya tulis ilmiah, dan public speaking melalui forum debat, klub jurnalistik sekolah, atau kompetisi pidato."
+      },
+      {
+        id: "B",
+        name: "Logis-Matematis",
+        alias: "Kecerdasan Logis atau Matematis",
+        icon: "fa-calculator",
+        color: "#0284c7",
+        description: "Unggul dalam penalaran logis, perhitungan angka, pengenalan pola, serta pemecahan masalah secara sistematis. Menyukai eksperimen logika, strategi, data terukur, dan memahami cara kerja suatu sistem dari sebab ke akibat.",
+        questions: [
+          "Dapat memecahkan soal-soal hitungan adalah hal yang menyenangkan bagi saya.",
+          "Saya sangat menikmati pelajaran matematika.",
+          "Saya menyukai komputer dan permainan angka-angka.",
+          "Dalam berargumentasi, saya mencoba mencari solusi yang adil dan logis.",
+          "Jika saya harus mengingat sesuatu, saya cenderung menempatkan setiap kejadian dalam urutan yang logis.",
+          "Saya suka bermain catur, checkers, atau monopoli.",
+          "Saya senang mencari tahu bagaimana cara kerja setiap benda.",
+          "Dalam kerja kelompok, saya lebih memilih membuat diagram dan grafik.",
+          "Saya menyukai permainan logika.",
+          "Jika ada sesuatu yang rusak dan tidak berfungsi, saya akan melihat bagian-bagiannya dan mencari tahu bagaimana cara kerjanya."
+        ],
+        majors: [
+          "Teknik Informatika / Ilmu Komputer / Data Science",
+          "Matematika / Statistika / Aktuaria",
+          "Akuntansi / Ilmu Ekonomi & Keuangan",
+          "Teknik Elektro / Teknik Industri / Teknik Mesin",
+          "Fisika / Kimia / Astronomi",
+          "Sistem Informasi"
+        ],
+        careers: [
+          "Data Scientist / Data Analyst / AI Engineer",
+          "Software Engineer & Programmer",
+          "Aktuaris / Analis Keuangan & Investasi",
+          "Akuntan Publik / Auditor Keuangan",
+          "Insinyur Sistem & Peneliti Sains",
+          "Perencana Strategis & Statistisi"
+        ],
+        advice: "Latih ketajaman analitis melalui pemrograman komputer dasar, analisis spreadsheet, olimpiade matematika/sains, atau permainan strategi logika."
+      },
+      {
+        id: "C",
+        name: "Visual-Spasial",
+        alias: "Kecerdasan Visual atau Spasial",
+        icon: "fa-palette",
+        color: "#ec4899",
+        description: "Memiliki kepekaan tajam terhadap warna, bentuk, garis, ruang, dan komposisi visual. Mudah memahami informasi melalui peta, diagram, ilustrasi, atau sketsa, serta memiliki daya imajinasi kreatif dalam merancang karya visual.",
+        questions: [
+          "Saya senang menggambar atau menciptakan sesuatu.",
+          "Saya menikmati hobi saya dalam bidang fotografi.",
+          "Jika saya harus mengingat sesuatu yang rumit, saya menggambar diagram untuk membantu mengingatnya.",
+          "Saya sering melamun.",
+          "Saya lebih memilih peta daripada petunjuk tertulis dalam mencari sebuah alamat.",
+          "Dalam kerja kelompok, saya lebih memilih menggambar hal-hal yang penting.",
+          "Dalam berargumentasi, biasanya saya menjaga jarak atau tetap berdiam diri.",
+          "Saya senang membuat coret-coretan di atas kertas.",
+          "Saat membaca majalah, saya lebih suka melihat gambarnya daripada membaca artikelnya.",
+          "Jika sesuatu rusak dan tidak berfungsi, saya cenderung mempelajari diagram mengenai cara kerjanya."
+        ],
+        majors: [
+          "Arsitektur & Perencanaan Wilayah Kota",
+          "Desain Komunikasi Visual (DKV)",
+          "Desain Interior & Desain Produk Industri",
+          "Seni Rupa Murni / Kriya Seni",
+          "Animasi, Sinematografi & Fotografi",
+          "Teknik Geodesi & Kartografi"
+        ],
+        careers: [
+          "Arsitek & Perancang Tata Ruang",
+          "Desainer Grafis / UI & UX Designer",
+          "Fotografer / Videografer / Sinematografer",
+          "Animator & Ilustrator Digital",
+          "Desainer Interior & Desainer Produk",
+          "Art Director & Perancang Busana"
+        ],
+        advice: "Kumpulkan portofolio karya visual (sketsa, desain grafis, fotografi, atau model 3D) dan pelajari perangkat lunak desain digital terkini."
+      },
+      {
+        id: "D",
+        name: "Kinestetik",
+        alias: "Kecerdasan Kinestetik (Jasmani)",
+        icon: "fa-person-running",
+        color: "#f97316",
+        description: "Memiliki koordinasi gerak tubuh, ketangkasan tangan, dan keterampilan motorik yang baik. Lebih cepat memahami sesuatu dengan mempraktikkannya secara langsung (hands-on), merakit benda, berolahraga, maupun melakukan kerja lapangan.",
+        questions: [
+          "Saya senang mengetuk-ngetukkan jari atau memainkan pulpen atau pensil selama jam pelajaran.",
+          "Dalam kerja kelompok saya lebih memilih memindahkan barang atau membuat suatu bentuk.",
+          "Ketika melihat benda-benda yang menarik hati, saya senang menyentuhnya.",
+          "Saya menyukai kegiatan seperti pertukangan, menjahit, dan membuat bentuk-bentuk.",
+          "Saya suka berolahraga, saya juga suka senam.",
+          "Saya tidak bisa duduk diam dalam waktu yang lama.",
+          "Jika saya harus mengingat sesuatu, saya menuliskannya berkali-kali sampai saya memahaminya.",
+          "Saat berdiskusi saya cenderung menyerang atau malah menghindari perdebatan.",
+          "Saya menggunakan banyak gerakan tubuh ketika berbicara.",
+          "Jika sesuatu rusak dan tidak berfungsi, saya cenderung memisahkan setiap bagian lalu menggabungkannya kembali."
+        ],
+        majors: [
+          "Pendidikan Jasmani, Kesehatan & Rekreasi (PJKR)",
+          "Ilmu Keolahragaan & Kepelatihan",
+          "Fisioterapi / Kedokteran / Keperawatan Bedah",
+          "Teknik Mesin / Otomotif / Mekatronika",
+          "Seni Tari & Seni Pertunjukan",
+          "Tata Boga / Kuliner & Perhotelan"
+        ],
+        careers: [
+          "Atlet Profesional & Pelatih Olahraga",
+          "Fisioterapis & Terapis Okupasi",
+          "Teknisi Ahli / Mekanik / Insinyur Lapangan",
+          "Chef & Ahli Kuliner Profesional",
+          "Koreografer / Penari / Aktor Panggung",
+          "Dokter Bedah & Paramedis Gawat Darurat"
+        ],
+        advice: "Gunakan metode belajar praktik langsung (simulasi, eksperimen alat, atau catatan tulisan tangan) dan salurkan energi fisik secara terarah."
+      },
+      {
+        id: "E",
+        name: "Musikal",
+        alias: "Kecerdasan Musikal",
+        icon: "fa-music",
+        color: "#8b5cf6",
+        description: "Memiliki kepekaan alami terhadap irama, melodi, nada, dan pola bunyi. Mudah mengingat informasi yang dikaitkan dengan ritme atau lagu, menikmati suasana belajar dengan iringan musik, serta peka terhadap harmoni suara.",
+        questions: [
+          "Saya suka bernyanyi.",
+          "Saya bisa menghafal nada-nada dari banyak lagu.",
+          "Saya suka mendengarkan musik sambil belajar atau sambil membaca buku.",
+          "Saya bisa memainkan salah satu alat musik dengan baik.",
+          "Saya cenderung bersenandung ketika sedang bekerja.",
+          "Saya senang mendengarkan musik dan radio.",
+          "Jika saya harus mengingat sesuatu, saya mencoba untuk membuat irama tentang hal tersebut.",
+          "Dalam berargumentasi, saya cenderung berteriak atau memukul (meja/benda) atau bergerak dalam satu irama.",
+          "Dalam kerja kelompok, saya lebih suka menggunakan kata-kata baru dari nada atau musik yang sudah dikenal.",
+          "Jika ada masalah, saya cenderung mengetuk-ngetuk jari saya membentuk suatu irama sambil mencari jalan keluar."
+        ],
+        majors: [
+          "Seni Musik / Pendidikan Seni Musik",
+          "Komposisi Musik & Etnomusikologi",
+          "Teknologi Produksi Audio & Sound Engineering",
+          "Seni Pertunjukan & Teater Musikal",
+          "Ilmu Komunikasi (Penyiaran Radio & Podcast)",
+          "Desain Multimedia & Audio Visual"
+        ],
+        careers: [
+          "Musisi / Penyanyi / Instrumentalis",
+          "Komposer / Arranger / Penulis Lagu",
+          "Sound Engineer & Produser Rekaman Audio",
+          "Guru / Instruktur Vokal & Alat Musik",
+          "Music Director & Penata Musik Film",
+          "Penyiar Radio & Podcaster Kreatif"
+        ],
+        advice: "Asah kepekaan ritmis dan harmoni melalui latihan instrumen/vokal rutin serta eksplorasi teknologi produksi audio digital."
+      },
+      {
+        id: "F",
+        name: "Interpersonal",
+        alias: "Kecerdasan Interpersonal (Sosial)",
+        icon: "fa-users",
+        color: "#10b981",
+        description: "Unggul dalam memahami perasaan, motivasi, dan karakter orang lain. Mudah bergaul, senang bekerja sama dalam tim, mampu mengorganisasi kelompok, serta sering dipercaya rekan sebaya sebagai pemimpin atau tempat meminta saran.",
+        questions: [
+          "Saya senang berkumpul atau berorganisasi.",
+          "Teman-teman sering meminta saran dari saya karena saya dianggap pemimpin mereka.",
+          "Dalam berargumentasi, saya cenderung meminta bantuan teman atau pihak-pihak yang ahli dalam bidang tersebut.",
+          "Saya suka membantu mengajar murid-murid lain.",
+          "Saya mempunyai banyak teman akrab.",
+          "Saya senang bekerja sama dalam kelompok.",
+          "Saya mampu bergaul baik dengan orang lain.",
+          "Dalam kerja kelompok, saya lebih memilih mengatur tugas dalam kelompok.",
+          "Jika saya harus mengingat sesuatu, saya meminta seseorang untuk menguji saya apakah saya sudah memahaminya.",
+          "Jika sesuatu rusak dan tidak berfungsi, saya mencari seseorang yang dapat menolong saya membetulkannya."
+        ],
+        majors: [
+          "Bimbingan dan Konseling (BK)",
+          "Psikologi",
+          "Manajemen Sumber Daya Manusia (SDM) & Bisnis",
+          "Ilmu Kesejahteraan Sosial & Sosiologi",
+          "Pendidikan Guru (PGSD / FKIP)",
+          "Ilmu Komunikasi & Hubungan Masyarakat"
+        ],
+        careers: [
+          "Konselor Sekolah / Konselor Karier / Guru BK",
+          "Psikolog & Konsultan Relasi",
+          "Manajer SDM (HRD) & Talent Recruiter",
+          "Guru / Pendidik / Fasilitator Pelatihan",
+          "Manajer Proyek & Pemimpin Organisasi",
+          "Pekerja Sosial & Diplomat"
+        ],
+        advice: "Kembangkan kecakapan kepemimpinan kolaboratif, empati, dan negosiasi melalui keaktifan di OSIS, ekstrakurikuler, atau kegiatan relawan."
+      },
+      {
+        id: "G",
+        name: "Intrapersonal",
+        alias: "Kecerdasan Intrapersonal (Reflektif)",
+        icon: "fa-user-check",
+        color: "#e11d48",
+        description: "Memiliki pemahaman mendalam terhadap kekuatan, kelemahan, emosi, dan nilai-nilai pribadi. Mandiri, tidak mudah ikut-ikutan arus, mampu bekerja fokus secara individu, serta memiliki pertimbangan matang sebelum mengambil keputusan.",
+        questions: [
+          "Saya tidak suka keramaian.",
+          "Saya memahami kelebihan dan kekurangan diri saya.",
+          "Saya suka menulis buku harian.",
+          "Saya menyukai diri saya sendiri.",
+          "Saya suka bekerja sendirian tanpa ada gangguan orang lain.",
+          "Jika saya harus mengingat sesuatu, saya cenderung menutup mata saya dan mencoba merasakan pengalaman itu kembali.",
+          "Dalam kerja kelompok, saya senang mengontribusikan sesuatu yang unik berdasarkan apa yang saya miliki dan rasakan.",
+          "Dalam berargumentasi saya biasanya menghindar atau keluar ruangan hingga saya dapat menenangkan diri.",
+          "Saya memiliki tekad yang kuat, mandiri, dan berpendirian kuat. Saya tidak mudah ikut-ikutan orang lain.",
+          "Jika sesuatu rusak dan tidak berfungsi, saya mempertimbangkan apakah benda tersebut masih layak untuk diperbaiki."
+        ],
+        majors: [
+          "Psikologi & Bimbingan Konseling",
+          "Filsafat / Ilmu Agama / Etika",
+          "Sastra & Penulisan Kreatif",
+          "Kewirausahaan (Entrepreneurship)",
+          "Ilmu Sejarah & Antropologi",
+          "Riset & Pengembangan Kebijakan"
+        ],
+        careers: [
+          "Peneliti Independen & Analis Kebijakan",
+          "Penulis / Esais / Pemikir Kreatif",
+          "Psikolog & Konselor Reflektif",
+          "Wirausahawan / Pemilik Usaha Mandiri",
+          "Akademisi / Penulis Buku",
+          "Perencana Keuangan Pribadi & Konsultan"
+        ],
+        advice: "Manfaatkan kemandirian dan refleksi diri untuk menyusun target belajar personal jangka panjang serta melatih keberanian menyampaikan gagasan orisinal."
+      },
+      {
+        id: "H",
+        name: "Naturalis",
+        alias: "Kecerdasan Naturalis",
+        icon: "fa-leaf",
+        color: "#0d9488",
+        description: "Memiliki kepekaan tinggi terhadap alam, makhluk hidup, lingkungan sekitar, serta pola pengelompokan (klasifikasi) informasi. Cermat mengamati detail sekeliling, menyukai ketenangan alam terbuka, dan pandai mengategorikan objek secara rapi.",
+        questions: [
+          "Saya senang berkebun.",
+          "Saya senang mengoleksi perangko, koin, dan barang semacamnya.",
+          "Ketika dewasa, saya ingin pergi dari kota yang ramai ke tempat yang masih alami untuk menikmati alam.",
+          "Saya sangat memerhatikan sekeliling dan apa yang sedang terjadi di sekitar saya.",
+          "Saya senang berjalan-jalan ke hutan atau taman untuk melihat-lihat pohon atau bunga.",
+          "Saya senang mempelajari nama dan jenis makhluk hidup atau tanaman di sekitar lingkungan saya.",
+          "Jika saya harus mengingat sesuatu, saya cenderung mengategorikannya dalam kelompok-kelompok.",
+          "Dalam kerja kelompok, saya lebih memilih mengatur dan mengelompokkan informasi dalam kategori-kategori sehingga mudah dimengerti.",
+          "Dalam berargumentasi, saya cenderung membandingkan lawan saya dengan seseorang atau sesuatu yang pernah saya baca atau dengar lalu bereaksi.",
+          "Jika sesuatu rusak dan tidak berfungsi, saya memerhatikan sekeliling saya untuk melihat apa yang bisa saya temukan untuk memperbaikinya."
+        ],
+        majors: [
+          "Biologi / Ilmu Lingkungan / Ekologi",
+          "Kehutanan / Agroteknologi / Pertanian",
+          "Kedokteran Hewan & Peternakan",
+          "Ilmu Kelautan & Perikanan",
+          "Geografi / Geologi / Meteorologi",
+          "Farmasi (Bahan Alam & Herbal)"
+        ],
+        careers: [
+          "Ahli Biologi / Peneliti Lingkungan & Konservasi",
+          "Dokter Hewan & Spesialis Satwa",
+          "Agronom / Ahli Kehutanan & Pertanian",
+          "Ahli Geologi / Klimatologi / Oseanografi",
+          "Arsitek Lanskap & Tata Lingkungan",
+          "Pengelola Ekowisata & Taman Nasional"
+        ],
+        advice: "Salurkan ketajaman observasi dengan melakukan eksperimen lapangan, kegiatan pecinta alam, atau menyusun ringkasan belajar berbasis pengelompokan kategori."
+      }
+    ];
+
+    const scaleDefinitions = [
+      { value: 1, shortLabel: "Sangat Tidak Setuju", desc: "Tidak menggambarkan diri" },
+      { value: 2, shortLabel: "Tidak Setuju", desc: "Kurang sesuai" },
+      { value: 3, shortLabel: "Agak Setuju", desc: "Kadang-kadang sesuai" },
+      { value: 4, shortLabel: "Setuju", desc: "Sesuai dengan diri" },
+      { value: 5, shortLabel: "Sangat Setuju", desc: "Sangat menggambarkan diri" }
+    ];
+
+    // ================= STATE MANAGEMENT =================
+    let studentData = {
+      nama: "",
+      kelas: "",
+      sekolah: "",
+      tanggal: ""
+    };
+
+    // Flatten all 80 questions into a single indexed lookup array
+    let flatQuestions = [];
+    talentData.forEach((cat, catIdx) => {
+      cat.questions.forEach((qText, itemIdx) => {
+        flatQuestions.push({
+          globalIndex: flatQuestions.length,
+          categoryIndex: catIdx,
+          categoryId: cat.id,
+          categoryName: cat.name,
+          categoryAlias: cat.alias,
+          categoryIcon: cat.icon,
+          categoryColor: cat.color,
+          itemIndex: itemIdx,
+          text: qText
+        });
+      });
+    });
+
+    // 80 answers: null = unanswered, 1..5 = Likert score
+    let answers = Array(80).fill(null);
+    let currentQuestionIndex = 0;
+    let currentCategoryIndex = 0;
+    let quizViewMode = 'card'; // 'card' or 'list'
+    let chartInstance = null;
+
+    // Initialization on load
+    window.onload = function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("inputTanggal").value = today;
+    };
+
+    // Modal Helpers
+    function showModal(title, msg) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalMessage").innerText = msg;
+      document.getElementById("modalAlert").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modalAlert").classList.add("hidden");
+    }
+
+    // STEP 1: START ASSESSMENT
+    function startTest(e) {
+      e.preventDefault();
+      const nama = document.getElementById("inputNama").value.trim();
+      const kelas = document.getElementById("inputKelas").value.trim();
+      const sekolah = document.getElementById("inputSekolah").value.trim();
+      const tanggal = document.getElementById("inputTanggal").value;
+
+      if (!nama || !kelas || !sekolah) {
+        showModal("Lengkapi Data", "Silakan isi nama, kelas, dan nama sekolah terlebih dahulu sebelum memulai kuis!");
+        return;
+      }
+
+      studentData = { nama, kelas, sekolah, tanggal };
+      document.getElementById("navStudentInfo").innerText = `${nama} (${kelas})`;
+
+      document.getElementById("stepIntro").classList.add("hidden");
+      document.getElementById("stepQuiz").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      currentQuestionIndex = 0;
+      renderQuizCard();
+      updateQuizProgress();
+    }
+
+    // ================= STEP 2: QUIZ CARD ENGINE =================
+    function renderQuizCard() {
+      const q = flatQuestions[currentQuestionIndex];
+      currentCategoryIndex = q.categoryIndex;
+
+      // Update Card texts
+      document.getElementById("cardQuestionNumber").innerText = q.globalIndex + 1;
+      document.getElementById("cardQuestionText").innerText = q.text;
+      document.getElementById("cardCategoryTag").innerText = `Kelompok ${q.categoryId} (Kecerdasan Majemuk)`;
+      document.getElementById("cardCategoryTitle").innerText = q.categoryAlias;
+      document.getElementById("categorySubCounter").innerText = `Butir ${q.itemIndex + 1} dari 10`;
+      document.getElementById("cardCategoryIcon").innerHTML = `<i class="fa-solid ${q.categoryIcon}"></i>`;
+
+      // Status indicator on current card
+      const curAns = answers[q.globalIndex];
+      const statusBadge = document.getElementById("cardCurrentStatusBadge");
+
+      if (curAns !== null) {
+        const chosen = scaleDefinitions.find(s => s.value === curAns);
+        statusBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300";
+        statusBadge.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Skor ${curAns}: ${chosen.shortLabel}`;
+      } else {
+        statusBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500";
+        statusBadge.innerText = "Belum Dijawab";
+      }
+
+      // Render 5 Likert Scale Buttons
+      const btnContainer = document.getElementById("cardScaleButtons");
+      btnContainer.innerHTML = "";
+
+      scaleDefinitions.forEach(opt => {
+        const isSelected = (curAns === opt.value);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => answerCard(opt.value);
+
+        if (isSelected) {
+          btn.className = "btn-press p-3.5 sm:p-4 rounded-2xl border-2 border-sky-600 bg-sky-600 text-white shadow-md ring-4 ring-sky-200 transition-all flex sm:flex-col items-center justify-between sm:justify-center text-left sm:text-center gap-2";
+          btn.innerHTML = `
+            <div class="w-10 h-10 rounded-xl bg-white text-sky-600 flex items-center justify-center text-lg font-black flex-shrink-0">
+              ${opt.value}
+            </div>
+            <div>
+              <span class="block font-extrabold text-xs sm:text-[13px] leading-tight">${opt.shortLabel}</span>
+              <span class="block text-[10px] opacity-85 mt-0.5 sm:hidden">${opt.desc}</span>
+            </div>
+          `;
+        } else {
+          btn.className = "btn-press group p-3.5 sm:p-4 rounded-2xl border-2 border-slate-200 bg-slate-50/70 hover:border-sky-500 hover:bg-sky-600 text-slate-800 hover:text-white transition-all shadow-sm hover:shadow-md flex sm:flex-col items-center justify-between sm:justify-center text-left sm:text-center gap-2";
+          btn.innerHTML = `
+            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 group-hover:border-transparent text-slate-700 group-hover:bg-white group-hover:text-sky-600 flex items-center justify-center text-lg font-black transition flex-shrink-0">
+              ${opt.value}
+            </div>
+            <div>
+              <span class="block font-bold text-xs sm:text-[13px] leading-tight">${opt.shortLabel}</span>
+              <span class="block text-[10px] opacity-75 mt-0.5 sm:hidden">${opt.desc}</span>
+            </div>
+          `;
+        }
+
+        btnContainer.appendChild(btn);
+      });
+
+      // Card animation trigger
+      const cardEl = document.getElementById("activeQuestionCard");
+      cardEl.classList.remove("quiz-card-animate");
+      void cardEl.offsetWidth; // trigger reflow
+      cardEl.classList.add("quiz-card-animate");
+
+      // Card previous button disabled state
+      document.getElementById("btnCardPrev").disabled = (currentQuestionIndex === 0);
+
+      updateQuizProgress();
+    }
+
+    function answerCard(scoreVal) {
+      answers[currentQuestionIndex] = scoreVal;
+      updateQuizProgress();
+
+      // Auto-advance to next question
+      if (currentQuestionIndex < 79) {
+        currentQuestionIndex++;
+        renderQuizCard();
+      } else {
+        // Reached the end (80th question)
+        renderQuizCard();
+        document.getElementById("modalFinishPrompt").classList.remove("hidden");
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuizCard();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < 79) {
+        currentQuestionIndex++;
+        renderQuizCard();
+      }
+    }
+
+    function jumpToQuestion(globalIdx) {
+      currentQuestionIndex = globalIdx;
+      if (quizViewMode === 'card') {
+        renderQuizCard();
+      } else {
+        jumpToCategory(flatQuestions[globalIdx].categoryIndex);
+      }
+      closeQuestionMapModal();
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function jumpToCategory(catIdx) {
+      currentCategoryIndex = catIdx;
+      const targetIdx = catIdx * 10;
+      currentQuestionIndex = targetIdx;
+
+      if (quizViewMode === 'card') {
+        renderQuizCard();
+      } else {
+        renderListCategory();
+      }
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // ================= PROGRESS & TOP BAR =================
+    function updateQuizProgress() {
+      const answeredCount = answers.filter(a => a !== null).length;
+      const percent = Math.round((answeredCount / 80) * 100);
+
+      document.getElementById("quizProgressLabel").innerText = `Pertanyaan ${currentQuestionIndex + 1} dari 80`;
+      document.getElementById("quizProgressPercent").innerText = `${percent}% Terjawab (${answeredCount}/80)`;
+      document.getElementById("quizGlobalProgressBar").style.width = `${Math.max(percent, 2)}%`;
+      document.getElementById("answeredPillCount").innerText = `${answeredCount}/80`;
+
+      // Update Category Bar tabs (A - H)
+      talentData.forEach((c, idx) => {
+        const btn = document.getElementById(`catBtn-${idx}`);
+        const catAnswers = answers.slice(idx * 10, (idx + 1) * 10);
+        const answeredInCat = catAnswers.filter(a => a !== null).length;
+        const isCurrent = (idx === currentCategoryIndex);
+
+        if (isCurrent) {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold border-2 border-sky-600 bg-sky-600 text-white shadow-md shadow-sky-500/20 flex-shrink-0";
+        } else if (answeredInCat === 10) {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold border border-emerald-300 bg-emerald-50 text-emerald-800 flex-shrink-0";
+        } else if (answeredInCat > 0) {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold border border-sky-200 bg-sky-50/70 text-sky-700 flex-shrink-0";
+        } else {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 flex-shrink-0";
+        }
+        btn.innerHTML = `${c.id} <span class="text-[10px] opacity-75">(${answeredInCat}/10)</span>`;
+      });
+    }
+
+    // ================= VIEW MODE TOGGLE (CARD vs LIST) =================
+    function toggleViewMode() {
+      if (quizViewMode === 'card') {
+        quizViewMode = 'list';
+        document.getElementById("quizCardMode").classList.add("hidden");
+        document.getElementById("quizListMode").classList.remove("hidden");
+        document.getElementById("viewModeBtn").innerHTML = `<i class="fa-solid fa-clone mr-1.5 text-sky-600"></i> Mode Kartu Kuis`;
+        renderListCategory();
+      } else {
+        quizViewMode = 'card';
+        document.getElementById("quizListMode").classList.add("hidden");
+        document.getElementById("quizCardMode").classList.remove("hidden");
+        document.getElementById("viewModeBtn").innerHTML = `<i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar`;
+        renderQuizCard();
+      }
+    }
+
+    function renderListCategory() {
+      const cat = talentData[currentCategoryIndex];
+      document.getElementById("listCatName").innerText = `${cat.id}. ${cat.alias}`;
+      document.getElementById("listCatDesc").innerText = cat.description;
+      document.getElementById("listCatIcon").innerHTML = `<i class="fa-solid ${cat.icon}"></i>`;
+
+      const container = document.getElementById("questionsListContainer");
+      container.innerHTML = "";
+
+      const startIdx = currentCategoryIndex * 10;
+      for (let i = 0; i < 10; i++) {
+        const gIdx = startIdx + i;
+        const qText = cat.questions[i];
+        const curVal = answers[gIdx];
+
+        const row = document.createElement("div");
+        row.className = `p-3.5 md:p-4 rounded-2xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          curVal !== null ? "bg-sky-50/40 border-sky-200" : "bg-white border-slate-200/90 hover:bg-slate-50"
+        }`;
+
+        let scaleBtns = "";
+        scaleDefinitions.forEach(s => {
+          const active = (curVal === s.value);
+          scaleBtns += `
+            <button type="button" onclick="setAnswerList(${gIdx}, ${s.value})" title="${s.shortLabel}" class="w-8 h-8 rounded-xl text-xs font-extrabold transition ${
+              active ? "bg-sky-600 text-white shadow-sm ring-2 ring-sky-300" : "bg-slate-100 hover:bg-sky-100 text-slate-700 hover:text-sky-800"
+            }">
+              ${s.value}
+            </button>
+          `;
+        });
+
+        row.innerHTML = `
+          <div class="flex items-start space-x-3">
+            <span class="text-xs font-bold text-slate-400 mt-0.5">${i + 1}.</span>
+            <span class="text-xs md:text-sm font-medium text-slate-800 leading-relaxed">${qText}</span>
+          </div>
+          <div class="flex items-center space-x-1.5 self-end sm:self-center flex-shrink-0">
+            ${scaleBtns}
+          </div>
+        `;
+        container.appendChild(row);
+      }
+
+      document.getElementById("btnListPrev").disabled = (currentCategoryIndex === 0);
+      document.getElementById("btnListPrev").style.opacity = (currentCategoryIndex === 0) ? "0.4" : "1";
+    }
+
+    function setAnswerList(globalIdx, val) {
+      answers[globalIdx] = val;
+      renderListCategory();
+      updateQuizProgress();
+    }
+
+    function navigateCategory(dir) {
+      const newCat = currentCategoryIndex + dir;
+      if (newCat >= 0 && newCat < 8) {
+        jumpToCategory(newCat);
+      }
+    }
+
+    // ================= QUESTION MAP MODAL (80 GRID) =================
+    function openQuestionMapModal() {
+      const container = document.getElementById("questionGridContainer");
+      container.innerHTML = "";
+
+      const answeredCount = answers.filter(a => a !== null).length;
+      document.getElementById("questionMapSummary").innerText = `${answeredCount} dari 80 Pertanyaan Terjawab`;
+
+      flatQuestions.forEach((q, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => jumpToQuestion(idx);
+
+        const ans = answers[idx];
+        const isCurrent = (idx === currentQuestionIndex);
+
+        let cls = "py-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center ";
+
+        if (isCurrent) {
+          cls += "ring-2 ring-sky-500 ring-offset-1 ";
+        }
+
+        if (ans !== null) {
+          cls += "bg-emerald-500 text-white border-emerald-600";
+          btn.innerHTML = `<span>${idx + 1}</span><span class="text-[9px] opacity-90 font-semibold">${q.categoryId} • ${ans}</span>`;
+        } else {
+          cls += "bg-white text-slate-400 border-dashed border-slate-300 hover:border-sky-400";
+          btn.innerHTML = `<span>${idx + 1}</span><span class="text-[9px] opacity-75 font-normal">${q.categoryId}</span>`;
+        }
+
+        btn.className = cls;
+        container.appendChild(btn);
+      });
+
+      document.getElementById("modalQuestionMap").classList.remove("hidden");
+    }
+
+    function closeQuestionMapModal() {
+      document.getElementById("modalQuestionMap").classList.add("hidden");
+    }
+
+    function confirmFinishAssessment() {
+      document.getElementById("modalFinishPrompt").classList.add("hidden");
+      submitAssessment();
+    }
+
+    function reviewFromFinishModal() {
+      document.getElementById("modalFinishPrompt").classList.add("hidden");
+      openQuestionMapModal();
+    }
+
+    // ================= STEP 3: SUBMIT AND CALCULATE RESULTS =================
+    function submitAssessment() {
+      const answeredCount = answers.filter(a => a !== null).length;
+
+      if (answeredCount === 0) {
+        showModal("Belum Ada Jawaban", "Kamu belum mengisi satu pun dari 80 butir pernyataan. Silakan pilih skor kesesuaian (1–5) terlebih dahulu.");
+        return;
+      }
+
+      // Calculate scores for each of the 8 Multiple Intelligences (max 50 each)
+      const scores = talentData.map((cat, catIdx) => {
+        const catAnswers = answers.slice(catIdx * 10, (catIdx + 1) * 10);
+        const sumScore = catAnswers.reduce((acc, val) => acc + (val !== null ? val : 0), 0);
+        return {
+          id: cat.id,
+          name: cat.name,
+          alias: cat.alias,
+          score: sumScore,
+          percentage: Math.round((sumScore / 50) * 100),
+          color: cat.color,
+          categoryObj: cat
+        };
+      });
+
+      // Sort scores to get Top 3 Talents
+      const sorted = [...scores].sort((a, b) => b.score - a.score);
+      const top1 = sorted[0];
+      const top2 = sorted[1];
+      const top3 = sorted[2];
+
+      const top3Code = `1. ${top1.name} • 2. ${top2.name} • 3. ${top3.name}`;
+      const top3FullName = `${top1.alias} (${top1.score}/50) • ${top2.alias} (${top2.score}/50) • ${top3.alias} (${top3.score}/50)`;
+
+      // Populate Student Info in Report
+      document.getElementById("resNama").innerText = studentData.nama;
+      document.getElementById("resKelas").innerText = studentData.kelas;
+      document.getElementById("resSekolah").innerText = studentData.sekolah;
+      if (document.getElementById("reportSchoolTitle")) {
+        document.getElementById("reportSchoolTitle").innerText = studentData.sekolah.toUpperCase();
+      }
+      
+      // Format Date
+      const dateObj = new Date(studentData.tanggal || new Date());
+      const formattedDate = dateObj.toLocaleDateString("id-ID", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      document.getElementById("resTanggal").innerText = formattedDate;
+      document.getElementById("signDateText").innerText = `Tanggal Terbit: ${formattedDate}`;
+      document.getElementById("signatureStudentName").innerText = `( ${studentData.nama} )`;
+
+      // Dominant Talents Executive Header
+      document.getElementById("resTop3Code").innerText = top3Code;
+      document.getElementById("resTop3FullName").innerText = top3FullName;
+      document.getElementById("resTalentTagline").innerText = `Berdasarkan 8 dimensi kecerdasan majemuk, bakat tertinggimu berada pada ${top1.alias}, diikuti oleh ${top2.alias} dan ${top3.alias}.`;
+      document.getElementById("resPrimaryType").innerText = `${top1.name} (${top1.id})`;
+      document.getElementById("resPrimaryScore").innerText = `Nilai ${top1.score} dari 50 (${top1.percentage}%)`;
+
+      // Render Formal Score Table (Clean & Professional)
+      const tableBody = document.getElementById("scoresTableBody");
+      tableBody.innerHTML = "";
+
+      scores.forEach(s => {
+        let catLevel = "Perlu Dilatih";
+        let catColorClass = "text-slate-600";
+        if (s.score >= 42) {
+          catLevel = "Sangat Dominan";
+          catColorClass = "font-bold text-slate-900";
+        } else if (s.score >= 34) {
+          catLevel = "Dominan";
+          catColorClass = "font-semibold text-slate-800";
+        } else if (s.score >= 25) {
+          catLevel = "Cukup";
+          catColorClass = "text-slate-700";
+        }
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50/80 transition text-xs";
+        tr.innerHTML = `
+          <td class="py-1.5 px-3 font-semibold text-slate-800">
+            ${s.alias}
+          </td>
+          <td class="py-1.5 px-2 text-center font-bold text-slate-700">${s.id}</td>
+          <td class="py-1.5 px-2 text-center font-bold text-slate-900">${s.score} / 50</td>
+          <td class="py-1.5 px-2 text-center text-slate-700">${s.percentage}%</td>
+          <td class="py-1.5 px-3 text-center ${catColorClass}">${catLevel}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      // Personality & Learning Style Description
+      const personalityContainer = document.getElementById("resPersonalityDesc");
+      personalityContainer.innerHTML = `
+        <p><strong>1. Talenta Utama (${top1.alias}):</strong> ${top1.categoryObj.description}</p>
+        <p><strong>2. Talenta Pendukung (${top2.alias}):</strong> ${top2.categoryObj.description}</p>
+        <p class="text-slate-600 italic mt-1">Peserta didik akan mencapai potensi belajar dan prestasi maksimal apabila memadukan strategi belajar yang sesuai dengan kecerdasan <strong>${top1.name}</strong> dan <strong>${top2.name}</strong>.</p>
+      `;
+
+      // Study Majors Recommendation
+      const majorContainer = document.getElementById("resStudyMajorList");
+      majorContainer.innerHTML = "";
+      const combinedMajors = [...new Set([...top1.categoryObj.majors.slice(0, 4), ...top2.categoryObj.majors.slice(0, 3)])];
+      combinedMajors.forEach(m => {
+        const li = document.createElement("li");
+        li.className = "flex items-start";
+        li.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 mt-1.5 mr-2 flex-shrink-0"></span><span>${m}</span>`;
+        majorContainer.appendChild(li);
+      });
+
+      // Career Recommendation
+      const careerContainer = document.getElementById("resCareerList");
+      careerContainer.innerHTML = "";
+      const combinedCareers = [...new Set([...top1.categoryObj.careers.slice(0, 4), ...top2.categoryObj.careers.slice(0, 3)])];
+      combinedCareers.forEach(c => {
+        const li = document.createElement("li");
+        li.className = "flex items-start";
+        li.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 mt-1.5 mr-2 flex-shrink-0"></span><span>${c}</span>`;
+        careerContainer.appendChild(li);
+      });
+
+      // Advice / Tips
+      document.getElementById("resDevTips").innerHTML = `
+        <strong>Penguatan Talenta ${top1.name}:</strong> ${top1.categoryObj.advice} 
+        Kombinasikan pula dengan pengembangan potensi dari kecerdasan <strong>${top2.name}</strong> (${top2.categoryObj.advice.toLowerCase()}) untuk memperluas peluang karier masa depan.
+      `;
+
+      // Render Radar Chart
+      renderChart(scores);
+
+      // Hide Quiz, Show Results
+      document.getElementById("stepQuiz").classList.add("hidden");
+      document.getElementById("stepResult").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Chart.js Radar Visualization (8 Dimensions)
+    function renderChart(scores) {
+      const ctx = document.getElementById('talentChart').getContext('2d');
+      
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const labels = scores.map(s => `${s.id}. ${s.name}`);
+      const dataValues = scores.map(s => s.score);
+
+      chartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Skor Talenta',
+            data: dataValues,
+            fill: true,
+            backgroundColor: 'rgba(30, 41, 59, 0.12)',
+            borderColor: 'rgba(30, 41, 59, 0.85)',
+            pointBackgroundColor: 'rgba(30, 41, 59, 1)',
+            pointBorderColor: '#ffffff',
+            pointHoverBackgroundColor: '#ffffff',
+            pointHoverBorderColor: 'rgba(30, 41, 59, 1)',
+            borderWidth: 1.8,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(148, 163, 184, 0.4)' },
+              grid: { color: 'rgba(148, 163, 184, 0.4)' },
+              suggestedMin: 0,
+              suggestedMax: 50,
+              ticks: {
+                stepSize: 10,
+                font: { size: 8 },
+                backdropColor: 'transparent',
+                color: '#64748b'
+              },
+              pointLabels: {
+                font: {
+                  size: 9,
+                  weight: '600',
+                  family: 'Inter, sans-serif'
+                },
+                color: '#0f172a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // RESET & RETAKE TEST
+    function restartTest() {
+      answers = Array(80).fill(null);
+      currentQuestionIndex = 0;
+      currentCategoryIndex = 0;
+      document.getElementById("stepResult").classList.add("hidden");
+      document.getElementById("stepIntro").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
