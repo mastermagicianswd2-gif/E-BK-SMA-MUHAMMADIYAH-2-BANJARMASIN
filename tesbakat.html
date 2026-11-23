@@ -47,6 +47,41 @@
     }
   </script>
 
+  <script>
+    // Terapkan warna tema E-BK sejak awal (dibaca dari pengaturan yang disimpan index.html di perangkat yang sama)
+    // sehingga halaman langsung berwarna sesuai tema, tanpa berkedip biru dulu.
+    (function () {
+      try {
+        var st = JSON.parse(localStorage.getItem('ebk_settings') || 'null');
+        if (!st || !st.colorPrimary) return;
+        var norm = function (h) {
+          if (!h) return null;
+          h = String(h).trim();
+          if (h[0] !== '#') h = '#' + h;
+          if (/^#[0-9a-f]{3}$/i.test(h)) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+          return /^#[0-9a-f]{6}$/i.test(h) ? h.toLowerCase() : null;
+        };
+        var p = norm(st.colorPrimary) || '#0284c7';
+        var d = norm(st.colorDark) || '#0c2340';
+        var a = norm(st.colorAccent) || '#f59e0b';
+        var root = document.documentElement;
+        root.style.setProperty('--color-primary', p);
+        root.style.setProperty('--color-dark', d);
+        root.style.setProperty('--color-accent', a);
+        if (p === '#0284c7') return;
+        var base = [parseInt(p.substr(1, 2), 16), parseInt(p.substr(3, 2), 16), parseInt(p.substr(5, 2), 16)];
+        var mix = function (c, t, k) { return c.map(function (v, i) { return Math.round(v + (t[i] - v) * k); }); };
+        var W = [255, 255, 255], B = [0, 0, 0];
+        var map = {
+          50: mix(base, W, 0.94), 100: mix(base, W, 0.87), 200: mix(base, W, 0.72), 300: mix(base, W, 0.52),
+          400: mix(base, W, 0.3), 500: mix(base, W, 0.13), 600: base,
+          700: mix(base, B, 0.2), 800: mix(base, B, 0.38), 900: mix(base, B, 0.55)
+        };
+        Object.keys(map).forEach(function (n) { root.style.setProperty('--sky-' + n, map[n].join(' ')); });
+      } catch (e) {}
+    })();
+  </script>
+
   <style>
     :root {
       --color-primary: #0284c7;
