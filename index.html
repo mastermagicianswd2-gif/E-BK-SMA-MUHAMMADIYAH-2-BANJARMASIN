@@ -509,7 +509,7 @@
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pusat Sumber Belajar</span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Materi dan Infromasi</h2>
-          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi, Media Bimbingan dan Konseling.</p>
+          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi, dan Media Bimbingan dan Konseling.</p>
         </div>
 
         <!-- Kolom Pencarian Materi -->
@@ -593,7 +593,7 @@
             <span>Buka di tab baru</span>
           </a>
         </div>
-        <iframe id="asm-bakat-frame" title="Tes Bakat & Kecerdasan Majemuk" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
+        <iframe id="asm-bakat-frame" onload="sendThemeToAsmFrame(this)" title="Tes Bakat & Kecerdasan Majemuk" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
       </div>
 
       <!-- ===== TES GAYA BELAJAR (file terpisah: tesgayabelajar.html, ditanam lewat iframe) ===== -->
@@ -608,7 +608,7 @@
             <span>Buka di tab baru</span>
           </a>
         </div>
-        <iframe id="asm-gaya-frame" title="Tes Gaya Belajar VARK" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
+        <iframe id="asm-gaya-frame" onload="sendThemeToAsmFrame(this)" title="Tes Gaya Belajar VARK" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
       </div>
 
       <!-- ===== TES MINAT (file terpisah: tesminat.html, ditanam lewat iframe) ===== -->
@@ -623,7 +623,7 @@
             <span>Buka di tab baru</span>
           </a>
         </div>
-        <iframe id="asm-minat-frame" title="Tes Minat Karier (Holland RIASEC)" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
+        <iframe id="asm-minat-frame" onload="sendThemeToAsmFrame(this)" title="Tes Minat Karier (Holland RIASEC)" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
       </div>
     </section>
 
@@ -1042,19 +1042,6 @@
                     <input type="text" id="cfg-hex-accent" value="#f59e0b" oninput="document.getElementById('cfg-color-accent').value = this.value" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase">
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <!-- Bagian 5: Tautan Pengembang Web (Developer Web) -->
-            <div class="border-t border-slate-100 pt-5 space-y-4">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">5. Tautan Pengembang Web (Developer Web)</label>
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">URL Tautan Developer Web (Muncul di Footer)</label>
-                <div class="relative">
-                  <i class="fa-solid fa-code absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                  <input type="url" id="cfg-developer-url" placeholder="https://instagram.com/akun_anda atau tautan portofolio" class="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500">
-                </div>
-                <p class="text-[10px] text-slate-400 mt-1">Tautan ini akan terbuka di tab baru saat pengunjung mengklik teks "Developer Web" pada bagian bawah halaman.</p>
               </div>
             </div>
 
@@ -1488,7 +1475,7 @@
       <p class="font-semibold text-slate-600">E-BK • Layanan Bimbingan & Konseling Digital</p>
       <p>Bimbingan dan Konseling FKIP ULM &copy; 2026</p>
       <p>
-        <a id="footer-developer-link" href="#" target="_blank" rel="noopener noreferrer" class="hover:text-sky-600 hover:underline transition-colors">
+        <a id="footer-developer-link" href="https://kelompok7bk.vercel.app/" title="Profil Developer — Direktori Tim" target="_blank" rel="noopener noreferrer" class="hover:text-sky-600 hover:underline transition-colors">
           Developer Web
         </a>
       </p>
@@ -1565,14 +1552,13 @@
       heroBadge: 'Portal Resmi Bimbingan & Konseling',
       heroTitle: 'Bimbingan & Konseling Digital',
       heroTitleHighlight: 'SMA Muhammadiyah 2 Banjarmasin',
-      heroCaption: 'Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik.',
+      heroCaption: 'Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik berlandaskan nilai-nilai Islami.',
       heroBgType: 'pattern',
       heroBgUrl: '',
       heroBgOverlay: '75',
       colorPrimary: '#0284c7',
       colorDark: '#0c2340',
-      colorAccent: '#f59e0b',
-      developerUrl: '#'
+      colorAccent: '#f59e0b'
     };
 
     // Inisialisasi Worker PDF.js
@@ -4064,6 +4050,14 @@
       st.textContent = aHex === '#f59e0b' ? '' :
         '#hero-accent-dot{background-color:var(--color-accent) !important;}' +
         '#hero-text-highlight{--tw-gradient-to:var(--color-accent) !important;}';
+
+      // Halaman tes yang sedang terbuka (iframe) ikut berganti warna
+      if (typeof ASM_FRAMES !== 'undefined') {
+        Object.keys(ASM_FRAMES).forEach(k => {
+          const f = document.getElementById(ASM_FRAMES[k].id);
+          if (f && f.getAttribute('src')) sendThemeToAsmFrame(f);
+        });
+      }
     }
 
     /**
@@ -4141,21 +4135,6 @@
         applyDynamicColors(siteSettings.colorPrimary, siteSettings.colorDark, siteSettings.colorAccent || '#f59e0b');
       }
 
-      // Tautan Developer Web pada Footer
-      const devLink = document.getElementById('footer-developer-link');
-      if (devLink) {
-        let devUrl = (siteSettings.developerUrl || '#').trim();
-        if (devUrl && devUrl !== '#' && !devUrl.startsWith('http://') && !devUrl.startsWith('https://')) {
-          devUrl = 'https://' + devUrl;
-        }
-        devLink.href = devUrl || '#';
-      }
-
-      const devInput = document.getElementById('cfg-developer-url');
-      if (devInput) {
-        devInput.value = (siteSettings.developerUrl && siteSettings.developerUrl !== '#') ? siteSettings.developerUrl : '';
-      }
-
       // Sinkronkan nilai kolom di form Kustomisasi Tema agar konsisten
       const typeSelect = document.getElementById('cfg-logo-type');
       if (typeSelect) {
@@ -4188,11 +4167,6 @@
         effectiveHeroBgUrl = siteSettings.heroBgUrl;
       }
 
-      let devUrlInput = document.getElementById('cfg-developer-url') ? document.getElementById('cfg-developer-url').value.trim() : '#';
-      if (devUrlInput && devUrlInput !== '#' && !devUrlInput.startsWith('http://') && !devUrlInput.startsWith('https://')) {
-        devUrlInput = 'https://' + devUrlInput;
-      }
-
       const newSt = {
         logoType: logoType,
         logoIcon: document.getElementById('cfg-logo-icon').value,
@@ -4207,7 +4181,6 @@
         colorPrimary: document.getElementById('cfg-hex-primary').value.trim(),
         colorDark: document.getElementById('cfg-hex-dark').value.trim(),
         colorAccent: document.getElementById('cfg-hex-accent').value.trim(),
-        developerUrl: devUrlInput || '#',
         logoFileBase64: tempLogoBase64,
         logoFileName: tempLogoFileName,
         logoFileMime: tempLogoFileMime,
@@ -5210,12 +5183,11 @@
 
     function sendThemeToAsmFrame(frame) {
       if (!frame || !frame.contentWindow) return;
-      const vars = {};
+      const keys = ['--color-primary', '--color-dark', '--color-accent']
+        .concat([50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map(n => '--sky-' + n));
       const st = document.documentElement.style;
-      for (let i = 0; i < st.length; i++) {
-        const name = st[i];
-        if (name.indexOf('--') === 0) vars[name] = st.getPropertyValue(name).trim();
-      }
+      const vars = {};
+      keys.forEach(k => { vars[k] = st.getPropertyValue(k).trim(); });   // kosong = kembali ke warna bawaan
       frame.contentWindow.postMessage({ type: 'ebk-theme', vars: vars }, '*');
     }
 
