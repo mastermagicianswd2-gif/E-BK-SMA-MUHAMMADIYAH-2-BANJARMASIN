@@ -206,16 +206,15 @@
                 <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-xs group-hover:bg-amber-500 group-hover:text-white transition-all"><i class="fa-solid fa-puzzle-piece"></i></span>
                 <span class="flex-1">
                   <span class="block text-xs font-bold text-slate-800">Tes Bakat</span>
-                  <span class="block text-[10px] text-slate-500">Tes Bakat (Kecerdasan Majemuk) Howard Gardner</span>
+                  <span class="block text-[10px] text-slate-500">Kecerdasan majemuk (80 butir)</span>
                 </span>
               </button>
               <button onclick="openAsesmen('gaya')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-50 flex items-center space-x-3 group transition-all">
                 <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs group-hover:bg-emerald-600 group-hover:text-white transition-all"><i class="fa-solid fa-book-open-reader"></i></span>
                 <span class="flex-1">
                   <span class="block text-xs font-bold text-slate-800">Tes Gaya Belajar</span>
-                  <span class="block text-[10px] text-slate-500">Cara belajar paling efektif</span>
+                  <span class="block text-[10px] text-slate-500">VARK: visual, aural, baca-tulis, kinestetik</span>
                 </span>
-                <span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
               </button>
             </div>
           </div>
@@ -269,7 +268,6 @@
         <button onclick="openAsesmen('gaya'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-sky-50 flex items-center space-x-3">
           <i class="fa-solid fa-book-open-reader w-5 text-center text-emerald-600"></i>
           <span>Tes Gaya Belajar</span>
-          <span class="ml-auto px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold uppercase">Segera</span>
         </button>
       </div>
       <button id="mbtn-nav-konseling" onclick="showTab('konseling'); toggleMobileMenu()" class="w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center space-x-3">
@@ -305,7 +303,7 @@
           </h1>
 
           <p id="hero-text-caption" class="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
-            Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik.
+            Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik berlandaskan nilai-nilai Islami.
           </p>
 
           <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
@@ -511,7 +509,7 @@
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pusat Sumber Belajar</span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Materi dan Infromasi</h2>
-          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi, dan Media Bimbingan dan Konseling.</p>
+          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi, Media Bimbingan dan Konseling.</p>
         </div>
 
         <!-- Kolom Pencarian Materi -->
@@ -576,9 +574,9 @@
             </div>
             <div class="flex items-center space-x-2">
               <h3 class="font-bold text-slate-900 text-base">Tes Gaya Belajar</h3>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 uppercase tracking-wider">Segera</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase tracking-wider">Tersedia</span>
             </div>
-            <p class="text-xs text-slate-500 leading-relaxed">Pahami cara belajar yang paling efektif untukmu: visual, auditori, atau kinestetik.</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Kenali gaya belajar VARK-mu (Visual, Aural, Read/Write, Kinesthetic) beserta strategi belajarnya. 16 pertanyaan.</p>
           </div>
         </div>
       </div>
@@ -598,18 +596,19 @@
         <iframe id="asm-bakat-frame" title="Tes Bakat & Kecerdasan Majemuk" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
       </div>
 
-      <!-- ===== SEGERA HADIR: TES GAYA BELAJAR ===== -->
-      <div id="asm-view-gaya" class="hidden max-w-xl mx-auto">
-        <div class="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 shadow-sm text-center space-y-4">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
-            <i class="fa-solid fa-book-open-reader"></i>
-          </div>
-          <h2 class="text-xl font-extrabold text-slate-900">Tes Gaya Belajar</h2>
-          <p class="text-xs text-slate-500 leading-relaxed">Tes ini sedang disiapkan oleh Guru BK dan akan segera tersedia.</p>
-          <button onclick="showAsmView('hub')" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-all">
-            <i class="fa-solid fa-arrow-left mr-1.5"></i> Kembali ke Assesmen
+      <!-- ===== TES GAYA BELAJAR (file terpisah: tesgayabelajar.html, ditanam lewat iframe) ===== -->
+      <div id="asm-view-gaya" class="hidden space-y-4">
+        <div class="flex items-center justify-between gap-3">
+          <button onclick="showAsmView('hub')" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition-all flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+            <span>Kembali ke Assesmen</span>
           </button>
+          <a href="tesgayabelajar.html?v=20261123" target="_blank" rel="noopener" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition-all flex items-center space-x-1.5">
+            <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+            <span>Buka di tab baru</span>
+          </a>
         </div>
+        <iframe id="asm-gaya-frame" title="Tes Gaya Belajar VARK" class="w-full rounded-3xl border border-slate-200/90 bg-white" style="height: calc(100vh - 8rem); min-height: 640px;" allow="fullscreen"></iframe>
       </div>
 
       <!-- ===== TES MINAT (file terpisah: tesminat.html, ditanam lewat iframe) ===== -->
@@ -1566,7 +1565,7 @@
       heroBadge: 'Portal Resmi Bimbingan & Konseling',
       heroTitle: 'Bimbingan & Konseling Digital',
       heroTitleHighlight: 'SMA Muhammadiyah 2 Banjarmasin',
-      heroCaption: 'Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik berlandaskan nilai-nilai Islami.',
+      heroCaption: 'Ruang aman, nyaman, dan profesional untuk membimbing potensi pribadi, sosial, belajar, dan karir peserta didik.',
       heroBgType: 'pattern',
       heroBgUrl: '',
       heroBgOverlay: '75',
@@ -5132,8 +5131,8 @@
     }
 
     // =========================================================================
-    // 🧭 ASSESMEN — MENU, TES MINAT (tesminat.html) & TES BAKAT (tesbakat.html)
-    // Kedua tes adalah file terpisah yang ditanam lewat iframe.
+    // 🧭 ASSESMEN — MENU, TES MINAT (tesminat.html), TES BAKAT (tesbakat.html) & TES GAYA BELAJAR (tesgayabelajar.html)
+    // Ketiga tes adalah file terpisah yang ditanam lewat iframe.
     // =========================================================================
 
     /* ---------- Menu Assesmen (dropdown desktop & submenu mobile) ---------- */
@@ -5186,7 +5185,8 @@
     /* ---------- Tes Minat & Tes Bakat: file terpisah ditanam lewat iframe ---------- */
     const ASM_FRAMES = {
       minat: { id: 'asm-minat-frame', src: 'tesminat.html?v=20261123', ready: 'tesminat-ready' },
-      bakat: { id: 'asm-bakat-frame', src: 'tesbakat.html?v=20261123', ready: 'tesbakat-ready' }
+      bakat: { id: 'asm-bakat-frame', src: 'tesbakat.html?v=20261123', ready: 'tesbakat-ready' },
+      gaya:  { id: 'asm-gaya-frame',  src: 'tesgayabelajar.html?v=20261123', ready: 'tesgayabelajar-ready' }
     };
 
     function openAsesmen(jenis) {
