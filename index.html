@@ -511,7 +511,7 @@
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-sky-600">Pusat Sumber Belajar</span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Materi dan Infromasi</h2>
-          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi dan Media Bimbingan dan Konseling.</p>
+          <p class="text-slate-500 text-sm mt-1">Pusat Materi, Informasi, dan Media Bimbingan dan Konseling.</p>
         </div>
 
         <!-- Kolom Pencarian Materi -->
@@ -747,20 +747,20 @@
         
         <!-- Baris Header Profil Guru BK & Aksi Cepat -->
         <div class="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4 min-w-0">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
               <i class="fa-solid fa-user-tie"></i>
             </div>
-            <div>
-              <div class="flex items-center space-x-2">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <h2 id="dash-guru-nama" class="text-xl sm:text-2xl font-bold text-slate-900">Guru BK</h2>
                 <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-700">Admin Aktif</span>
               </div>
               <p id="dash-guru-jabatan" class="text-xs font-semibold text-sky-600 mt-0.5">Guru Bimbingan & Konseling</p>
-              <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-400 mt-1">
                 <span id="dash-guru-nip">NIP: -</span>
-                <span>•</span>
-                <span id="dash-guru-email"><i class="fa-regular fa-envelope mr-1"></i>Belum ada email OTP</span>
+                <span class="hidden sm:inline">•</span>
+                <span id="dash-guru-email" class="break-all min-w-0"><i class="fa-regular fa-envelope mr-1"></i>Belum ada email OTP</span>
               </div>
             </div>
           </div>
@@ -782,21 +782,21 @@
         </div>
 
         <!-- Tab Navigasi Dasbor Admin -->
-        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3">
-          <button onclick="switchAdminTab('konten')" id="admin-tab-btn-konten" class="px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2">
+        <div id="admin-tab-row" class="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
+          <button onclick="switchAdminTab('konten')" id="admin-tab-btn-konten" class="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-layer-group"></i>
             <span>Kelola Materi & Pengumuman</span>
           </button>
-          <button onclick="switchAdminTab('konseling')" id="admin-tab-btn-konseling" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
+          <button onclick="switchAdminTab('konseling')" id="admin-tab-btn-konseling" class="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-inbox"></i>
             <span>Pesan Konseling Masuk</span>
             <span id="badge-unread-konseling" class="hidden px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px]">0</span>
           </button>
-          <button onclick="switchAdminTab('tema')" id="admin-tab-btn-tema" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
+          <button onclick="switchAdminTab('tema')" id="admin-tab-btn-tema" class="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-palette"></i>
             <span>Kustomisasi Tampilan & Tema</span>
           </button>
-          <button onclick="switchAdminTab('popup')" id="admin-tab-btn-popup" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
+          <button onclick="switchAdminTab('popup')" id="admin-tab-btn-popup" class="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-bullhorn"></i>
             <span>Popup Pengumuman</span>
           </button>
@@ -3085,11 +3085,17 @@
       const tabs = ['konten', 'konseling', 'tema', 'popup'];
       tabs.forEach(t => {
         document.getElementById(`admin-subtab-${t}`).classList.add('hidden');
-        document.getElementById(`admin-tab-btn-${t}`).className = 'px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2';
+        document.getElementById(`admin-tab-btn-${t}`).className = 'shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all flex items-center space-x-2';
       });
 
       document.getElementById(`admin-subtab-${subTab}`).classList.remove('hidden');
-      document.getElementById(`admin-tab-btn-${subTab}`).className = 'px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
+      const activeTabBtn = document.getElementById(`admin-tab-btn-${subTab}`);
+      activeTabBtn.className = 'shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold text-sky-600 bg-sky-50 transition-all flex items-center space-x-2';
+      // Di HP: geser baris tab agar tab aktif terlihat penuh
+      const tabRow = document.getElementById('admin-tab-row');
+      if (tabRow && tabRow.scrollWidth > tabRow.clientWidth) {
+        tabRow.scrollTo({ left: activeTabBtn.offsetLeft - (tabRow.clientWidth - activeTabBtn.offsetWidth) / 2, behavior: 'smooth' });
+      }
 
       if (subTab === 'konseling') {
         renderAdminKonselingTable();
