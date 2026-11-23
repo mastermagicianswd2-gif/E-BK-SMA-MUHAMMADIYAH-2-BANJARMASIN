@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tes Gaya Belajar VARK (Visual, Aural, Read/Write, Kinesthetic)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts Inter (sama dengan index.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    // Konfigurasi warna identik dengan index.html agar tema E-BK ikut berlaku
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            themePrimary: 'var(--color-primary, #0284c7)',
+            themeDark: 'var(--color-dark, #0c2340)',
+            themeAccent: 'var(--color-accent, #f59e0b)',
+            sky: {
+              50:  'rgb(var(--sky-50, 240 249 255) / <alpha-value>)',
+              100: 'rgb(var(--sky-100, 224 242 254) / <alpha-value>)',
+              200: 'rgb(var(--sky-200, 186 230 253) / <alpha-value>)',
+              300: 'rgb(var(--sky-300, 125 211 252) / <alpha-value>)',
+              400: 'rgb(var(--sky-400, 56 189 248) / <alpha-value>)',
+              500: 'rgb(var(--sky-500, 14 165 233) / <alpha-value>)',
+              600: 'rgb(var(--sky-600, 2 132 199) / <alpha-value>)',
+              700: 'rgb(var(--sky-700, 3 105 161) / <alpha-value>)',
+              800: 'rgb(var(--sky-800, 7 89 133) / <alpha-value>)',
+              900: 'rgb(var(--sky-900, 12 74 110) / <alpha-value>)',
+            },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --color-primary: #0284c7;
+      --color-dark: #0c2340;
+      --color-accent: #f59e0b;
+    }
+
+    .bg-pattern-subtle {
+      background-color: var(--color-dark);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px), radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+
+    /* Saat ditanam di index.html: sembunyikan header/footer sendiri */
+    .embedded body { background-color: transparent; }
+    .embedded header, .embedded footer { display: none !important; }
+    .embedded main { padding-top: 0.25rem; padding-bottom: 1.5rem; }
+
+    /* Cetak laporan: bersih & formal (A4) */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 9.5pt !important;
+        line-height: 1.35 !important;
+      }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .page-break { page-break-before: always; }
+      .print-avoid-break {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .shadow-xl, .shadow-md, .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
+      #printReportArea {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+      #printReportArea * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      @page { size: A4 portrait; margin: 1.2cm 1.4cm; }
+    }
+
+    @media screen {
+      .print-only { display: none !important; }
+    }
+
+    /* Animasi kartu kuis */
+    @keyframes quizCardIn {
+      0% { opacity: 0; transform: translateY(14px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .quiz-card-animate { animation: quizCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .btn-press:active { transform: scale(0.97); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    /* Animasi tombol & jendela (selaras dengan index.html) */
+    @keyframes ebkFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ebkPopIn  { from { opacity: 0; transform: translateY(18px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    div[id^="modal"]:not(.hidden) { animation: ebkFadeIn 0.25s ease backwards; }
+    div[id^="modal"]:not(.hidden) > div { animation: ebkPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+    button:not(:disabled) {
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease,
+                  background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease, opacity 0.2s ease;
+    }
+    button:not(:disabled):not([class*="translate"]):active { transform: scale(0.95); transition-duration: 0.08s; }
+    button[class*="shadow-"]:not(:disabled):not([class*="translate"]):hover { transform: translateY(-2px); }
+    button[class*="shadow-"]:not(:disabled):not([class*="translate"]):hover:active { transform: translateY(0) scale(0.95); }
+    button:focus-visible { outline: 2px solid var(--color-primary, #0284c7); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      div[id^="modal"], div[id^="modal"] > div { animation: none !important; }
+      button { transition: none !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="no-print bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-500 text-white flex items-center justify-center text-lg shadow-md shadow-sky-500/20 flex-shrink-0">
+          <i class="fa-solid fa-book-open-reader"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base md:text-lg leading-tight text-slate-900">Asesmen Gaya Belajar (VARK)</h1>
+          <p class="text-xs text-slate-500 font-medium">SMA 2 Muhammadiyah Banjarmasin • Visual, Aural, Read/Write, Kinesthetic</p>
+        </div>
+      </div>
+      <div id="navBadge" class="hidden md:flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-700">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span id="navStudentInfo">Belum Memulai</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 md:py-8">
+
+    <!-- NOTIFICATION MODAL (NO ALERT) -->
+    <div id="modalAlert" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden no-print">
+      <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6 shadow-2xl border border-slate-100">
+        <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-4 mx-auto text-xl">
+          <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <h3 id="modalTitle" class="text-center font-bold text-lg text-slate-900 mb-2">Perhatian</h3>
+        <p id="modalMessage" class="text-center text-sm text-slate-600 mb-6 leading-relaxed">Harap lengkapi semua data sebelum melanjutkan.</p>
+        <button type="button" onclick="closeModal()" class="w-full py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm rounded-xl transition shadow">
+          Mengerti
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL PETA 16 SOAL (GRID NAVIGATOR) -->
+    <div id="modalQuestionMap" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden no-print p-4">
+      <div class="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="font-bold text-base md:text-lg text-slate-900 flex items-center">
+              <i class="fa-solid fa-grip text-sky-600 mr-2"></i> Peta Kuesioner VARK (16 Soal)
+            </h3>
+            <p class="text-xs text-slate-500">Klik nomor untuk langsung melompat ke situasi terkait.</p>
+          </div>
+          <button type="button" onclick="closeQuestionMapModal()" class="w-9 h-9 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="p-4 border-b border-slate-100 bg-white flex flex-wrap gap-3 text-xs">
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-emerald-500 mr-1.5 inline-block"></span> Sudah Dipilih</span>
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md border-2 border-dashed border-slate-300 mr-1.5 inline-block"></span> Belum Dipilih / Kosong</span>
+          <span class="flex items-center"><span class="w-3.5 h-3.5 rounded-md bg-sky-600 ring-2 ring-sky-300 mr-1.5 inline-block"></span> Sedang Dibuka</span>
+        </div>
+
+        <div class="p-5 md:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+          <div id="questionGridContainer" class="grid grid-cols-4 sm:grid-cols-8 gap-2.5 text-center text-xs font-bold">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 bg-white flex justify-between items-center">
+          <span id="questionMapSummary" class="text-xs text-slate-600 font-medium">0 / 16 Terisi</span>
+          <button type="button" onclick="closeQuestionMapModal()" class="px-5 py-2 bg-sky-600 text-white text-xs font-semibold rounded-xl hover:bg-sky-700 transition">
+            Tutup &amp; Lanjutkan Kuis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL SELESAI KUIS (CELEBRATION) -->
+    <div id="modalFinishPrompt" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden no-print p-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-100">
+        <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900 mb-2">Kuesioner VARK Selesai!</h3>
+        <p class="text-xs md:text-sm text-slate-600 leading-relaxed mb-6">
+          Kamu telah mencapai butir terakhir dari kuesioner gaya belajar VARK. Sistem siap memetakan kecenderungan modalitas belajarmu serta menyusun contoh metode belajar yang paling efektif.
+        </p>
+        <div class="flex flex-col gap-2.5">
+          <button type="button" onclick="confirmFinishAssessment()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-600/25">
+            <i class="fa-solid fa-chart-pie mr-2"></i> Lihat Hasil &amp; Contoh Metode Belajar
+          </button>
+          <button type="button" onclick="reviewFromFinishModal()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
+            <i class="fa-solid fa-list-check mr-2"></i> Periksa Kembali Jawaban
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 1: PENDAFTARAN & IDENTITAS ================= -->
+    <section id="stepIntro" class="no-print space-y-6">
+      <!-- Banner -->
+      <div class="bg-pattern-subtle rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-slate-950/60 pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl">
+          <div class="flex items-center space-x-2 mb-3">
+            <span class="inline-block py-1 px-3 rounded-full bg-white/20 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
+              <i class="fa-solid fa-bolt-lightning text-amber-300 mr-1.5"></i> Kuis Interaktif VARK
+            </span>
+            <span class="inline-block py-1 px-3 rounded-full bg-emerald-500/30 text-emerald-200 text-xs font-semibold backdrop-blur-sm">
+              16 Situasi Nyata
+            </span>
+          </div>
+          <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-3">
+            Kuis Identifikasi Gaya Belajar (VARK)
+          </h2>
+          <p class="text-sm md:text-base text-slate-300 leading-relaxed">
+            Kenali cara otakmu menyerap, memproses, dan mengingat informasi paling efektif melalui 4 modalitas belajar: <em>Visual (V), Aural (A), Read/Write (R), dan Kinesthetic (K)</em>.
+          </p>
+        </div>
+        <div class="absolute -right-10 -bottom-10 opacity-15 text-white pointer-events-none">
+          <i class="fa-solid fa-lightbulb text-9xl"></i>
+        </div>
+      </div>
+
+      <!-- Identity Form Card -->
+      <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center">
+          <i class="fa-solid fa-id-card text-sky-600 mr-2.5"></i> Masukkan Data Diri Peserta Didik
+        </h3>
+        <p class="text-xs text-slate-500 mb-6">Data ini akan tercantum secara resmi pada lembar laporan hasil gaya belajar yang dapat dicetak/disimpan ke PDF.</p>
+
+        <form id="identityForm" onsubmit="startTest(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap Siswa <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-regular fa-user absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputNama" required placeholder="Contoh: Siti Aisyah" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kelas / Tingkat <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-solid fa-graduation-cap absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputKelas" required placeholder="Contoh: X-1 / XI MIPA 3" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Sekolah / Lembaga <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="fa-solid fa-school absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="inputSekolah" required value="SMA 2 Muhammadiyah Banjarmasin" placeholder="SMA 2 Muhammadiyah Banjarmasin" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Tanggal Pelaksanaan</label>
+              <div class="relative">
+                <i class="fa-regular fa-calendar absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="date" id="inputTanggal" 
+                  class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-600 transition">
+              </div>
+            </div>
+          </div>
+
+          <!-- Petunjuk Pengerjaan Kuis VARK -->
+          <div class="mt-6 p-4 rounded-2xl bg-sky-50/60 border border-sky-100 text-slate-700 text-xs md:text-sm space-y-2">
+            <h4 class="font-bold text-sky-900 flex items-center">
+              <i class="fa-solid fa-circle-info mr-2 text-sky-600"></i> Petunjuk Pengisian Kuesioner VARK:
+            </h4>
+            <ul class="list-disc list-inside space-y-1 text-slate-600">
+              <li>Pilihlah <strong>satu jawaban</strong> (<strong>a, b, c, atau d</strong>) yang paling mendekati preferensi tindakanmu pada 16 situasi yang disajikan.</li>
+              <li>Setelah kamu mengklik salah satu pilihan jawaban, kartu kuis akan <strong>otomatis lanjut ke soal berikutnya</strong>.</li>
+              <li>Kamu dapat membuka <strong>Peta Soal</strong> atau tombol <strong>Sebelumnya</strong> kapan saja untuk memeriksa atau mengganti jawaban.</li>
+            </ul>
+          </div>
+
+          <div class="pt-2 text-right">
+            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-lg shadow-sky-500/25 transition active:scale-[0.98]">
+              Mulai Kuis Gaya Belajar <i class="fa-solid fa-play ml-2.5 text-xs"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 2: KUIS INTERAKTIF ARENA ================= -->
+    <section id="stepQuiz" class="no-print hidden space-y-6">
+      
+      <!-- Top Quiz Toolbar -->
+      <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/80 shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <!-- Live VARK Counter Badges -->
+          <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
+            <span class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 flex-shrink-0">
+              V: <span id="liveCountV">0</span>
+            </span>
+            <span class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 flex-shrink-0">
+              A: <span id="liveCountA">0</span>
+            </span>
+            <span class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 flex-shrink-0">
+              R: <span id="liveCountR">0</span>
+            </span>
+            <span class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">
+              K: <span id="liveCountK">0</span>
+            </span>
+          </div>
+
+          <!-- Utility Buttons: Peta Soal, Switch Mode -->
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="openQuestionMapModal()" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold transition flex items-center">
+              <i class="fa-solid fa-grip mr-1.5"></i> Peta Soal (<span id="answeredPillCount">0/16</span>)
+            </button>
+            <button type="button" onclick="toggleViewMode()" id="viewModeBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition flex items-center">
+              <i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar
+            </button>
+          </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between items-center text-xs text-slate-500 font-medium">
+            <span id="quizProgressLabel">Situasi 1 dari 16</span>
+            <span id="quizProgressPercent" class="font-bold text-sky-600">0 / 16 Terisi</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div id="quizGlobalProgressBar" class="bg-gradient-to-r from-sky-600 to-sky-500 h-2.5 rounded-full transition-all duration-300" style="width: 6%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= QUIZ MODE A: INTERACTIVE CARD (DEFAULT) ================= -->
+      <div id="quizCardMode" class="space-y-4">
+        
+        <!-- Single-Select Instruction Banner -->
+        <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-100 text-sky-900 flex items-center justify-between gap-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center text-sm shadow-sm flex-shrink-0">
+              <i class="fa-solid fa-hand-pointer"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm leading-tight">Pilih Satu Jawaban Paling Sesuai</h4>
+              <p class="text-[11px] text-sky-800/80">Klik satu pilihan yang paling menggambarkan dirimu untuk lanjut otomatis ke soal berikutnya.</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold bg-white border border-sky-200 text-sky-700 px-3 py-1 rounded-xl flex-shrink-0" id="cardQuestionCounterPill">
+            1 / 16
+          </span>
+        </div>
+
+        <!-- MAIN QUESTION CARD -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-lg relative overflow-hidden quiz-card-animate" id="activeQuestionCard">
+          
+          <!-- Top Badge & Answer Status -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="inline-flex items-center text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-sky-700 px-3 py-1 rounded-full border border-sky-200">
+              <i class="fa-solid fa-circle-question mr-1.5 text-sky-600"></i> Pertanyaan No. <span id="cardQuestionNumber">1</span>
+            </span>
+
+            <div id="cardCurrentStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500">
+              Belum Dipilih
+            </div>
+          </div>
+
+          <!-- Question Prompt -->
+          <div class="py-2 md:py-4">
+            <h3 class="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 leading-snug tracking-tight" id="cardQuestionText">
+              Memuat pertanyaan...
+            </h3>
+          </div>
+
+          <!-- 4 MULTI-SELECT OPTION BUTTONS (a, b, c, d) -->
+          <div class="space-y-3 mt-4" id="cardOptionsContainer">
+            <!-- Injected via JS -->
+          </div>
+
+          <!-- Bottom Card Controls -->
+          <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+            <button type="button" onclick="prevQuestion()" id="btnCardPrev" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition flex items-center disabled:opacity-40">
+              <i class="fa-solid fa-arrow-left mr-1.5"></i> Sebelumnya
+            </button>
+
+            <button type="button" onclick="nextQuestion()" id="btnCardNext" class="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-sky-500/20 transition flex items-center">
+              Lanjut Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= QUIZ MODE B: ALL 16 QUESTIONS LIST ================= -->
+      <div id="quizListMode" class="hidden space-y-4">
+        <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-sky-900 flex items-start space-x-3">
+          <div class="text-xl text-sky-600 mt-0.5">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm md:text-base">Mode Lembar Kuesioner Lengkap (16 Situasi)</h4>
+            <p class="text-xs md:text-sm text-sky-800/80 mt-0.5 leading-relaxed">
+              Pilih satu jawaban (a, b, c, atau d) pada setiap situasi yang paling menggambarkan kebiasaan belajarmu.
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-4" id="questionsListContainer">
+          <!-- All 16 items injected here -->
+        </div>
+      </div>
+
+      <!-- Action Card Finish -->
+      <div class="bg-gradient-to-r from-slate-900 to-sky-900 text-white rounded-3xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <h4 class="font-bold text-sm sm:text-base flex items-center">
+            <i class="fa-solid fa-award text-amber-400 mr-2"></i> Selesai Mengerjakan Kuesioner VARK?
+          </h4>
+          <p class="text-xs text-slate-300 mt-0.5">
+            Lihat profil gaya belajarmu beserta contoh metode belajar efektif yang siap dicetak ke PDF.
+          </p>
+        </div>
+        <button type="button" onclick="submitAssessment()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/30 transition flex items-center justify-center">
+          <i class="fa-solid fa-chart-pie mr-2"></i> Lihat Hasil Gaya Belajar &amp; PDF
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================= SECTION 3: HASIL ASESMEN & METODE BELAJAR ================= -->
+    <section id="stepResult" class="hidden space-y-6">
+
+      <!-- Action Buttons (No Print) -->
+      <div class="no-print bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <p class="text-xs md:text-sm font-semibold text-slate-800">Hasil Identifikasi Gaya Belajar (VARK) Berhasil Dianalisis</p>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <button type="button" onclick="window.print()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow transition flex items-center">
+            <i class="fa-solid fa-print mr-2"></i> Cetak / Simpan PDF
+          </button>
+          <button type="button" onclick="restartTest()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-medium rounded-xl transition flex items-center">
+            <i class="fa-solid fa-rotate-right mr-1.5"></i> Tes Ulang
+          </button>
+        </div>
+      </div>
+
+      <!-- PRINTABLE REPORT CONTAINER (BERSIH & PROFESIONAL) -->
+      <div id="printReportArea" class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm text-slate-900">
+        
+        <!-- KOP SURAT RESMI PEMERINTAH KOTA BANJARMASIN - SMA 2 MUHAMMADIYAH BANJARMASIN (TANPA LOGO, SIMETRIS) -->
+        <div class="border-b-4 border-double border-slate-900 pb-3 mb-5 text-slate-900 font-['Times_New_Roman',serif] text-center">
+          <h4 class="text-sm sm:text-base md:text-lg font-bold tracking-wider leading-snug uppercase">
+            PEMERINTAH KOTA BANJARMASIN
+          </h4>
+          <h4 class="text-sm sm:text-base md:text-lg font-bold tracking-wider leading-snug uppercase">
+            DINAS PENDIDIKAN
+          </h4>
+          <h3 class="text-base sm:text-lg md:text-xl font-extrabold tracking-wide leading-snug uppercase mt-0.5" id="reportSchoolTitle">
+            SMA 2 MUHAMMADIYAH BANJARMASIN
+          </h3>
+          <p class="text-[11px] sm:text-xs md:text-[13px] font-normal leading-tight mt-1 text-slate-800">
+            Jl. Mangga 3 Rt. 22 No. 47, Kebun Bunga, Kec. Banjarmasin Timur, Kota Banjarmasin, Kalimantan Selatan.
+          </p>
+        </div>
+
+        <div class="text-center mb-5">
+          <h3 class="text-sm md:text-base font-bold uppercase tracking-tight text-slate-900 underline decoration-1 underline-offset-4">
+            LAPORAN HASIL IDENTIFIKASI GAYA BELAJAR (MODEL VARK)
+          </h3>
+          <p class="text-[11px] text-slate-600 mt-1">
+            Unit Layanan Bimbingan dan Konseling (BK) • Pemetaan Preferensi Modalitas &amp; Metode Belajar Siswa
+          </p>
+        </div>
+
+        <!-- TABEL BIODATA PESERTA DIDIK -->
+        <div class="border border-slate-300 rounded-xl overflow-hidden mb-5 text-xs">
+          <table class="w-full text-left">
+            <tbody class="divide-y divide-slate-200">
+              <tr class="divide-x divide-slate-200">
+                <td class="w-1/4 bg-slate-50 py-2 px-3 font-semibold text-slate-600">Nama Lengkap</td>
+                <td class="w-1/4 py-2 px-3 font-bold text-slate-900" id="resNama">-</td>
+                <td class="w-1/4 bg-slate-50 py-2 px-3 font-semibold text-slate-600">Kelas / Tingkat</td>
+                <td class="w-1/4 py-2 px-3 font-bold text-slate-900" id="resKelas">-</td>
+              </tr>
+              <tr class="divide-x divide-slate-200">
+                <td class="bg-slate-50 py-2 px-3 font-semibold text-slate-600">Asal Sekolah</td>
+                <td class="py-2 px-3 font-bold text-slate-900" id="resSekolah">-</td>
+                <td class="bg-slate-50 py-2 px-3 font-semibold text-slate-600">Tanggal Asesmen</td>
+                <td class="py-2 px-3 font-bold text-slate-900" id="resTanggal">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- RINGKASAN GAYA BELAJAR DOMINAN (EXECUTIVE SUMMARY) -->
+        <div class="border border-slate-300 rounded-xl p-4 bg-slate-50/70 mb-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-3">
+            <div>
+              <span class="text-[10px] font-bold tracking-wider uppercase text-slate-500">Kecenderungan Gaya Belajar Utama (VARK)</span>
+              <h4 class="text-xl sm:text-2xl font-black tracking-wide text-slate-900" id="resDominantTitle">-</h4>
+              <p class="text-xs font-semibold text-slate-700 mt-0.5" id="resModalityBadge">-</p>
+            </div>
+            <div class="bg-white border border-slate-300 rounded-lg px-4 py-2 text-right">
+              <span class="text-[10px] text-slate-500 uppercase font-bold block">Modalitas Tertinggi</span>
+              <span class="text-base font-extrabold text-slate-900" id="resPrimaryType">-</span>
+              <span class="text-[11px] text-slate-600 block" id="resPrimaryScore">-</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed" id="resStyleSummary">
+            Ringkasan profil gaya belajar berdasarkan preferensi pada Kuesioner VARK.
+          </p>
+        </div>
+
+        <!-- VISUALISASI & TABEL SKOR VARK -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5 items-center print-avoid-break">
+          
+          <!-- Diagram Radar VARK -->
+          <div class="md:col-span-5 border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center bg-white">
+            <h5 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1 text-center">Diagram Profil Modalitas VARK</h5>
+            <div class="w-full max-w-[230px] aspect-square flex items-center justify-center">
+              <canvas id="varkChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Tabel Skor Formal 4 Dimensi VARK -->
+          <div class="md:col-span-7">
+            <h5 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Perolehan Skor Setiap Modalitas (Maksimal 16)</h5>
+            <div class="border border-slate-300 rounded-xl overflow-hidden text-xs">
+              <table class="w-full text-left">
+                <thead class="bg-slate-100 text-slate-700 border-b border-slate-300">
+                  <tr>
+                    <th class="py-2 px-3 font-bold">Modalitas Belajar</th>
+                    <th class="py-2 px-2 text-center font-bold">Kode</th>
+                    <th class="py-2 px-2 text-center font-bold">Skor</th>
+                    <th class="py-2 px-2 text-center font-bold">Proporsi</th>
+                    <th class="py-2 px-3 text-center font-bold">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="scoresTableBody" class="divide-y divide-slate-200">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-1.5 italic">* Skor dihitung dari pilihan jawaban (a, b, c, atau d) pada masing-masing dari 16 situasi.</p>
+          </div>
+
+        </div>
+
+        <!-- KARAKTERISTIK GAYA BELAJAR -->
+        <div class="border border-slate-200 rounded-xl p-4 mb-5 print-avoid-break">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2 mb-2">
+            Karakteristik Cara Menyerap &amp; Memproses Informasi
+          </h4>
+          <div class="text-xs text-slate-700 space-y-2 leading-relaxed" id="resStyleDescription">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- REKOMENDASI CONTOH METODE BELAJAR (FOKUS UTAMA TANPA REKOMENDASI JURUSAN) -->
+        <div class="border border-slate-300 rounded-xl p-4 sm:p-5 mb-6 bg-slate-50/50 print-avoid-break">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 mb-3 flex items-center">
+            <i class="fa-solid fa-lightbulb text-slate-700 mr-2"></i> Rekomendasi Contoh Metode &amp; Strategi Belajar Efektif
+          </h4>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs" id="resStudyMethodsGrid">
+            <!-- 3 Kolom Strategi Belajar: Saat di Kelas, Saat Mencatat/Merangkum, Saat Belajar Mandiri & Ujian -->
+          </div>
+        </div>
+
+        <!-- LEMBAR PENGESAHAN TANDA TANGAN RESMI -->
+        <div class="pt-3 border-t border-slate-300 print-avoid-break">
+          <div class="flex justify-between items-center text-[11px] text-slate-500 mb-5">
+            <span>Instrumen: Kuesioner Gaya Belajar VARK (16 Situasi)</span>
+            <span id="signDateText">-</span>
+          </div>
+
+          <div class="grid grid-cols-3 text-center text-xs text-slate-800 gap-4">
+            <div>
+              <p class="text-slate-500 text-[11px]">Mengetahui,</p>
+              <p class="font-semibold mt-0.5">Orang Tua / Wali Siswa</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium">( ............................................ )</p>
+            </div>
+            <div>
+              <p class="text-slate-500 text-[11px]">Peserta Didik,</p>
+              <p class="font-semibold mt-0.5">Siswa Bersangkutan</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium" id="signatureStudentName">( ............................................ )</p>
+            </div>
+            <div>
+              <p class="text-slate-500 text-[11px]">Konselor /</p>
+              <p class="font-semibold mt-0.5">Guru Bimbingan Konseling</p>
+              <div class="h-16"></div>
+              <p class="border-t border-slate-400 inline-block px-6 font-medium">( ............................................ )</p>
+            </div>
+          </div>
+
+          <!-- FOOTER CETAK LAPORAN -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex flex-wrap justify-between items-center text-[10px] text-slate-500">
+            <span>Sistem Asesmen Gaya Belajar (Model VARK)</span>
+            <span class="font-medium text-slate-600">Copyright &copy; 2026 Bimbingan dan Konseling FKIP ULM</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="no-print border-t border-slate-200 bg-white py-5 mt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1.5">
+      <p>Aplikasi Asesmen &amp; Kuis Gaya Belajar Berbasis Model VARK (Visual, Aural, Read/Write, Kinesthetic)</p>
+      <p class="font-semibold text-slate-700">Copyright &copy; 2026 Bimbingan dan Konseling FKIP ULM</p>
+    </div>
+  </footer>
+
+  <!-- ================= LOGIC & DATA SCRIPT ================= -->
+  <script>
+
+    // ================= JEMBATAN KE index.html (saat ditanam via iframe) =================
+    (function () {
+      if (window.self === window.top) return;               // dibuka langsung: tidak perlu jembatan
+      document.documentElement.classList.add('embedded');
+      window.addEventListener('message', function (ev) {
+        if (ev.source !== window.parent) return;
+        var d = ev.data;
+        if (!d || d.type !== 'ebk-theme' || typeof d.vars !== 'object') return;
+        Object.keys(d.vars).forEach(function (k) {
+          var v = String(d.vars[k]);
+          if (/^--[a-z0-9-]+$/i.test(k) && /^[#a-z0-9 ,.()%\/-]*$/i.test(v)) {
+            document.documentElement.style.setProperty(k, v);
+          }
+        });
+      });
+      try { window.parent.postMessage({ type: 'tesminat-ready' }, '*'); } catch (e) {}
+    })();
+
+    /*
+     * MASTER DATA KUESIONER VARK (16 PERTANYAAN + PETA SKORING RESMI)
+     */
+    const varkQuestions = [
+      {
+        no: 1,
+        text: "Anda sedang menolong seseorang yang ingin pergi ke bandara, pusat kota atau stasiun kereta. Anda akan:",
+        options: [
+          { key: "a", type: "K", text: "Pergi bersama-sama dengan orang tersebut." },
+          { key: "b", type: "A", text: "Memberitahukan arahnya kepada orang tersebut." },
+          { key: "c", type: "R", text: "Menuliskan petunjuk arah tempat yang hendak dituju orang tersebut." },
+          { key: "d", type: "V", text: "Menggambar atau memberinya sebuah peta." }
+        ]
+      },
+      {
+        no: 2,
+        text: "Anda tidak yakin bagaimana mengeja suatu kata, apakah 'analisis' atau 'analisa'. Anda akan:",
+        options: [
+          { key: "a", type: "V", text: "Membayangkan kata-kata tersebut di dalam pikiran Anda dan kemudian memilih salah satunya." },
+          { key: "b", type: "A", text: "Memikirkan bagaimana bunyi kata-kata tersebut dan memilih satu di antaranya." },
+          { key: "c", type: "R", text: "Mencarinya di kamus." },
+          { key: "d", type: "K", text: "Menuliskan kedua kata tersebut di kertas dan memilih satu di antaranya." }
+        ]
+      },
+      {
+        no: 3,
+        text: "Anda sedang merencanakan liburan untuk sebuah kelompok. Anda menginginkan beberapa umpan balik dari mereka berkenaan dengan rencana yang Anda buat. Anda akan:",
+        options: [
+          { key: "a", type: "K", text: "Menjelaskan beberapa garis besar atau pokok-pokok acara yang penting." },
+          { key: "b", type: "V", text: "Menggunakan sebuah peta atau situs web untuk menunjukkan tempat-tempatnya kepada mereka." },
+          { key: "c", type: "R", text: "Memberikan mereka sebuah salinan rencana perjalanan." },
+          { key: "d", type: "A", text: "Menelepon, atau meng-email mereka." }
+        ]
+      },
+      {
+        no: 4,
+        text: "Anda ingin memasak sesuatu yang istimewa untuk keluarga Anda. Anda akan:",
+        options: [
+          { key: "a", type: "K", text: "Memasak sesuatu yang Anda bisa tanpa perlu melihat instruksi atau cara memasaknya." },
+          { key: "b", type: "A", text: "Meminta saran dari teman." },
+          { key: "c", type: "V", text: "Melihat gambar-gambar di buku memasak untuk mencari ide." },
+          { key: "d", type: "R", text: "Menggunakan buku memasak di mana Anda tahu di sana ada sebuah resep yang enak." }
+        ]
+      },
+      {
+        no: 5,
+        text: "Sekelompok turis ingin belajar mengenai kebun raya atau cagar alam di daerah Anda. Anda akan:",
+        options: [
+          { key: "a", type: "A", text: "Menceritakan kepada mereka atau merancang suatu bincang-bincang mengenai kebun raya atau cagar alam di daerah Anda." },
+          { key: "b", type: "V", text: "Menunjukkan mereka gambar-gambar di internet, foto atau gambar di buku-buku mengenai kebun raya dan cagar alam." },
+          { key: "c", type: "K", text: "Membawa mereka ke kebun raya atau cagar alam dan berjalan bersama mereka mengitari kebun raya tersebut." },
+          { key: "d", type: "R", text: "Memberi mereka buku atau pamflet mengenai kebun raya atau cagar alam." }
+        ]
+      },
+      {
+        no: 6,
+        text: "Anda hendak membeli sebuah kamera digital atau sebuah telepon genggam. Selain harga, apa yang paling mempengaruhi keputusan Anda untuk membeli?",
+        options: [
+          { key: "a", type: "K", text: "Mencoba atau mengujinya." },
+          { key: "b", type: "R", text: "Membaca penjelasan tentang fiturnya." },
+          { key: "c", type: "V", text: "Karena desainnya modern dan kelihatan bagus." },
+          { key: "d", type: "A", text: "Si penjual menjelaskan tentang fitur kamera atau telepon tersebut kepada saya." }
+        ]
+      },
+      {
+        no: 7,
+        text: "Ingatlah suatu masa ketika Anda belajar bagaimana mengerjakan sesuatu yang baru. Cobalah hindari mengingat yang berhubungan dengan keterampilan fisik, seperti mengendarai sepeda. Anda paling suka belajar dengan cara:",
+        options: [
+          { key: "a", type: "K", text: "Menonton demonstrasinya (cara melakukannya)." },
+          { key: "b", type: "A", text: "Mendengarkan seseorang menjelaskannya dan kemudian bertanya." },
+          { key: "c", type: "V", text: "Diagram dan grafik - petunjuk-petunjuk visual." },
+          { key: "d", type: "R", text: "Instruksi tertulis - seperti sebuah manual atau buku teks." }
+        ]
+      },
+      {
+        no: 8,
+        text: "Anda mempunyai masalah dengan lutut Anda. Anda lebih suka bila dokter:",
+        options: [
+          { key: "a", type: "R", text: "Memberi Anda sebuah alamat web atau sebuah bacaan mengenai lutut." },
+          { key: "b", type: "K", text: "Menggunakan sebuah model plastik dari sebuah lutut untuk menunjukkan masalah di lutut Anda." },
+          { key: "c", type: "A", text: "Menjelaskan apa masalah di lutut Anda." },
+          { key: "d", type: "V", text: "Menunjukkan kepada Anda sebuah gambar berkenaan dengan masalah di lutut Anda." }
+        ]
+      },
+      {
+        no: 9,
+        text: "Anda ingin mempelajari sebuah program, keterampilan atau game baru di sebuah komputer. Anda akan:",
+        options: [
+          { key: "a", type: "R", text: "Membaca instruksi tertulis dari program tersebut." },
+          { key: "b", type: "A", text: "Berdiskusi dengan orang yang mengerti tentang program tersebut." },
+          { key: "c", type: "K", text: "Menggunakan keyboard." },
+          { key: "d", type: "V", text: "Mengikuti gambar yang ada di buku petunjuk program tersebut." }
+        ]
+      },
+      {
+        no: 10,
+        text: "Saya menyukai situs web yang memiliki:",
+        options: [
+          { key: "a", type: "K", text: "Sesuatu yang dapat diklik, diganti atau dicoba." },
+          { key: "b", type: "V", text: "Desain dan fitur visual yang menarik." },
+          { key: "c", type: "R", text: "Deskripsi tertulis, rincian dan penjelasan tertulis yang menarik." },
+          { key: "d", type: "A", text: "Audio channel di mana saya bisa mendengarkan musik, program radio atau wawancara." }
+        ]
+      },
+      {
+        no: 11,
+        text: "Selain harga, apa yang paling mempengaruhi keputusan Anda dalam membeli sebuah buku non-fiksi yang baru?",
+        options: [
+          { key: "a", type: "V", text: "Penampilannya yang menarik." },
+          { key: "b", type: "R", text: "Bagian-bagiannya yang dapat dibaca dengan cepat." },
+          { key: "c", type: "A", text: "Seorang teman membicarakan dan merekomendasikannya." },
+          { key: "d", type: "K", text: "Isinya kisah-kisah kehidupan, pengalaman dan contoh-contoh yang nyata." }
+        ]
+      },
+      {
+        no: 12,
+        text: "Anda sedang menggunakan sebuah buku, CD atau situs web untuk mempelajari bagaimana mengambil gambar dengan kamera digital Anda yang baru. Anda ingin memiliki:",
+        options: [
+          { key: "a", type: "A", text: "Sebuah kesempatan bertanya dan berdiskusi tentang kamera tersebut dan fitur-fiturnya." },
+          { key: "b", type: "R", text: "Instruksi tertulis yang jelas dengan rincian dan poin-poin mengenai apa yang harus dilakukan." },
+          { key: "c", type: "V", text: "Gambar-gambar yang menunjukkan kamera dan fungsi dari masing-masing bagiannya." },
+          { key: "d", type: "K", text: "Berbagai contoh dari foto atau gambar yang bagus dan yang buruk dan bagaimana memperbaikinya." }
+        ]
+      },
+      {
+        no: 13,
+        text: "Anda lebih suka seorang guru atau seorang presenter yang menggunakan:",
+        options: [
+          { key: "a", type: "K", text: "Demonstrasi (pertunjukan), model atau sesi praktik." },
+          { key: "b", type: "A", text: "Tanya jawab, diskusi, diskusi kelompok, atau pembicara tamu." },
+          { key: "c", type: "R", text: "Selebaran (handout), buku, atau bacaan-bacaan." },
+          { key: "d", type: "V", text: "Gambar, diagram, atau grafik." }
+        ]
+      },
+      {
+        no: 14,
+        text: "Anda baru saja menyelesaikan sebuah kompetisi atau tes/ujian dan menginginkan beberapa umpan balik. Anda menyukai umpan balik yang:",
+        options: [
+          { key: "a", type: "K", text: "Menggunakan contoh-contoh dari apa yang telah Anda kerjakan." },
+          { key: "b", type: "R", text: "Menggunakan deskripsi tertulis dari hasil tes Anda." },
+          { key: "c", type: "A", text: "Berasal dari seseorang yang mendiskusikannya dengan Anda." },
+          { key: "d", type: "V", text: "Menggunakan grafik untuk menunjukkan apa yang telah Anda capai." }
+        ]
+      },
+      {
+        no: 15,
+        text: "Anda sedang akan memilih makanan di sebuah restoran atau kafe. Anda akan:",
+        options: [
+          { key: "a", type: "K", text: "Memilih sesuatu yang sudah pernah Anda makan sebelumnya di sana." },
+          { key: "b", type: "A", text: "Mendengarkan pilihan menu dari pelayan atau meminta seorang teman memberikan rekomendasi pilihan makanan." },
+          { key: "c", type: "R", text: "Memilih berdasarkan penjelasan yang ada di dalam daftar menu." },
+          { key: "d", type: "V", text: "Melihat apa yang dimakan pengunjung lain atau melihat gambar dari masing-masing menu." }
+        ]
+      },
+      {
+        no: 16,
+        text: "Anda harus membuat sebuah pidato penting dalam sebuah acara. Anda akan:",
+        options: [
+          { key: "a", type: "V", text: "Membuat gambar-gambar atau grafik untuk membantu menjelaskan sesuatu." },
+          { key: "b", type: "A", text: "Menulis beberapa kata kunci dan berlatih mempraktikkan pidato Anda berulang-ulang." },
+          { key: "c", type: "R", text: "Menuliskan pidato Anda dan mempelajarinya dengan cara membacanya beberapa kali." },
+          { key: "d", type: "K", text: "Mengumpulkan banyak contoh dan cerita untuk membuat bahan bicara yang nyata dan praktis." }
+        ]
+      }
+    ];
+
+    /*
+     * PROFIL & REKOMENDASI METODE BELAJAR VARK (TANPA REKOMENDASI JURUSAN)
+     */
+    const varkProfiles = {
+      V: {
+        id: "V",
+        name: "Visual",
+        fullName: "Visual (Penglihatan & Tata Ruang)",
+        icon: "fa-eye",
+        color: "#4f46e5",
+        description: "Pemelajar dengan gaya Visual paling mudah memahami dan mengingat informasi ketika disajikan dalam bentuk gambar, diagram, bagan alir (flowchart), peta konsep, warna, simbol, dan tata letak ruang yang terstruktur.",
+        methods: {
+          inClass: [
+            "Duduk di barisan depan agar dapat melihat papan tulis, slide presentasi, dan ekspresi guru dengan jelas.",
+            "Perhatikan bagan, grafik, ilustrasi, atau video pembelajaran yang ditayangkan selama penjelasan materi.",
+            "Ganti kata-kata panjang di buku catatan dengan simbol, panah hubungan, dan sketsa visual."
+          ],
+          noteTaking: [
+            "Buat Peta Pikiran (Mind Mapping) dengan cabang warna-warni untuk menghubungkan konsep utama dan sub-bab.",
+            "Gunakan stabilo (highlighter) dengan kode warna berbeda (misalnya: kuning untuk definisi, hijau untuk rumus, biru untuk contoh).",
+            "Ubah tabel angka atau teks rumit menjadi grafik batang, diagram lingkaran, atau garis waktu (timeline)."
+          ],
+          selfStudy: [
+            "Tonton video animasi edukasi atau tutorial visual sebelum membaca bab pelajaran yang sulit.",
+            "Tempelkan poster ringkasan rumus, peta konsep, atau kartu pengingat (flashcard bergambar) di dinding meja belajar.",
+            "Saat ujian, bayangkan kembali tata letak gambar, warna catatan, atau posisi bagan di halaman bukumu."
+          ]
+        }
+      },
+      A: {
+        id: "A",
+        name: "Aural",
+        fullName: "Aural / Auditori (Pendengaran & Diskusi)",
+        icon: "fa-headphones",
+        color: "#d97706",
+        description: "Pemelajar dengan gaya Aural paling efektif menyerap informasi melalui pendengaran, penjelasan lisan, diskusi kelompok, tanya jawab, serta mengutarakan kembali ide atau materi pelajaran dengan suara keras.",
+        methods: {
+          inClass: [
+            "Dengarkan penjelasan guru secara saksama dan aktiflah mengajukan pertanyaan atau menjawab saat sesi tanya jawab.",
+            "Ikuti diskusi kelompok kecil untuk bertukar pendapat dan mendengarkan sudut pandang teman sekelas.",
+            "Minta izin guru untuk merekam penjelasan materi penting agar dapat diputar ulang di rumah."
+          ],
+          noteTaking: [
+            "Sisakan ruang kosong di catatan kelas untuk ditambahkan setelah berdiskusi dengan teman.",
+            "Bacakan kembali rangkuman catatanmu dengan suara terdengar jelas setelah selesai menulis.",
+            "Ubah poin-poin hafalan menjadi irama lagu, akronim berirama, atau cerita lisan singkat."
+          ],
+          selfStudy: [
+            "Belajar bersama teman (study buddy) dan jelaskan kembali materi yang baru dipelajari seolah-olah kamu sedang mengajar.",
+            "Dengarkan rekaman suara penjelasan materi sendiri, podcast edukasi, atau audiobook saat mengulang pelajaran.",
+            "Saat mengerjakan ujian, dengarkan kembali 'suara penjelasan' atau diskusi di dalam pikiranmu untuk mengingat konsep."
+          ]
+        }
+      },
+      R: {
+        id: "R",
+        name: "Read/Write",
+        fullName: "Read/Write (Baca & Tulis)",
+        icon: "fa-pen-to-square",
+        color: "#0284c7",
+        description: "Pemelajar dengan gaya Read/Write sangat menyukai informasi yang ditampilkan dalam bentuk teks tertulis. Anda mudah memahami materi melalui membaca buku teks, membuat daftar poin terstruktur, menulis ulang rangkuman, dan mencari referensi bacaan.",
+        methods: {
+          inClass: [
+            "Catat penjelasan guru secara lengkap dan rapi dalam bentuk kalimat terstruktur serta poin-poin bernomor.",
+            "Manfaatkan handout, modul cetak, buku paket, dan glosarium istilah sebagai pegangan utama belajar.",
+            "Catat kata-kata kunci atau definisi penting beserta sumber halaman bukunya."
+          ],
+          noteTaking: [
+            "Tulis ulang ringkasan materi dengan bahasamu sendiri setelah pulang sekolah untuk memperkuat daya ingat.",
+            "Susun daftar urutan (bullet points), tabel perbandingan teks, dan rangkuman definisi per bab.",
+            "Terjemahkan diagram, grafik, atau gambar dari buku pelajaran menjadi paragraf penjelasan tertulis."
+          ],
+          selfStudy: [
+            "Baca buku teks, artikel ilmiah populer, atau catatan rangkuman secara berulang kali sebelum ujian.",
+            "Latih diri menjawab soal-soal latihan esai dan tulis jawaban lengkap di kertas secara terstruktur.",
+            "Gunakan kamus atau ensiklopedia untuk memperdalam pemahaman istilah-istilah baru yang sulit."
+          ]
+        }
+      },
+      K: {
+        id: "K",
+        name: "Kinesthetic",
+        fullName: "Kinesthetic (Praktik & Pengalaman Nyata)",
+        icon: "fa-hands-holding-circle",
+        color: "#059669",
+        description: "Pemelajar dengan gaya Kinesthetic paling cepat memahami konsep melalui praktik langsung, eksperimen, simulasi, studi kasus nyata, penggunaan alat peraga, dan keterlibatan aktivitas fisik saat belajar.",
+        methods: {
+          inClass: [
+            "Ambil bagian aktif dalam kegiatan praktikum laboratorium, simulasi, role-play, atau demonstrasi alat peraga.",
+            "Kaitkan setiap teori abstrak yang dijelaskan guru dengan contoh kejadian nyata dalam kehidupan sehari-hari.",
+            "Gunakan gerakan tangan atau mencatat aktif agar tetap fokus selama jam pelajaran berlangsung."
+          ],
+          noteTaking: [
+            "Isi buku catatanmu dengan banyak contoh soal nyata, studi kasus, dan langkah-langkah penerapan praktis.",
+            "Gunakan kartu belajar fisik (flashcard) yang dapat dikocok, dikelompokkan, dan dipindahkan di atas meja.",
+            "Buat model sederhana, maket, atau kerajinan tangan untuk memvisualisasikan konsep pelajaran secara fisik."
+          ],
+          selfStudy: [
+            "Terapkan teknik belajar berdurasi pendek dengan jeda gerak ringan (misalnya 25 menit fokus, 5 menit peregangan).",
+            "Belajar sambil berjalan pelan di dalam kamar, meremas bola stres, atau menuliskan rumus berulang kali di papan/kertas.",
+            "Kerjakan soal latihan try-out dengan kondisi simulasi ujian yang nyata untuk melatih kesiapan fisik dan mental."
+          ]
+        }
+      }
+    };
+
+    // ================= STATE MANAGEMENT =================
+    let studentData = {
+      nama: "",
+      kelas: "",
+      sekolah: "",
+      tanggal: ""
+    };
+
+    // Each element stores a single selected option key ('a', 'b', 'c', 'd') or null
+    let selectedAnswers = Array(16).fill(null);
+    let currentQuestionIndex = 0;
+    let quizViewMode = 'card'; // 'card' or 'list'
+    let chartInstance = null;
+    let autoAdvanceTimer = null;
+
+    // Initialization on load
+    window.onload = function() {
+      const today = new Date().toISOString().split('T')[0];
+      const tanggalInput = document.getElementById("inputTanggal");
+      if (tanggalInput) tanggalInput.value = today;
+    };
+
+    // Modal Helpers
+    function showModal(title, msg) {
+      document.getElementById("modalTitle").innerText = title;
+      document.getElementById("modalMessage").innerText = msg;
+      document.getElementById("modalAlert").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modalAlert").classList.add("hidden");
+    }
+
+    // STEP 1: START ASSESSMENT
+    function startTest(e) {
+      if (e) e.preventDefault();
+      const nama = document.getElementById("inputNama").value.trim();
+      const kelas = document.getElementById("inputKelas").value.trim();
+      const sekolah = document.getElementById("inputSekolah").value.trim();
+      const tanggal = document.getElementById("inputTanggal").value;
+
+      if (!nama || !kelas || !sekolah) {
+        showModal("Lengkapi Data", "Silakan isi nama, kelas, dan nama sekolah terlebih dahulu sebelum memulai kuis!");
+        return;
+      }
+
+      studentData = { nama, kelas, sekolah, tanggal };
+      document.getElementById("navStudentInfo").innerText = `${nama} (${kelas})`;
+
+      document.getElementById("stepIntro").classList.add("hidden");
+      document.getElementById("stepQuiz").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      currentQuestionIndex = 0;
+      renderQuizCard();
+      updateLiveScoresAndProgress();
+    }
+
+    // ================= STEP 2: QUIZ CARD ENGINE (SINGLE-SELECT + AUTO-ADVANCE) =================
+    function renderQuizCard() {
+      const q = varkQuestions[currentQuestionIndex];
+      const selectedKey = selectedAnswers[currentQuestionIndex];
+
+      document.getElementById("cardQuestionNumber").innerText = q.no;
+      document.getElementById("cardQuestionCounterPill").innerText = `${q.no} / 16`;
+      document.getElementById("cardQuestionText").innerText = q.text;
+
+      // Status Badge
+      const statusBadge = document.getElementById("cardCurrentStatusBadge");
+      if (selectedKey !== null) {
+        statusBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300";
+        statusBadge.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Terpilih: ${selectedKey.toUpperCase()}`;
+      } else {
+        statusBadge.className = "text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500";
+        statusBadge.innerText = "Belum Dijawab";
+      }
+
+      // Render 4 Single-Select Option Buttons
+      const container = document.getElementById("cardOptionsContainer");
+      container.innerHTML = "";
+
+      q.options.forEach(opt => {
+        const isSelected = (selectedKey === opt.key);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => selectCardOption(opt.key);
+
+        if (isSelected) {
+          btn.className = "btn-press w-full p-4 rounded-2xl border-2 border-sky-600 bg-sky-50/80 text-slate-900 shadow-sm transition-all flex items-center justify-between gap-3 text-left";
+          btn.innerHTML = `
+            <div class="flex items-start space-x-3.5">
+              <span class="w-8 h-8 rounded-xl bg-sky-600 text-white font-extrabold text-sm flex items-center justify-center flex-shrink-0 mt-0.5 uppercase">
+                ${opt.key}
+              </span>
+              <span class="text-sm sm:text-base font-bold text-slate-900 leading-snug">${opt.text}</span>
+            </div>
+            <div class="w-7 h-7 rounded-full bg-sky-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-check text-xs"></i>
+            </div>
+          `;
+        } else {
+          btn.className = "btn-press group w-full p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-sky-400 hover:bg-slate-50 text-slate-800 transition-all flex items-center justify-between gap-3 text-left";
+          btn.innerHTML = `
+            <div class="flex items-start space-x-3.5">
+              <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-sky-100 text-slate-700 group-hover:text-sky-700 font-extrabold text-sm flex items-center justify-center flex-shrink-0 mt-0.5 uppercase transition">
+                ${opt.key}
+              </span>
+              <span class="text-sm sm:text-base font-medium text-slate-700 group-hover:text-slate-900 leading-snug">${opt.text}</span>
+            </div>
+            <div class="w-7 h-7 rounded-full border-2 border-slate-300 group-hover:border-sky-400 flex items-center justify-center flex-shrink-0">
+            </div>
+          `;
+        }
+
+        container.appendChild(btn);
+      });
+
+      // Card animation trigger
+      const cardEl = document.getElementById("activeQuestionCard");
+      cardEl.classList.remove("quiz-card-animate");
+      void cardEl.offsetWidth;
+      cardEl.classList.add("quiz-card-animate");
+
+      // Prev / Next button state
+      document.getElementById("btnCardPrev").disabled = (currentQuestionIndex === 0);
+      const nextBtn = document.getElementById("btnCardNext");
+      if (currentQuestionIndex === 15) {
+        nextBtn.innerHTML = `Selesai Kuis <i class="fa-solid fa-flag-checkered ml-2"></i>`;
+        nextBtn.className = "px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 transition flex items-center";
+      } else {
+        nextBtn.innerHTML = `Lanjut Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>`;
+        nextBtn.className = "px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-sky-500/20 transition flex items-center";
+      }
+
+      updateLiveScoresAndProgress();
+    }
+
+    function selectCardOption(optionKey) {
+      if (autoAdvanceTimer) {
+        clearTimeout(autoAdvanceTimer);
+      }
+
+      selectedAnswers[currentQuestionIndex] = optionKey;
+      renderQuizCard();
+
+      // Auto-advance to next question after brief visual feedback
+      autoAdvanceTimer = setTimeout(() => {
+        if (currentQuestionIndex < 15) {
+          currentQuestionIndex++;
+          renderQuizCard();
+        } else {
+          document.getElementById("modalFinishPrompt").classList.remove("hidden");
+        }
+      }, 220);
+    }
+
+    function prevQuestion() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuizCard();
+      }
+    }
+
+    function nextQuestion() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      if (currentQuestionIndex < 15) {
+        currentQuestionIndex++;
+        renderQuizCard();
+      } else {
+        document.getElementById("modalFinishPrompt").classList.remove("hidden");
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      currentQuestionIndex = idx;
+      if (quizViewMode === 'card') {
+        renderQuizCard();
+      } else {
+        renderAllQuestionsList();
+      }
+      closeQuestionMapModal();
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // ================= LIVE SCORING & PROGRESS =================
+    function calculateVarkCounts() {
+      const counts = { V: 0, A: 0, R: 0, K: 0 };
+      varkQuestions.forEach((q, idx) => {
+        const chosenKey = selectedAnswers[idx];
+        if (chosenKey !== null) {
+          const matchedOpt = q.options.find(opt => opt.key === chosenKey);
+          if (matchedOpt) {
+            counts[matchedOpt.type]++;
+          }
+        }
+      });
+      return counts;
+    }
+
+    function updateLiveScoresAndProgress() {
+      const counts = calculateVarkCounts();
+      document.getElementById("liveCountV").innerText = counts.V;
+      document.getElementById("liveCountA").innerText = counts.A;
+      document.getElementById("liveCountR").innerText = counts.R;
+      document.getElementById("liveCountK").innerText = counts.K;
+
+      const answeredQuestionsCount = selectedAnswers.filter(a => a !== null).length;
+      const percent = Math.round((answeredQuestionsCount / 16) * 100);
+
+      document.getElementById("quizProgressLabel").innerText = `Situasi ${currentQuestionIndex + 1} dari 16`;
+      document.getElementById("quizProgressPercent").innerText = `${answeredQuestionsCount} / 16 Terisi (${percent}%)`;
+      document.getElementById("quizGlobalProgressBar").style.width = `${Math.max(percent, 4)}%`;
+      document.getElementById("answeredPillCount").innerText = `${answeredQuestionsCount}/16`;
+    }
+
+    // ================= VIEW MODE TOGGLE (CARD vs FULL LIST) =================
+    function toggleViewMode() {
+      if (quizViewMode === 'card') {
+        quizViewMode = 'list';
+        document.getElementById("quizCardMode").classList.add("hidden");
+        document.getElementById("quizListMode").classList.remove("hidden");
+        document.getElementById("viewModeBtn").innerHTML = `<i class="fa-solid fa-clone mr-1.5 text-sky-600"></i> Mode Kartu Kuis`;
+        renderAllQuestionsList();
+      } else {
+        quizViewMode = 'card';
+        document.getElementById("quizListMode").classList.add("hidden");
+        document.getElementById("quizCardMode").classList.remove("hidden");
+        document.getElementById("viewModeBtn").innerHTML = `<i class="fa-solid fa-table-list mr-1.5"></i> Mode Lembar`;
+        renderQuizCard();
+      }
+    }
+
+    function renderAllQuestionsList() {
+      const container = document.getElementById("questionsListContainer");
+      container.innerHTML = "";
+
+      varkQuestions.forEach((q, qIdx) => {
+        const chosenKey = selectedAnswers[qIdx];
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm space-y-3";
+
+        let optsHtml = "";
+        q.options.forEach(opt => {
+          const checked = (chosenKey === opt.key);
+          optsHtml += `
+            <div onclick="selectListOption(${qIdx}, '${opt.key}')" class="p-3 rounded-xl border transition cursor-pointer flex items-start justify-between gap-3 ${
+              checked ? "bg-sky-50/80 border-sky-500 text-slate-900" : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/70 text-slate-700"
+            }">
+              <div class="flex items-start space-x-2.5">
+                <span class="w-6 h-6 rounded-lg text-xs font-extrabold flex items-center justify-center flex-shrink-0 mt-0.5 uppercase ${
+                  checked ? "bg-sky-600 text-white" : "bg-white border border-slate-300 text-slate-600"
+                }">${opt.key}</span>
+                <span class="text-xs sm:text-sm ${checked ? "font-bold" : "font-medium"} leading-snug">${opt.text}</span>
+              </div>
+              <div class="w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                checked ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 bg-white"
+              }">
+                ${checked ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-start space-x-2.5">
+            <span class="px-2.5 py-0.5 rounded-lg bg-slate-900 text-white text-xs font-bold flex-shrink-0 mt-0.5">${q.no}</span>
+            <h4 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">${q.text}</h4>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
+            ${optsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectListOption(qIdx, key) {
+      selectedAnswers[qIdx] = key;
+      renderAllQuestionsList();
+      updateLiveScoresAndProgress();
+    }
+
+    // ================= QUESTION MAP MODAL (16 GRID) =================
+    function openQuestionMapModal() {
+      const container = document.getElementById("questionGridContainer");
+      container.innerHTML = "";
+
+      const answeredCount = selectedAnswers.filter(a => a !== null).length;
+      document.getElementById("questionMapSummary").innerText = `${answeredCount} dari 16 Situasi Terisi`;
+
+      varkQuestions.forEach((q, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => jumpToQuestion(idx);
+
+        const chosenKey = selectedAnswers[idx];
+        const isCurrent = (idx === currentQuestionIndex);
+
+        let cls = "py-2.5 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center ";
+        if (isCurrent) {
+          cls += "ring-2 ring-sky-500 ring-offset-1 ";
+        }
+
+        if (chosenKey !== null) {
+          cls += "bg-emerald-500 text-white border-emerald-600";
+          btn.innerHTML = `<span>${idx + 1}</span><span class="text-[9px] opacity-95 font-semibold">${chosenKey.toUpperCase()}</span>`;
+        } else {
+          cls += "bg-white text-slate-400 border-dashed border-slate-300 hover:border-sky-400";
+          btn.innerHTML = `<span>${idx + 1}</span><span class="text-[9px] opacity-75 font-normal">-</span>`;
+        }
+
+        btn.className = cls;
+        container.appendChild(btn);
+      });
+
+      document.getElementById("modalQuestionMap").classList.remove("hidden");
+    }
+
+    function closeQuestionMapModal() {
+      document.getElementById("modalQuestionMap").classList.add("hidden");
+    }
+
+    function confirmFinishAssessment() {
+      document.getElementById("modalFinishPrompt").classList.add("hidden");
+      submitAssessment();
+    }
+
+    function reviewFromFinishModal() {
+      document.getElementById("modalFinishPrompt").classList.add("hidden");
+      openQuestionMapModal();
+    }
+
+    // ================= STEP 3: SUBMIT AND CALCULATE VARK RESULTS =================
+    function submitAssessment() {
+      const counts = calculateVarkCounts();
+      const totalSelected = counts.V + counts.A + counts.R + counts.K;
+
+      if (totalSelected === 0) {
+        showModal("Belum Ada Jawaban", "Kamu belum memilih satu pun opsi dari 16 pertanyaan yang tersedia. Silakan pilih minimal beberapa preferensi belajarmu terlebih dahulu.");
+        return;
+      }
+
+      const order = ["V", "A", "R", "K"];
+      const scoresList = order.map(code => {
+        const profile = varkProfiles[code];
+        const sc = counts[code];
+        return {
+          id: code,
+          name: profile.name,
+          fullName: profile.fullName,
+          score: sc,
+          sharePercent: Math.round((sc / totalSelected) * 100),
+          maxPercent: Math.round((sc / 16) * 100),
+          profileObj: profile
+        };
+      });
+
+      // Sort descending to find dominant modalities
+      const sorted = [...scoresList].sort((a, b) => b.score - a.score);
+      const topScore = sorted[0].score;
+
+      // Determine dominant styles (within 1 point of topScore for multimodal preference)
+      const dominantItems = sorted.filter(item => item.score > 0 && (topScore - item.score) <= 1);
+      const modalityLabelMap = {
+        1: "Unimodal (1 Gaya Belajar Dominan)",
+        2: "Bimodal (Kombinasi 2 Gaya Belajar)",
+        3: "Trimodal (Kombinasi 3 Gaya Belajar)",
+        4: "Multimodal VARK (Seimbang Keempat Gaya)"
+      };
+
+      const modalityCategory = modalityLabelMap[dominantItems.length] || "Preferensi Gaya Belajar";
+      const dominantNames = dominantItems.map(d => `${d.name} (${d.id})`).join(" & ");
+
+      // Populate Student Info in Report
+      document.getElementById("resNama").innerText = studentData.nama;
+      document.getElementById("resKelas").innerText = studentData.kelas;
+      document.getElementById("resSekolah").innerText = studentData.sekolah;
+      if (document.getElementById("reportSchoolTitle")) {
+        document.getElementById("reportSchoolTitle").innerText = studentData.sekolah.toUpperCase();
+      }
+      
+      // Format Date
+      const dateObj = new Date(studentData.tanggal || new Date());
+      const formattedDate = dateObj.toLocaleDateString("id-ID", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      document.getElementById("resTanggal").innerText = formattedDate;
+      document.getElementById("signDateText").innerText = `Tanggal Terbit: ${formattedDate}`;
+      document.getElementById("signatureStudentName").innerText = `( ${studentData.nama} )`;
+
+      // Executive Summary Box
+      document.getElementById("resDominantTitle").innerText = dominantNames;
+      document.getElementById("resModalityBadge").innerText = `Kategori Profil: ${modalityCategory}`;
+      document.getElementById("resPrimaryType").innerText = `${sorted[0].name} (${sorted[0].id})`;
+      document.getElementById("resPrimaryScore").innerText = `Skor ${sorted[0].score} (${sorted[0].sharePercent}% proporsi)`;
+      document.getElementById("resStyleSummary").innerText = `Berdasarkan ${totalSelected} pilihan preferensi pada Kuesioner VARK, kecenderungan gaya belajar utamamu adalah ${dominantNames}. Menerapkan metode belajar yang selaras dengan modalitas ini akan membantu pemahaman materi lebih cepat dan tahan lama.`;
+
+      // Formal Table of 4 VARK Dimensions
+      const tableBody = document.getElementById("scoresTableBody");
+      tableBody.innerHTML = "";
+
+      scoresList.forEach(s => {
+        const isDominant = dominantItems.some(d => d.id === s.id);
+        const statusText = isDominant ? "Dominan" : (s.score > 0 ? "Pendukung" : "Rendah");
+        const statusClass = isDominant ? "font-bold text-slate-900" : "text-slate-600";
+
+        const tr = document.createElement("tr");
+        tr.className = isDominant ? "bg-slate-50/90 text-xs" : "text-xs";
+        tr.innerHTML = `
+          <td class="py-2 px-3 font-semibold text-slate-800">${s.fullName}</td>
+          <td class="py-2 px-2 text-center font-bold text-slate-700">${s.id}</td>
+          <td class="py-2 px-2 text-center font-bold text-slate-900">${s.score}</td>
+          <td class="py-2 px-2 text-center text-slate-700">${s.sharePercent}%</td>
+          <td class="py-2 px-3 text-center ${statusClass}">${statusText}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      // Style Description
+      const descContainer = document.getElementById("resStyleDescription");
+      descContainer.innerHTML = "";
+      dominantItems.slice(0, 2).forEach((item, idx) => {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${idx + 1}. Gaya Belajar ${item.fullName}:</strong> ${item.profileObj.description}`;
+        descContainer.appendChild(p);
+      });
+
+      // Recommended Study Methods (3 Columns: Saat di Kelas, Saat Mencatat/Merangkum, Saat Belajar Mandiri & Ujian)
+      const primaryProfile = sorted[0].profileObj;
+      const secondaryProfile = (dominantItems.length > 1) ? dominantItems[1].profileObj : null;
+
+      const inClassList = [...primaryProfile.methods.inClass];
+      const noteTakingList = [...primaryProfile.methods.noteTaking];
+      const selfStudyList = [...primaryProfile.methods.selfStudy];
+
+      if (secondaryProfile) {
+        inClassList.push(secondaryProfile.methods.inClass[0]);
+        noteTakingList.push(secondaryProfile.methods.noteTaking[0]);
+        selfStudyList.push(secondaryProfile.methods.selfStudy[0]);
+      }
+
+      const methodsGrid = document.getElementById("resStudyMethodsGrid");
+      methodsGrid.innerHTML = `
+        <div class="bg-white border border-slate-200 rounded-xl p-3.5">
+          <h5 class="font-bold text-slate-900 border-b border-slate-200 pb-1.5 mb-2 flex items-center">
+            <i class="fa-solid fa-chalkboard-user text-slate-700 mr-2"></i> 1. Saat Belajar di Kelas
+          </h5>
+          <ul class="space-y-1.5 text-slate-700">
+            ${inClassList.map(m => `<li class="flex items-start"><span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 mt-1.5 mr-2 flex-shrink-0"></span><span>${m}</span></li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-3.5">
+          <h5 class="font-bold text-slate-900 border-b border-slate-200 pb-1.5 mb-2 flex items-center">
+            <i class="fa-solid fa-note-sticky text-slate-700 mr-2"></i> 2. Saat Mencatat &amp; Merangkum
+          </h5>
+          <ul class="space-y-1.5 text-slate-700">
+            ${noteTakingList.map(m => `<li class="flex items-start"><span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 mt-1.5 mr-2 flex-shrink-0"></span><span>${m}</span></li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-3.5">
+          <h5 class="font-bold text-slate-900 border-b border-slate-200 pb-1.5 mb-2 flex items-center">
+            <i class="fa-solid fa-house-laptop text-slate-700 mr-2"></i> 3. Saat Belajar Mandiri &amp; Ujian
+          </h5>
+          <ul class="space-y-1.5 text-slate-700">
+            ${selfStudyList.map(m => `<li class="flex items-start"><span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 mt-1.5 mr-2 flex-shrink-0"></span><span>${m}</span></li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      // Render Radar Chart
+      renderChart(scoresList);
+
+      // Show Result Section
+      document.getElementById("stepQuiz").classList.add("hidden");
+      document.getElementById("stepResult").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Chart.js Radar Visualization (4 Dimensions: V, A, R, K)
+    function renderChart(scoresList) {
+      const ctx = document.getElementById('varkChart').getContext('2d');
+      
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const labels = scoresList.map(s => `${s.name} (${s.id})`);
+      const dataValues = scoresList.map(s => s.score);
+      const maxVal = Math.max(8, ...dataValues);
+
+      chartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Skor VARK',
+            data: dataValues,
+            fill: true,
+            backgroundColor: 'rgba(30, 41, 59, 0.14)',
+            borderColor: 'rgba(30, 41, 59, 0.85)',
+            pointBackgroundColor: 'rgba(30, 41, 59, 1)',
+            pointBorderColor: '#ffffff',
+            pointHoverBackgroundColor: '#ffffff',
+            pointHoverBorderColor: 'rgba(30, 41, 59, 1)',
+            borderWidth: 1.8,
+            pointRadius: 3.5,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(148, 163, 184, 0.4)' },
+              grid: { color: 'rgba(148, 163, 184, 0.4)' },
+              suggestedMin: 0,
+              suggestedMax: maxVal,
+              ticks: {
+                stepSize: 2,
+                font: { size: 8 },
+                backdropColor: 'transparent',
+                color: '#64748b'
+              },
+              pointLabels: {
+                font: {
+                  size: 10,
+                  weight: '700',
+                  family: 'Inter, sans-serif'
+                },
+                color: '#0f172a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // RESET & RETAKE TEST
+    function restartTest() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      selectedAnswers = Array(16).fill(null);
+      currentQuestionIndex = 0;
+      document.getElementById("stepResult").classList.add("hidden");
+      document.getElementById("stepIntro").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
